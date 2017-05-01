@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Youku HTML5 Player",
+  "version": "1.0.0",
+  "id":"youku_html5_player@esterTion",
+  "description": "告别flash与广告",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://v.youku.com/v_show/*"
+      ],
+      "all_frames": true,
+      "js": [
+        "flv.min.js",
+        "google-style-loading.min.js",
+        "ABPlayer.min.js",
+        "youku_html5.js"
+      ],
+      "css":[
+        "ABPlayer.min.css"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+		"*://*/*"
+  ]
+}
