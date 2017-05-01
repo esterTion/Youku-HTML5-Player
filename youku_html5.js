@@ -117,6 +117,9 @@ function md5(str){
     let init={flv:function(select){
         currentSrc=select;
         createPlayer({detail:{src:srcUrl[select],option:{seekType:'range'}}});
+        if(srcUrl[select].partial){
+            abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态',3e3);
+        }
         if(srcUrl[select].segments){
             var totalSize=0;
             srcUrl[select].segments.forEach(function(i){totalSize+=i.filesize})
@@ -177,6 +180,10 @@ function md5(str){
                             duration:part.total_milliseconds_video|0,
                             url:"http://k.youku.com/player/getFlvPath/sid/"+sid+"_00/st/"+typeArray[type]+"/fileid/"+currentFileID+"?K="+part.key+"&hd=1&myp=0&ts="+part.total_milliseconds_video+'&ypp=0&ctype=10&ev=1&token='+token+'&oip='+ip+'&ep='+ep
                         })*/
+                        if(part.key==-1){
+                            srcUrl[type].partial=true;
+                            continue;
+                        }
                         srcUrl[type].segments.push({
                             filesize:part.size|0,
                             duration:part.total_milliseconds_video|0,
