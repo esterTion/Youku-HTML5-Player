@@ -508,7 +508,6 @@ ABP.Strings={
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('br'),
 
-				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozParse)]), _('span',{id:'mozParsedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozDecode)]), _('span',{id:'mozDecodedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozPaint)]), _('span',{id:'mozPaintedFrames'})]),
