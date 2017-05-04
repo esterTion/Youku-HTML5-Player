@@ -1794,7 +1794,7 @@ ABP.Strings={
 				contextMenu.style.display='block';
 				var aboutDiv,remove=contextMenuBody.querySelectorAll('.dm'),originalData,color,isWhite,containerBox=ABPInst.playerUnit.getBoundingClientRect(),
 				dmitem;
-				for(i=remove.length-2;i>=0;i--){
+				for(i=remove.length-3;i>=0;i--){
 					remove[i].remove();
 				}
 				aboutDiv=contextMenuBody.firstChild;
@@ -2038,6 +2038,7 @@ ABP.Strings={
 				preview.imgs=JSON.parse(JSON.stringify(json.data.image).replace(/http:/g,'https:'));
 				preview.len=[json.data.img_x_len,json.data.img_y_len];
 				preview.size=[json.data.img_x_size,json.data.img_y_size];
+				/*
 				var xhr=new XMLHttpRequest(),data,arr=[];
 				xhr.open('GET',json.data.pvdata.replace('http:','https:'),true);
 				xhr.responseType="arraybuffer";
@@ -2051,6 +2052,11 @@ ABP.Strings={
 					}
 				}
 				xhr.send();
+				*/
+				for(var i=0,arr=[];i<preview.imgs.length*100;i++){
+					arr.push(i*json.data.step);
+				}
+				preview.data=arr;
 			},
 			onTimeBar=!1;
 			ABPInst.barTimeHitArea[addEventListener]("mouseenter",function(e){
@@ -2059,18 +2065,9 @@ ABP.Strings={
 			ABPInst.barTimeHitArea[addEventListener]("mouseleave",function(e){
 				onTimeBar=!1;
 			});
-			if(window.cid!=undefined){
-				getjson('/danmaku/pvinfo/'+window.cid+'.json',fetchedPreview);
-			}
-			ABPInst.playerUnit[addEventListener]('cidchange',function(){
-				getjson('/danmaku/pvinfo/'+window.cid+'.json',fetchedPreview);
-				try{
-					var history=JSON.parse(localStorage.playHistory||'{}');
-					if(history[cid]!=undefined){
-						ABPInst.lastTime=history[cid];
-					}
-				}catch(e){}
-			})
+			ABPInst.playerUnit[addEventListener]('previewData',function(e){
+				fetchedPreview(e.detail);
+			});
 			document[addEventListener]("mouseup", function(e) {
 				if (dragging) {
 					var newTime = ((e.clientX - ABPInst.barTimeHitArea.getBoundingClientRect().left) / ABPInst.barTimeHitArea.offsetWidth) * ABPInst.video.duration;

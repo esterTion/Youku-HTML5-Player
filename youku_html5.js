@@ -43,7 +43,7 @@ function md5(str) {
 function createPopup(param) {
     if (!param.content)
         return;
-    if(document.querySelector('#YHP_Notice')!=null)
+    if (document.querySelector('#YHP_Notice') != null)
         document.querySelector('#YHP_Notice').remove();
 
     let div = document.createElement('div');
@@ -56,7 +56,7 @@ function createPopup(param) {
     str += '</div></div></div>';
     div.innerHTML = str;
     document.body.appendChild(div);
-    div.style.height = div.firstChild.offsetHeight+'px';
+    div.style.height = div.firstChild.offsetHeight + 'px';
     document.querySelector('#YHP_Notice .close').addEventListener('click', function () {
         div.style.height = 0;
         setTimeout(function () { div.remove() }, 500);
@@ -78,13 +78,22 @@ let typeArray = {
     'mp4hd2': 'flv',
     'mp4hd3': 'flv'
 };
+let knownLangs = {
+    'default': '默认',
+    'guoyu': '国语',
+    'yue': '粤语'
+}
 let srcUrl = {};
+let audioLangs = {};
 let availableSrc = [];
 window.currentSrc = '';
+window.currentLang = '';
 function response2url(json) {
     let data = {};
     for (let val of json.data.stream) {
-        data[val.stream_type] = val;
+        if (!data[val.audio_lang])
+            data[val.audio_lang] = {};
+        data[val.audio_lang][val.stream_type] = val;
     }
 
     /*
@@ -93,36 +102,65 @@ function response2url(json) {
     let [sid,token]=desde(ep,'00149ad5').split('_');
     */
 
-    for (let type in knownTypes) {
-        if (data[type]) {
-            let time = 0;
-            srcUrl[type] = {
-                type: 'flv',
-                segments: []
-            };
-            for (let part of data[type].segs) {
-                /*let currentFileID=part.fileid;
-                let epmd5=md5(sid+'_'+currentFileID+'_'+token+'_0_kservice').substr(0,4);
-                let ep=encodeURIComponent(desen(sid+'_'+currentFileID+'_'+token+'_0_'+epmd5,'21dd8110'));
-                srcUrl[type].segments.push({
-                    filesize:part.size|0,
-                    duration:part.total_milliseconds_video|0,
-                    url:"http://k.youku.com/player/getFlvPath/sid/"+sid+"_00/st/"+typeArray[type]+"/fileid/"+currentFileID+"?K="+part.key+"&hd=1&myp=0&ts="+part.total_milliseconds_video+'&ypp=0&ctype=10&ev=1&token='+token+'&oip='+ip+'&ep='+ep
-                })*/
-                if (part.key == -1) {
-                    srcUrl[type].partial = true;
-                    continue;
-                }
-                srcUrl[type].segments.push({
-                    filesize: part.size | 0,
-                    duration: part.total_milliseconds_video | 0,
-                    url: part.cdn_url
-                })
-                time += part.total_milliseconds_video | 0;
-            }
-            srcUrl[type].duration = time;
-            srcUrl.duration = time;
+    for (let lang in data) {
+        audioLangs[lang] = {
+            src: {},
+            available: []
         }
+        if (currentLang == '')
+            currentLang = lang;
+        for (let type in knownTypes) {
+            if (data[lang][type]) {
+                let time = 0;
+                audioLangs[lang].src[type] = {
+                    type: 'flv',
+                    segments: [],
+                    fetchM3U8: false,
+                    playlist_url: data[lang][type].m3u8_url
+                };
+                for (let part of data[lang][type].segs) {
+                    /*let currentFileID=part.fileid;
+                    let epmd5=md5(sid+'_'+currentFileID+'_'+token+'_0_kservice').substr(0,4);
+                    let ep=encodeURIComponent(desen(sid+'_'+currentFileID+'_'+token+'_0_'+epmd5,'21dd8110'));
+                    audioLangs[lang].src[type].segments.push({
+                        filesize:part.size|0,
+                        duration:part.total_milliseconds_video|0,
+                        url:"http://k.youku.com/player/getFlvPath/sid/"+sid+"_00/st/"+typeArray[type]+"/fileid/"+currentFileID+"?K="+part.key+"&hd=1&myp=0&ts="+part.total_milliseconds_video+'&ypp=0&ctype=10&ev=1&token='+token+'&oip='+ip+'&ep='+ep
+                    })*/
+                    if (part.key == -1) {
+                        audioLangs[lang].src[type].partial = true;
+                        continue;
+                    }
+                    if (part.rtmp_url) {
+                        audioLangs[lang].src[type].segments.push({
+                            filesize: part.size | 0,
+                            duration: part.total_milliseconds_video | 0
+                        });
+                        audioLangs[lang].src[type].fetchM3U8 = true;
+                    } else {
+                        audioLangs[lang].src[type].segments.push({
+                            filesize: part.size | 0,
+                            duration: part.total_milliseconds_video | 0,
+                            url: part.cdn_url
+                        })
+                    }
+                    time += part.total_milliseconds_video | 0;
+                }
+                audioLangs[lang].src[type].duration = time;
+                audioLangs[lang].src.duration = time;
+            }
+        }
+
+        let selected;
+        for (let type in knownTypes) {
+            if (audioLangs[lang].src[type]) {
+                selected = [type, knownTypes[type]];
+                audioLangs[lang].available.push(selected);
+                currentSrc = type;
+            }
+        }
+        if (currentLang == lang)
+            currentSrc = selected[0];
     }
 }
 
@@ -130,7 +168,7 @@ let passwordCB = function () {
     let password = document.querySelector('#YHP_Notice input[type=text]');
     if (password.value.length == 0) {
         let container = document.querySelector('#YHP_Notice .confirm').parentNode;
-        container.insertBefore(document.createElement('span'),container.firstChild).outerHTML = '<span style="color:#F00">空密码</span>';
+        container.insertBefore(document.createElement('span'), container.firstChild).outerHTML = '<span style="color:#F00">空密码</span>';
         setTimeout(function () {
             let toremove = container.firstChild;
             if (toremove.nodeName.toLowerCase() == 'span')
@@ -150,6 +188,25 @@ let passwordCB = function () {
     }
 };
 
+function switchLang(lang) {
+    Array.from(abpinst.playerUnit.querySelectorAll('.BiliPlus-Scale-Menu .Video-Defination>div')).forEach(function (i) {
+        i.remove();
+    })
+
+    srcUrl = audioLangs[lang].src;
+    availableSrc = audioLangs[lang].available;
+
+    for (let i = 0, div; i < availableSrc.length; i++) {
+        div = document.createElement('div');
+        div.setAttribute('changeto', JSON.stringify(availableSrc[i]));
+        div.setAttribute('name', availableSrc[i][0]);
+        if (availableSrc[i][0] == currentSrc)
+            div.className = 'on';
+        div.appendChild(document.createTextNode(availableSrc[i][1]));
+        abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination').appendChild(div);
+    }
+    abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
+}
 function fetchSrc(extraQuery) {
     fetch('https://ups.youku.com/ups/get.json?ccode=0401&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
@@ -187,30 +244,47 @@ function fetchSrc(extraQuery) {
             } else {
                 response2url(json);
             }
-            let selected;
-            for (let type in knownTypes) {
-                if (srcUrl[type]) {
-                    selected = [type, knownTypes[type]];
-                    availableSrc.push(selected);
-                    currentSrc = type;
+            switchLang(currentLang);
+            let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
+            let langChange = document.createElement('div');
+            contextMenu.insertBefore(langChange, contextMenu.firstChild);
+            langChange.className = 'dm';
+            langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
+            langChange = langChange.appendChild(document.createElement('div'));
+            langChange.className = 'dmMenu';
+            for (let lang in audioLangs) {
+                let div = langChange.appendChild(document.createElement('div'));
+                div.innerHTML = knownLangs[lang] || lang;
+                div.setAttribute('data-lang', lang);
+            }
+            langChange.addEventListener('click', function (e) {
+                let lang = e.target.getAttribute('data-lang');
+                if (lang == currentLang)
+                    return;
+                switchLang(lang);
+                currentLang = lang;
+                changeSrc('', currentSrc, true);
+            });
+
+            abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
+                detail: {
+                    code: 0, data: {
+                        img_x_len: 10,
+                        img_y_len: 10,
+                        img_x_size: 128,
+                        img_y_size: 72,
+                        image: json.data.preview.thumb,
+                        step: json.data.preview.timespan / 1e3
+                    }
                 }
-            }
-            for (let i = 0, div; i < availableSrc.length; i++) {
-                div = document.createElement('div');
-                div.setAttribute('changeto', JSON.stringify(availableSrc[i]));
-                div.setAttribute('name', availableSrc[i][0]);
-                if (availableSrc[i][0] == currentSrc)
-                    div.className = 'on';
-                div.appendChild(document.createTextNode(availableSrc[i][1]));
-                abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination').appendChild(div);
-            }
-            flvparam(selected[0]);
+            }))
+            flvparam(currentSrc);
         })
     })
 }
-window.changeSrc = function (e, t) {
+window.changeSrc = function (e, t, force) {
     var div = document.getElementById('info-box');
-    if (abpinst == undefined || (currentSrc == t))
+    if ((abpinst == undefined || (currentSrc == t)) && !force)
         return false;
     if (div.style.opacity == 0) {
         div.style.opacity = 1;
@@ -254,6 +328,33 @@ let load_fail = function () {
 }
 let flvparam = function (select) {
     currentSrc = select;
+    if (srcUrl[select].fetchM3U8) {
+        //rtmp视频流，使用m3u8地址播放
+        fetch(srcUrl[select].playlist_url, {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-cache',
+            referrer: location.href
+        }).then(function (r) {
+            r.text().then(function (playlist) {
+                //匹配m3u8的地址
+                let urls = playlist.match(/http[^\?]+/g);
+                let arr = [];
+                urls.forEach(function (i) {
+                    if (arr.indexOf(i) == -1)
+                        arr.push(i)
+                });
+                //部分cdn识别处理
+                for (let i in arr) {
+                    srcUrl[select].segments[i].url = arr[i].replace(/http:\/\/.+?\//, function (s) { return s + 'youku/' });
+                }
+                //重新创建播放器
+                srcUrl[select].fetchM3U8 = false;
+                flvparam(select);
+            })
+        })
+        return;
+    }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range' } } });
     if (srcUrl[select].partial) {
         abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3);
@@ -325,15 +426,17 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 
     let savedPassword = JSON.parse(localStorage.YHP_SavedPassword || '{}');
     let password;
-    if(savedPassword[vid])
-        password='&password='+savedPassword[vid];
+    if (savedPassword[vid])
+        password = '&password=' + savedPassword[vid];
     fetchSrc(password);
+    setInterval(function () {
+        document.body.className = document.body.className.replace('danmuoff', 'danmuon');
+    }, 1e3);
 }
 (function () {
     if (vid === null)
         return;
     vid = vid[1];
-    document.body.className = document.body.className.replace('danmuoff', 'danmuon');
     if (document.querySelector('object#movie_player') != null)
         init();
     else {
@@ -347,4 +450,3 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         observer.observe(document.body, { childList: true, subtree: true });
     }
 })();
-
