@@ -1,13 +1,12 @@
 function words2str(words) {
-    let intin = new Int32Array([0]);
-    let uintout = new Uint8Array(intin.buffer);
-    let arr = [];
-    for (let word of words) {
-        intin[0] = word;
-        for (let i = 0; i < 4; i++)
-            arr.push(uintout[i]);
+    let uintarr = [];
+    for (word of words) {
+        uintarr.push(word >>> 24);
+        uintarr.push((word >>> 16) & 0xff);
+        uintarr.push((word >>> 8) & 0xff);
+        uintarr.push((word) & 0xff);
     }
-    return String.fromCharCode.apply(null, arr);
+    return String.fromCharCode.apply(null, uintarr);
 }
 function desen(message, key) {
     var keyHex = CryptoJS.enc.Utf8.parse(key);
@@ -19,25 +18,17 @@ function desen(message, key) {
 }
 function desde(ciphertext, key) {
     var keyHex = CryptoJS.enc.Utf8.parse(key);
-    // direct decrypt ciphertext
     var decrypted = CryptoJS.DES.decrypt({
         ciphertext: CryptoJS.enc.Base64.parse(ciphertext)
     }, keyHex, {
             mode: CryptoJS.mode.ECB,
-            padding: CryptoJS.pad.Pkcs7
+            padding: CryptoJS.pad.ZeroPadding
         });
-    return decrypted.toString(CryptoJS.enc.Utf8).replace(/\0/g, '');
+    return decrypted.toString(CryptoJS.enc.Utf8);
 }
 function md5(str) {
     let data = CryptoJS.MD5(str);
-    str = '';
-    let intin = new Int32Array([0]);
-    let uintout = new Uint32Array(intin.buffer);
-    for (let word of data.words) {
-        intin[0] = word;
-        str += uintout[0].toString(16);
-    }
-    return str;
+    return words2str(data.words).replace(/[\w\W]/g, function (i) { return i.charCodeAt(0).toString(16) });
 }
 
 function createPopup(param) {
@@ -61,7 +52,6 @@ function createPopup(param) {
         div.style.height = 0;
         setTimeout(function () { div.remove() }, 500);
     });
-    //div.innerHTML='<div><div><p style="font-size: 16px;">视频需要密码访问，请输入密码：</p><input placeholder="输入视频密码" type="text"><br><input type="checkbox">记住密码<hr><div style="text-align: right;"><input value="提交" type="button"><input value="取消"type="button"></div></div></div>';
 }
 
 let vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
@@ -72,6 +62,12 @@ let knownTypes = {
     'mp4hd2': '超清',
     'mp4hd3': '原画'
 };
+let legacyTypes = {
+    'flvhd': 'flv',
+    'mp4hd': 'mp4',
+    'mp4hd2': 'hd2',
+    'mp4hd3': 'hd3'
+};
 let typeArray = {
     'flvhd': 'flv',
     'mp4hd': 'mp4',
@@ -79,9 +75,25 @@ let typeArray = {
     'mp4hd3': 'flv'
 };
 let knownLangs = {
-    'default': '默认',
-    'guoyu': '国语',
-    'yue': '粤语'
+    "default": "默认",
+    "guoyu": "国语",
+    "yue": "粤语",
+    "chuan": "川话",
+    "tai": "台湾",
+    "min": "闽南",
+    "en": "英语",
+    "ja": "日语",
+    "kr": "韩语",
+    "in": "印度",
+    "ru": "俄语",
+    "fr": "法语",
+    "de": "德语",
+    "it": "意语",
+    "es": "西语",
+    "po": "葡语",
+    "th": "泰语",
+    "man": "暖男",
+    "baby": "萌童"
 }
 let srcUrl = {};
 let audioLangs = {};
@@ -96,11 +108,16 @@ function response2url(json) {
         data[val.audio_lang][val.stream_type] = val;
     }
 
-    /*
-    let ep=json.data.security.encrypt_string;
-    let ip=json.data.security.ip;
-    let [sid,token]=desde(ep,'00149ad5').split('_');
-    */
+    let ep = json.data.security.encrypt_string;
+    let ip = json.data.security.ip;
+    let [sid, token] = desde(ep, '00149ad5').split('_');
+
+    let videoids = {};
+    if (json.data.dvd.audiolang) {
+        for (let item of json.data.dvd.audiolang) {
+            videoids[item.langcode] = item.vid
+        }
+    }
 
     for (let lang in data) {
         audioLangs[lang] = {
@@ -109,40 +126,46 @@ function response2url(json) {
         }
         if (currentLang == '')
             currentLang = lang;
+        let videoid = videoids[lang] || vid;
         for (let type in knownTypes) {
             if (data[lang][type]) {
                 let time = 0;
+                let ep_m3u8 = desen([sid, videoid, token].join('_'), '21dd8110');
                 audioLangs[lang].src[type] = {
                     type: 'flv',
                     segments: [],
                     fetchM3U8: false,
-                    playlist_url: data[lang][type].m3u8_url
+                    playlist_url: 'http://pl.youku.com/playlist/m3u8?ctype=10&ep=' + ep_m3u8 + '&ev=1&keyframe=1&oip=' + ip + '&sid=' + sid + '&token=' + token + '&vid=' + videoid + '&type=' + legacyTypes[type]
                 };
                 for (let part of data[lang][type].segs) {
-                    /*let currentFileID=part.fileid;
-                    let epmd5=md5(sid+'_'+currentFileID+'_'+token+'_0_kservice').substr(0,4);
-                    let ep=encodeURIComponent(desen(sid+'_'+currentFileID+'_'+token+'_0_'+epmd5,'21dd8110'));
-                    audioLangs[lang].src[type].segments.push({
-                        filesize:part.size|0,
-                        duration:part.total_milliseconds_video|0,
-                        url:"http://k.youku.com/player/getFlvPath/sid/"+sid+"_00/st/"+typeArray[type]+"/fileid/"+currentFileID+"?K="+part.key+"&hd=1&myp=0&ts="+part.total_milliseconds_video+'&ypp=0&ctype=10&ev=1&token='+token+'&oip='+ip+'&ep='+ep
-                    })*/
                     if (part.key == -1) {
                         audioLangs[lang].src[type].partial = true;
                         continue;
                     }
-                    if (part.rtmp_url) {
-                        audioLangs[lang].src[type].segments.push({
-                            filesize: part.size | 0,
-                            duration: part.total_milliseconds_video | 0
-                        });
-                        audioLangs[lang].src[type].fetchM3U8 = true;
-                    } else {
-                        audioLangs[lang].src[type].segments.push({
-                            filesize: part.size | 0,
-                            duration: part.total_milliseconds_video | 0,
-                            url: part.cdn_url
-                        })
+                    switch (data[lang][type].transfer_mode) {
+                        case 'http':
+                            let currentFileID = part.fileid;
+                            let epmd5 = md5(sid + '_' + currentFileID + '_' + token + '_0_kservice').substr(0, 4);
+                            let ep = encodeURIComponent(desen(sid + '_' + currentFileID + '_' + token + '_0_' + epmd5, '21dd8110'));
+                            audioLangs[lang].src[type].segments.push({
+                                filesize: part.size | 0,
+                                duration: part.total_milliseconds_video | 0,
+                                url: part.path + '&ypp=0&ctype=10&ev=1&token=' + token + '&oip=' + ip + '&ep=' + ep
+                            });
+                            break;
+                        case 'rtmp':
+                            audioLangs[lang].src[type].segments.push({
+                                filesize: part.size | 0,
+                                duration: part.total_milliseconds_video | 0
+                            });
+                            audioLangs[lang].src[type].fetchM3U8 = true;
+                            break;
+                        default:
+                            createPopup({
+                                content: '未知分发模式 "' + data[lang][type].transfer_mode + '" ，请联系开发者报错',
+                                showConfirm: false
+                            })
+                            throw 'break!';
                     }
                     time += part.total_milliseconds_video | 0;
                 }
@@ -208,7 +231,7 @@ function switchLang(lang) {
     abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
 }
 function fetchSrc(extraQuery) {
-    fetch('https://ups.youku.com/ups/get.json?ccode=0401&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
+    fetch('https://play.youku.com/play/get.json?ct=10&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache',
@@ -266,20 +289,26 @@ function fetchSrc(extraQuery) {
                 changeSrc('', currentSrc, true);
             });
 
-            abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
-                detail: {
-                    code: 0, data: {
-                        img_x_len: 10,
-                        img_y_len: 10,
-                        img_x_size: 128,
-                        img_y_size: 72,
-                        image: json.data.preview.thumb,
-                        step: json.data.preview.timespan / 1e3
+            if (json.data.preview)
+                abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
+                    detail: {
+                        code: 0, data: {
+                            img_x_len: 10,
+                            img_y_len: 10,
+                            img_x_size: 128,
+                            img_y_size: 72,
+                            image: json.data.preview.thumb,
+                            step: json.data.preview.timespan / 1e3
+                        }
                     }
-                }
-            }))
+                }))
             flvparam(currentSrc);
         })
+    }).catch(function (e) {
+        createPopup({
+            content: '<p style="font-size:16px">获取视频地址出错，详细错误：</p>' + e.message,
+            showConfirm: false
+        });
     })
 }
 window.changeSrc = function (e, t, force) {
@@ -319,12 +348,16 @@ let createPlayer = function (e) {
     self.flvplayer.attachMediaElement(document.querySelector('video'));
     self.flvplayer.load();
 }
-let load_fail = function () {
+let load_fail = function (type, info, detail) {
     var div = document.createElement('div');
     div.innerHTML = '<div style="position:relative;top:50%"><div style="position:relative;font-size:16px;line-height:16px;top:-8px">加载视频失败，无法播放该视频</div></div>';
     div.setAttribute('style', 'width:100%;height:100%;text-align:center;background:rgba(0,0,0,0.8);position:absolute;color:#FFF');
     document.querySelector('.ABP-Video').insertBefore(div, document.querySelector('.ABP-Video>:first-child'));
     document.getElementById('info-box').remove();
+    createPopup({
+        content: '<p style="font-size:16px">播放错误</p><div style="white-space:pre-wrap">' + JSON.stringify({ type, info, detail }, null, '  ') + '</div>',
+        showConfirm: false
+    });
 }
 let flvparam = function (select) {
     currentSrc = select;
@@ -340,6 +373,11 @@ let flvparam = function (select) {
                 //匹配m3u8的地址
                 let urls = playlist.match(/http[^\?]+/g);
                 let arr = [];
+                if (urls == null) {
+                    abpinst.video.play();
+                    abpinst.createPopup('切换失败，该语言/清晰度暂时不能播放', 3e3);
+                    return;
+                }
                 urls.forEach(function (i) {
                     if (arr.indexOf(i) == -1)
                         arr.push(i)
@@ -401,7 +439,8 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }`
 
     let container = document.querySelector('object#movie_player').parentNode;
-    container.firstChild.remove();
+    let flashplayer = container.firstChild;
+    flashplayer.remove();
     let video = container.appendChild(document.createElement('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
     abpinst = ABP.create(document.getElementById("player"), {
@@ -429,9 +468,28 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     if (savedPassword[vid])
         password = '&password=' + savedPassword[vid];
     fetchSrc(password);
-    setInterval(function () {
-        document.body.className = document.body.className.replace('danmuoff', 'danmuon');
-    }, 1e3);
+    let disabled = false;
+    let playerHeight = function () {
+        !disabled && (document.body.className = document.body.className.replace('danmuoff', 'danmuon'));
+    };
+    setInterval(playerHeight, 1e3);
+    playerHeight();
+    let restore = document.querySelector('#module-interact').appendChild(document.createElement('div'));
+    restore.className = 'fn-phone-see';
+    restore.innerHTML = '<div class="fn"><a class="label" href="javascript:void(0);">还原flash播放器</a></div>'
+    restore.firstChild.addEventListener('click', function () {
+        if (disabled)
+            return;
+        disabled = true;
+        if (self.flvplayer && self.flvplayer.destroy) {
+            self.flvplayer.destroy();
+            self.flvplayer={};
+        }
+        container.firstChild.style.display='none';
+        container.appendChild(flashplayer);
+        document.body.className = document.body.className.replace('danmuon', 'danmuoff')
+        this.parentNode.remove();
+    })
 }
 (function () {
     if (vid === null)
