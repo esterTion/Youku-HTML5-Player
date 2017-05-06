@@ -1983,6 +1983,7 @@ ABP.Strings={
 			})
 
 			var saveConfigurations = function() {
+				localStorage.YHP_PlayerVolume = ABPInst.video.volume;
 			}
 
 			var sendComment = function() {
