@@ -102,6 +102,7 @@ window.currentSrc = '';
 window.currentLang = '';
 let firstTime = true;
 let tempPwd = '';
+let highestType;
 function response2url(json) {
     let data = {};
     for (let val of json.data.stream) {
@@ -173,19 +174,24 @@ function response2url(json) {
                 }
                 audioLangs[lang].src[type].duration = time;
                 audioLangs[lang].src.duration = time;
+                highestType = type;
             }
         }
 
         let selected;
+        let hitPrefer = false;
+        let prefer = localStorage.YHP_PreferedType || '';
         for (let type in knownTypes) {
             if (audioLangs[lang].src[type]) {
                 selected = [type, knownTypes[type]];
                 audioLangs[lang].available.push(selected);
-                if (firstTime)
+                if (firstTime && !hitPrefer)
                     currentSrc = type;
+                if (prefer == type)
+                    hitPrefer = true;
             }
         }
-        if (firstTime && currentLang == lang)
+        if (firstTime && currentLang == lang && !hitPrefer)
             currentSrc = selected[0];
     }
 }
@@ -337,6 +343,10 @@ window.changeSrc = function (e, t, force) {
         if (abpinst.lastSpeed == undefined)
             abpinst.lastSpeed = abpinst.video.playbackRate;
         abpinst.video.dispatchEvent(new CustomEvent('autoplay'));
+        if (!force) {
+            let setPrefer = t == highestType ? '' : t;
+            localStorage.YHP_PreferedType = setPrefer;
+        }
         flvparam(t);
     }
 }
@@ -408,7 +418,7 @@ let flvparam = function (select) {
     }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
     if (srcUrl[select].partial) {
-        abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3);
+        setTimeout(function(){abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3)},4e3);
     }
     if (srcUrl[select].segments) {
         var totalSize = 0;
