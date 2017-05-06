@@ -457,6 +457,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     flashplayer.remove();
     let video = container.appendChild(document.createElement('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
+    let playerVolume = Number(localStorage.YHP_PlayerVolume) || 1;
     abpinst = ABP.create(document.getElementById("player"), {
         src: {
             playlist: [{
@@ -465,7 +466,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         },
         width: '100%',
         height: '100%',
-        config: {},
+        config: { volume: playerVolume },
         mobile: isMobile()
     });
     dots.init({
