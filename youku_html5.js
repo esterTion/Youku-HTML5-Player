@@ -100,6 +100,8 @@ let audioLangs = {};
 let availableSrc = [];
 window.currentSrc = '';
 window.currentLang = '';
+let firstTime = true;
+let tempPwd = '';
 function response2url(json) {
     let data = {};
     for (let val of json.data.stream) {
@@ -113,7 +115,7 @@ function response2url(json) {
     let [sid, token] = desde(ep, '00149ad5').split('_');
 
     let videoids = {};
-    if (json.data.dvd.audiolang) {
+    if (json.data.dvd && json.data.dvd.audiolang) {
         for (let item of json.data.dvd.audiolang) {
             videoids[item.langcode] = item.vid
         }
@@ -179,10 +181,11 @@ function response2url(json) {
             if (audioLangs[lang].src[type]) {
                 selected = [type, knownTypes[type]];
                 audioLangs[lang].available.push(selected);
-                currentSrc = type;
+                if (firstTime)
+                    currentSrc = type;
             }
         }
-        if (currentLang == lang)
+        if (firstTime && currentLang == lang)
             currentSrc = selected[0];
     }
 }
@@ -206,7 +209,7 @@ let passwordCB = function () {
             localStorage.YHP_SavedPassword = JSON.stringify(savedPassword);
         }
         dots.runTimer();
-        fetchSrc('&password=' + password);
+        fetchSrc('&pwd=' + password);
         document.querySelector('#YHP_Notice .close').click();
     }
 };
@@ -231,6 +234,7 @@ function switchLang(lang) {
     abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
 }
 function fetchSrc(extraQuery) {
+    tempPwd = extraQuery;
     fetch('https://play.youku.com/play/get.json?ct=10&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
@@ -241,19 +245,19 @@ function fetchSrc(extraQuery) {
             if (json.data.error) {
                 /*
                 处理错误
-                -2002 需要密码
-                -2003 密码错误
+                -202 需要密码
+                -203 密码错误
                 */
                 dots.stopTimer();
                 let error = json.data.error;
-                if (error.code == -2002) {
+                if (error.code == -202) {
                     createPopup({
                         content: '<p style="font-size:16px">视频需要密码访问，请输入密码：</p><input placeholder="输入视频密码" type="text"><br><label><input type="checkbox">记住密码</label>',
                         showConfirm: true,
                         confirmBtn: '提交'
                     });
                     document.querySelector('#YHP_Notice .confirm').addEventListener('click', passwordCB);
-                } else if (error.code == -2003) {
+                } else if (error.code == -203) {
                     createPopup({
                         content: '<p style="font-size:16px">视频访问密码错误，请重新输入密码：</p><input placeholder="输入视频密码" type="text"><br><label><input type="checkbox">记住密码</label>',
                         showConfirm: true,
@@ -268,41 +272,44 @@ function fetchSrc(extraQuery) {
                 response2url(json);
             }
             switchLang(currentLang);
-            let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
-            let langChange = document.createElement('div');
-            contextMenu.insertBefore(langChange, contextMenu.firstChild);
-            langChange.className = 'dm';
-            langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
-            langChange = langChange.appendChild(document.createElement('div'));
-            langChange.className = 'dmMenu';
-            for (let lang in audioLangs) {
-                let div = langChange.appendChild(document.createElement('div'));
-                div.innerHTML = knownLangs[lang] || lang;
-                div.setAttribute('data-lang', lang);
-            }
-            langChange.addEventListener('click', function (e) {
-                let lang = e.target.getAttribute('data-lang');
-                if (lang == currentLang)
-                    return;
-                switchLang(lang);
-                currentLang = lang;
-                changeSrc('', currentSrc, true);
-            });
+            if (firstTime) {
+                let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
+                let langChange = document.createElement('div');
+                contextMenu.insertBefore(langChange, contextMenu.firstChild);
+                langChange.className = 'dm';
+                langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
+                langChange = langChange.appendChild(document.createElement('div'));
+                langChange.className = 'dmMenu';
+                for (let lang in audioLangs) {
+                    let div = langChange.appendChild(document.createElement('div'));
+                    div.innerHTML = knownLangs[lang] || lang;
+                    div.setAttribute('data-lang', lang);
+                }
+                langChange.addEventListener('click', function (e) {
+                    let lang = e.target.getAttribute('data-lang');
+                    if (lang == currentLang)
+                        return;
+                    switchLang(lang);
+                    currentLang = lang;
+                    changeSrc('', currentSrc, true);
+                });
 
-            if (json.data.preview)
-                abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
-                    detail: {
-                        code: 0, data: {
-                            img_x_len: 10,
-                            img_y_len: 10,
-                            img_x_size: 128,
-                            img_y_size: 72,
-                            image: json.data.preview.thumb,
-                            step: json.data.preview.timespan / 1e3
+                if (json.data.preview)
+                    abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
+                        detail: {
+                            code: 0, data: {
+                                img_x_len: 10,
+                                img_y_len: 10,
+                                img_x_size: 128,
+                                img_y_size: 72,
+                                image: json.data.preview.thumb,
+                                step: json.data.preview.timespan / 1e3
+                            }
                         }
-                    }
-                }))
-            flvparam(currentSrc);
+                    }))
+            }
+            firstTime = false;
+            changeSrc('', currentSrc, true);
         })
     }).catch(function (e) {
         createPopup({
@@ -348,7 +355,13 @@ let createPlayer = function (e) {
     self.flvplayer.attachMediaElement(document.querySelector('video'));
     self.flvplayer.load();
 }
+let retry = 0;
 let load_fail = function (type, info, detail) {
+    if (type == 'NetworkError' && detail.code == 404) {
+        console.error('意外无效地址，重新获取地址');
+        fetchSrc(tempPwd);
+        return;
+    }
     var div = document.createElement('div');
     div.innerHTML = '<div style="position:relative;top:50%"><div style="position:relative;font-size:16px;line-height:16px;top:-8px">加载视频失败，无法播放该视频</div></div>';
     div.setAttribute('style', 'width:100%;height:100%;text-align:center;background:rgba(0,0,0,0.8);position:absolute;color:#FFF');
@@ -393,7 +406,7 @@ let flvparam = function (select) {
         })
         return;
     }
-    createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range' } } });
+    createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
     if (srcUrl[select].partial) {
         abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3);
     }
@@ -438,6 +451,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 	background: #CCC;
 }`
 
+    window.cid = vid;
     let container = document.querySelector('object#movie_player').parentNode;
     let flashplayer = container.firstChild;
     flashplayer.remove();
@@ -466,7 +480,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     let savedPassword = JSON.parse(localStorage.YHP_SavedPassword || '{}');
     let password;
     if (savedPassword[vid])
-        password = '&password=' + savedPassword[vid];
+        password = '&pwd=' + savedPassword[vid];
     fetchSrc(password);
     let disabled = false;
     let playerHeight = function () {
@@ -483,9 +497,9 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         disabled = true;
         if (self.flvplayer && self.flvplayer.destroy) {
             self.flvplayer.destroy();
-            self.flvplayer={};
+            self.flvplayer = {};
         }
-        container.firstChild.style.display='none';
+        container.firstChild.style.display = 'none';
         container.appendChild(flashplayer);
         document.body.className = document.body.className.replace('danmuon', 'danmuoff')
         this.parentNode.remove();
@@ -495,6 +509,9 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     if (vid === null)
         return;
     vid = vid[1];
+    flvjs.LoggingControl.enableVerbose = false;
+    flvjs.LoggingControl.enableInfo = false;
+    flvjs.LoggingControl.enableDebug = false;
     if (document.querySelector('object#movie_player') != null)
         init();
     else {
