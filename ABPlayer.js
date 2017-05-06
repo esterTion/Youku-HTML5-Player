@@ -1471,6 +1471,7 @@ ABP.Strings={
 							off++
 						}
 					}
+					if (!segs[j]) return;
 					var currentSize=segs[j].filesize,currentDuration=segs[j].duration;
 					/*['mimeType','audioCodec','videoCodec'].forEach(function(name){
 						flvjsStats[i++].innerHTML=mediaInfo[name];
