@@ -244,8 +244,7 @@ function fetchSrc(extraQuery) {
     fetch('https://play.youku.com/play/get.json?ct=10&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
-        cache: 'no-cache',
-        referrer: location.href
+        cache: 'no-cache'
     }).then(function (r) {
         r.json().then(function (json) {
             if (json.data.error) {
@@ -367,7 +366,7 @@ let createPlayer = function (e) {
 }
 let retry = 0;
 let load_fail = function (type, info, detail) {
-    if (type == 'NetworkError' && detail.code == 404) {
+    if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid') {
         console.error('意外无效地址，重新获取地址');
         fetchSrc(tempPwd);
         return;
@@ -418,7 +417,7 @@ let flvparam = function (select) {
     }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
     if (srcUrl[select].partial) {
-        setTimeout(function(){abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3)},4e3);
+        setTimeout(function () { abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3) }, 4e3);
     }
     if (srcUrl[select].segments) {
         var totalSize = 0;
