@@ -97,6 +97,7 @@ let knownLangs = {
 }
 let srcUrl = {};
 let audioLangs = {};
+Object.defineProperty(audioLangs, 'length', { enumerable: false, writable: true })
 let availableSrc = [];
 window.currentSrc = '';
 window.currentLang = '';
@@ -108,7 +109,9 @@ function response2url(json) {
     for (let val of json.data.stream) {
         if (!data[val.audio_lang])
             data[val.audio_lang] = {};
-        data[val.audio_lang][val.stream_type] = val;
+        if (!val.channel_type)
+            data[val.audio_lang][val.stream_type] = val;
+        //片尾、片头独立片段暂时丢弃
     }
 
     let ep = json.data.security.encrypt_string;
@@ -122,11 +125,13 @@ function response2url(json) {
         }
     }
 
+    audioLangs.length = 0;
     for (let lang in data) {
         audioLangs[lang] = {
             src: {},
             available: []
         }
+        audioLangs.length++;
         if (currentLang == '')
             currentLang = lang;
         let videoid = videoids[lang] || vid;
@@ -237,7 +242,8 @@ function switchLang(lang) {
         div.appendChild(document.createTextNode(availableSrc[i][1]));
         abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination').appendChild(div);
     }
-    abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
+    if (audioLangs.length > 1)
+        abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
@@ -278,26 +284,28 @@ function fetchSrc(extraQuery) {
             }
             switchLang(currentLang);
             if (firstTime) {
-                let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
-                let langChange = document.createElement('div');
-                contextMenu.insertBefore(langChange, contextMenu.firstChild);
-                langChange.className = 'dm';
-                langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
-                langChange = langChange.appendChild(document.createElement('div'));
-                langChange.className = 'dmMenu';
-                for (let lang in audioLangs) {
-                    let div = langChange.appendChild(document.createElement('div'));
-                    div.innerHTML = knownLangs[lang] || lang;
-                    div.setAttribute('data-lang', lang);
+                if (audioLangs.length > 1) {
+                    let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
+                    let langChange = document.createElement('div');
+                    contextMenu.insertBefore(langChange, contextMenu.firstChild);
+                    langChange.className = 'dm';
+                    langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
+                    langChange = langChange.appendChild(document.createElement('div'));
+                    langChange.className = 'dmMenu';
+                    for (let lang in audioLangs) {
+                        let div = langChange.appendChild(document.createElement('div'));
+                        div.innerHTML = knownLangs[lang] || lang;
+                        div.setAttribute('data-lang', lang);
+                    }
+                    langChange.addEventListener('click', function (e) {
+                        let lang = e.target.getAttribute('data-lang');
+                        if (lang == currentLang)
+                            return;
+                        switchLang(lang);
+                        currentLang = lang;
+                        changeSrc('', currentSrc, true);
+                    });
                 }
-                langChange.addEventListener('click', function (e) {
-                    let lang = e.target.getAttribute('data-lang');
-                    if (lang == currentLang)
-                        return;
-                    switchLang(lang);
-                    currentLang = lang;
-                    changeSrc('', currentSrc, true);
-                });
 
                 if (json.data.preview)
                     abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
