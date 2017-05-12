@@ -86,7 +86,7 @@ ABP.Strings={
 	mute:'静音',
 	unmute:'取消静音',
 	muteNotSupported:'不支持静音',
-	fullScreen:"浏览器全屏",
+	fullScreen:"全屏",
 	exitFullScreen:"退出全屏",
 	webFull:"网页全屏",
 	exitWebFull:"退出网页全屏",
@@ -105,7 +105,7 @@ ABP.Strings={
 	
 	copyComment:'复制弹幕',
 	findComment:'定位弹幕',
-	blockContent:'屏蔽内容“',
+	blockContent:'屏蔽内容',
 	blockUser:'屏蔽发送者',
 	blockColor:'屏蔽颜色',
 	blockColorWhite:'不能屏蔽白色',
@@ -128,8 +128,9 @@ ABP.Strings={
 (function() {
 	"use strict";
 	if (!ABP) return;
-	var addEventListener='addEventListener',
-	versionString='HTML5 Player ver.170426 based on ABPlayer-bilibili-ver',
+	var $$ = jQuery,
+	addEventListener='addEventListener',
+	versionString='HTML5 Player ver.170512 based on ABPlayer-bilibili-ver',
 	mousePrevPos=[0,0],
 	mouseMoved=function(e){
 		var oldPos=mousePrevPos;
@@ -508,6 +509,7 @@ ABP.Strings={
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('br'),
 
+				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozParse)]), _('span',{id:'mozParsedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozDecode)]), _('span',{id:'mozDecodedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozPaint)]), _('span',{id:'mozPaintedFrames'})]),
@@ -773,7 +775,7 @@ ABP.Strings={
 						_('div',{className:'shield_toggle',id:'useReg'},[_('text',ABP.Strings.shieldUseRegex)]),
 						_('div',{className:'shield_toggle',id:'blockTop'},[_('text',ABP.Strings.shieldBlockTop)]),
 						_('div',{className:'shield_toggle',id:'blockBottom'},[_('text',ABP.Strings.shieldBlockBottom)]),
-						_('div',{className:'shield_toggle',id:'blockVisitor'},[_('text',ABP.Strings.shieldBlockVisitor)]),
+						_('div',{className:'shield_toggle',id:'blockVisitor',style:{display:'none'}},[_('text',ABP.Strings.shieldBlockVisitor)]),
 						_('div',{className:'shield_slide',id:'repeat'},[
 							_('div',{className:'fill'}),
 							_('div',{className:'button'}),
@@ -1014,38 +1016,6 @@ ABP.Strings={
 				ABPInst.playerUnit.querySelector('.ABP-Comment-List-Count span#danmaku').innerHTML=ABPInst.commentObjArray.length;
 			},
 			renderCommentList: function() {
-				var offset = ABPInst.commentListContainer.parentElement.scrollTop,
-					firstIndex = parseInt(offset / 24);
-				ABPInst.commentListContainer.innerHTML = "";
-				for (var i = firstIndex; i <= firstIndex + 40; i++) {
-					if (typeof ABPInst.commentObjArray[i] !== "undefined") {
-						if (i == firstIndex && i > 0) {
-							var commentObj = ABPInst.commentObjArray[i].cloneNode(true),
-								commentObjContent = commentObj.getElementsByClassName("cmt-content")[0],
-								commentObjDate = commentObj.getElementsByClassName("cmt-date")[0];
-							commentObj[addEventListener]("dblclick", function(e) {
-								ABPInst.video.currentTime = ABPInst.commentObjArray[i].data.time / 1000;
-								updateTime(video.currentTime);
-							});
-							hoverTooltip(commentObjContent, false, 36);
-							hoverTooltip(commentObjDate, false, 18);
-							commentObjContent.tooltip(ABPInst.commentObjArray[i].data.content);
-							commentObjDate.tooltip(formatDate(ABPInst.commentObjArray[i].data.date));
-							commentObj.style.paddingTop = 24 * firstIndex + "px";
-						} else {
-							var commentObj = ABPInst.commentObjArray[i];
-						}
-						if(ABPInst.commentObjArray[i].data.originalData.isBlocked){
-							ABPInst.commentObjArray[i].childNodes[0].className='cmt-time blocked';
-						}else{
-							ABPInst.commentObjArray[i].childNodes[0].className='cmt-time';
-						}
-						ABPInst.commentListContainer.appendChild(commentObj);
-					} else {
-						break;
-					}
-				}
-				ABPInst.commentListContainer.parentElement.scrollTop = offset;
 			},
 			commentCallback: function(data) {
 				if (data.result) {
@@ -1058,12 +1028,6 @@ ABP.Strings={
 			},
 			swapVideo: null
 		};
-		var saveSetting=function(k,v){
-			var settings=localStorage.html5Settings||'{}';
-			settings=JSON.parse(settings);
-			settings[k]=v;
-			localStorage.html5Settings=JSON.stringify(settings);
-		}
 		ABPInst.swapVideo = function(video) {
 			var bufferListener=function() {
 				if (!dragging) {
@@ -1165,26 +1129,90 @@ ABP.Strings={
 					parent.h5NextPart();
 			});
 			video[addEventListener]("progress", bufferListener);
-			var isPlaying = false;
-			video[addEventListener]("play", function() {
-				ABPInst.btnPlay.className='button ABP-Play ABP-Pause icon-pause';
-				ABPInst.btnPlay.tooltip(ABP.Strings.pause);
-				addClass(ABPInst.videoDiv, "ABP-HideCursor");
-			});
-			video[addEventListener]("ratechange", function() {
-				if (video.playbackRate !== 0) {
-					updatePlaySpeed(ABPInst.video.playbackRate);
-				}
-			});
-			var isPlaying = false;
-			video[addEventListener]("pause", function() {
-				ABPInst.btnPlay.className='button ABP-Play icon-play';
-				ABPInst.btnPlay.tooltip(ABP.Strings.play)
-				isPlaying = false;
-				removeClass(ABPInst.videoDiv, "ABP-HideCursor");
-			});
 			video.isBound = true;
 			var lastPosition = 0,triedLoadScripting=false;
+			if (ABPInst.cmManager) {
+				ABPInst.cmManager.setBounds = function() {
+					if (playerUnit.offsetHeight <= 300 || playerUnit.offsetWidth <= 700) {
+						addClass(playerUnit, "ABP-Mini");
+					} else {
+						removeClass(playerUnit, "ABP-Mini");
+					}
+					var actualWidth = ABPInst.videoDiv.offsetWidth,
+						actualHeight = ABPInst.videoDiv.offsetHeight,
+						scale = ABPInst.proportionalScale ? actualHeight / 493 * ABPInst.commentScale : ABPInst.commentScale;
+					this.width = actualWidth/* / scale*/;
+					this.height = actualHeight/* / scale*/;
+					this.options.global.scale = this.width / 680 / ABPInst.commentSpeed/* / ABPInst.video.playbackRate*/;
+					this.dispatchEvent("resize");
+					for (var a in this.csa) this.csa[a].setBounds(this.width, this.height);
+					this.stage.style.width = this.width + "px";
+					this.stage.style.height = this.height + "px";
+					this.stage.style.perspective = this.width * Math.tan(40 * Math.PI / 180) / 2 + "px";
+					this.stage.style.webkitPerspective = this.width * Math.tan(40 * Math.PI / 180) / 2 + "px";
+					//this.stage.style.zoom = scale;
+					playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Scale div.on').click();
+					this.canvasResize();
+				}
+				ABPInst.cmManager.setBounds();
+				ABPInst.cmManager.clear();
+				//ABPInst.video[addEventListener]('loadedmetadata',function(){;isFirst=true;})
+				video[addEventListener]("progress", function() {
+					if (lastPosition == video.currentTime && isPlaying && new Date().getTime() - lastCheckTime >= 100) {
+						video.hasStalled = true;
+						ABPInst.cmManager.stopTimer();
+						ABPInst.cmManager.pauseComment();
+					} else if (lastPosition != video.currentTime) {
+						lastPosition = video.currentTime;
+					}
+					lastCheckTime = new Date().getTime();
+				});
+				if (window) {
+					window[addEventListener]("resize", function() {
+						ABPInst.cmManager.setBounds();
+					});
+				}
+				video[addEventListener]("timeupdate", function() {
+					if (ABPInst.cmManager.display === false) return;
+					if (video.hasStalled) {
+						ABPInst.cmManager.startTimer();
+						ABPInst.cmManager.resumeComment();
+						video.hasStalled = false;
+					}
+					ABPInst.cmManager.time(Math.floor(video.currentTime * 1000));
+				});
+				video[addEventListener]("play", function() {
+					ABPInst.cmManager.startTimer();
+					ABPInst.cmManager.resumeComment();
+					ABPInst.btnPlay.className='button ABP-Play ABP-Pause icon-pause';
+					ABPInst.btnPlay.tooltip(ABP.Strings.pause);
+					addClass(ABPInst.videoDiv, "ABP-HideCursor");
+				});
+				video[addEventListener]("ratechange", function() {
+					if (video.playbackRate !== 0) {
+						updatePlaySpeed(ABPInst.video.playbackRate);
+					}
+				});
+				var isPlaying = false;
+				video[addEventListener]("pause", function() {
+					ABPInst.cmManager.stopTimer();
+					ABPInst.cmManager.pauseComment();
+					ABPInst.btnPlay.className='button ABP-Play icon-play';
+					ABPInst.btnPlay.tooltip(ABP.Strings.play)
+					isPlaying = false;
+					removeClass(ABPInst.videoDiv, "ABP-HideCursor");
+				});
+				video[addEventListener]("waiting", function() {
+					ABPInst.cmManager.stopTimer();
+					ABPInst.cmManager.pauseComment();
+					isPlaying = false;
+				});
+				video[addEventListener]("playing", function() {
+					ABPInst.cmManager.startTimer();
+					ABPInst.cmManager.resumeComment();
+					isPlaying = true;
+				});
+			}
 		}
 		if (playerUnit === null || playerUnit.getElementsByClassName === null) return;
 		ABPInst.defaults.w = playerUnit.offsetWidth;
@@ -1526,6 +1554,9 @@ ABP.Strings={
 				document_querySelector('#overall-bitrate').innerHTML=to2digitFloat(overallBitrate)+' kbps';
 			}
 			
+			if(odd)
+				canvasFPS.innerHTML = ABPInst.cmManager.canvasFPS;
+			
 			if(enabledStats.gecko){
 				['mozParsedFrames','mozDecodedFrames','mozPaintedFrames'].forEach(function(name){
 					document_querySelector('#'+name).innerHTML=video[name];
@@ -1545,9 +1576,45 @@ ABP.Strings={
 			}
 		},500)
 		
+		/** Create a commentManager if possible **/
+		if (typeof CommentManager !== "undefined") {
+			ABPInst.cmManager = new CommentManager(ABPInst.divComment);
+			ABPInst.cmManager.display = true;
+			ABPInst.cmManager.init();
+			ABPInst.cmManager.clear();
+			ABPInst.cmManager.filter.addModifier(shield.filter);
+			if (window) {
+				window[addEventListener]("resize", function() {
+					//Notify on resize
+					ABPInst.cmManager.setBounds();
+				});
+			}
+		}
 		if (typeof ABP.playerConfig == "object") {
 			if (ABP.playerConfig.volume) ABPInst.video.volume = ABP.playerConfig.volume;
+			if (ABP.playerConfig.opacity) ABPInst.cmManager.options.global.opacity = ABP.playerConfig.opacity;
 		}
+		$$('.ABP-Comment-List-Title *').click(function() {
+			var item = $$(this).attr('item'),
+				order = $$(this).hasClass('asc') ? 'desc' : 'asc';
+			$$('.ABP-Comment-List-Title *').removeClass('asc').removeClass('desc');
+			$$(this).addClass(order);
+			ABPInst.loadCommentList(item, order);
+		});
+		$$('.ABP-Unit .ABP-CommentStyle .ABP-Comment-FontOption .style-option').click(function() {
+			$$(this).closest('.style-select').find('.style-option').removeClass('on');
+			$$(this).addClass('on');
+			ABPInst[$$(this).closest('.style-select').attr('name')] = parseInt($$(this).attr('value'));
+		});
+		$$(playerUnit).find('.ABP-Comment-ColorPicker').colpick({
+			flat: true,
+			submit: 0,
+			color: 'ffffff',
+			onChange: function(hsb, hex) {
+				ABPInst.commentColor = hex;
+				ABPInst.displayColor.style.backgroundColor = '#' + hex;
+			}
+		});
 		if (video.isBound !== true) {
 			ABPInst.swapVideo(video);
 			ABPInst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination')[addEventListener]('click',function(e){
@@ -1693,8 +1760,57 @@ ABP.Strings={
 				ABPInst.btnFull.className = "button ABP-FullScreen icon-screen-normal";
 				ABPInst.btnFull.tooltip(ABP.Strings.exitWebFull);
 				ABPInst.state.fullscreen = true;
+				if (ABPInst.cmManager)
+					ABPInst.cmManager.setBounds();
 				if (!ABPInst.state.allowRescale) return;
+				if (ABPInst.state.fullscreen) {
+					if (ABPInst.defaults.w > 0) {
+						ABPInst.cmManager.options.scrollScale = playerUnit.offsetWidth / ABPInst.defaults.w;
+					}
+				} else {
+					ABPInst.cmManager.options.scrollScale = 1;
+				}
 			});
+			var fontOn=false,colorOn=false;
+			ABPInst.btnFont[addEventListener]("click", function(e) {
+				if(colorOn)
+					ABPInst.btnColor.click();
+				this.parentNode.classList.toggle("on");
+				fontOn=!fontOn
+			});
+			ABPInst.btnColor[addEventListener]("click", function(e) {
+				if(fontOn)
+					ABPInst.btnFont.click();
+				this.parentNode.classList.toggle("on");
+				colorOn=!colorOn
+			});
+			var saveConfigurations = function() {
+				localStorage.YHP_PlayerSettings=JSON.stringify({
+					"volume": ABPInst.video.volume,
+					"opacity": ABPInst.cmManager.options.global.opacity,
+					"scale": ABPInst.commentScale,
+					"speed":ABPInst.commentSpeed,
+					"commentVisible":ABPInst.cmManager.display,
+					"useCSS":ABPInst.cmManager.options.global.useCSS,
+					"autoOpacity":ABPInst.cmManager.options.global.autoOpacity
+				});
+			}
+			ABPInst.btnAutoOpacity[addEventListener]("click", function(e) {
+				this.classList.toggle("on");
+				var autoOpacity=this.classList.contains("on");
+				ABPInst.cmManager.autoOpacity(autoOpacity);
+				this.tooltip(autoOpacity ? ABP.Strings.autoOpacityOn : ABP.Strings.autoOpacityOff);
+				saveConfigurations();
+			});
+			if (ABP.playerConfig.autoOpacity) ABPInst.btnAutoOpacity.click();
+			ABPInst.btnProp[addEventListener]("click", function(e) {
+				this.classList.toggle("on");
+				var useCSS=this.classList.contains("on");
+				ABPInst.cmManager.useCSS(useCSS);
+				this.tooltip(useCSS ? ABP.Strings.usingCSS : ABP.Strings.usingCanvas);
+				saveConfigurations();
+			});
+			if (ABP.playerConfig.useCSS) ABPInst.btnProp.click();
 			var fullscreenChangeHandler = function() {
 				if (!document.isFullScreen() && hasClass(playerUnit, "ABP-FullScreen")) {
 					removeClass(playerUnit, "ABP-FullScreen");
@@ -1722,9 +1838,17 @@ ABP.Strings={
 					document.exitFullscreen();
 				}
 				ABPInst.state.fullscreen = !ABPInst.state.fullscreen;
+				if (ABPInst.cmManager)
+					ABPInst.cmManager.setBounds();
 				if (!ABPInst.state.allowRescale) return;
+				if (ABPInst.state.fullscreen) {
+					if (ABPInst.defaults.w > 0) {
+						ABPInst.cmManager.options.scrollScale = playerUnit.offsetWidth / ABPInst.defaults.w;
+					}
+				} else {
+					ABPInst.cmManager.options.scrollScale = 1;
+				}
 			});
-
 			ABPInst.btnWide[addEventListener]("click", function() {
 				ABPInst.state.widescreen = hasClass(playerUnit, "ABP-WideScreen");
 				if (!ABPInst.state.widescreen) {
@@ -1739,8 +1863,33 @@ ABP.Strings={
 					this.tooltip(ABP.Strings.wideScreen);
 				}
 				ABPInst.state.widescreen = !ABPInst.state.widescreen;
+				if (ABPInst.cmManager)
+					ABPInst.cmManager.setBounds();
 				if (!ABPInst.state.allowRescale) return;
+				if (ABPInst.state.fullscreen) {
+					if (ABPInst.defaults.w > 0) {
+						ABPInst.cmManager.options.scrollScale = playerUnit.offsetWidth / ABPInst.defaults.w;
+					}
+				} else {
+					ABPInst.cmManager.options.scrollScale = 1;
+				}
 			});
+			ABPInst.btnDm[addEventListener]("click", function() {
+				if (ABPInst.cmManager.display == false) {
+					ABPInst.cmManager.display = true;
+					ABPInst.cmManager.startTimer();
+					this.className = "button ABP-CommentShow icon-comment on";
+					this.tooltip(ABP.Strings.hideComment);
+				} else {
+					ABPInst.cmManager.display = false;
+					ABPInst.cmManager.clear();
+					ABPInst.cmManager.stopTimer();
+					this.className = "button ABP-CommentShow icon-comment";
+					this.tooltip(ABP.Strings.showComment);
+				}
+				saveConfigurations();
+			});
+			if (!ABP.playerConfig.commentVisible) ABPInst.btnDm.click();
 			ABPInst.btnLoop[addEventListener]("click", function() {
 				if (ABPInst.video.loop == false) {
 					ABPInst.video.loop = true;
@@ -1794,14 +1943,70 @@ ABP.Strings={
 				var s=_('script',{className:'info_jsonp',src:'//account.bilibili.com/api/member/getCardByMid?type=jsonp&callback=getSenderInfo&mid='+currentSender});
 				document.body.appendChild(s);
 			},
+			addTextClick=function(){
+				shield.addText(this.getAttribute('data-text'));
+			},
+			addUserClick=function(){
+				shield.addUser(this.getAttribute('data-mid'));
+			},
+			addColorClick=function(){
+				shield.addColor(this.getAttribute('data-color'));
+			},
 			showContextMenu=function(x,y,dmList){
 				contextMenu.style.display='block';
 				var aboutDiv,remove=contextMenuBody.querySelectorAll('.dm'),originalData,color,isWhite,containerBox=ABPInst.playerUnit.getBoundingClientRect(),
 				dmitem;
-				for(i=remove.length-3;i>=0;i--){
-					remove[i].remove();
+				for(i=remove.length-2;i>=0;i--){
+					if(remove[i].className!='dm static')
+						remove[i].remove();
 				}
 				aboutDiv=contextMenuBody.firstChild;
+				for(i=0;i<dmList.length;i++){
+					originalData=dmList[i].originalData;
+					color=originalData.color.toString(16);
+					while(color.length<6)
+						color='0'+color;
+					isWhite= (originalData.color==0xffffff);
+					dmitem=_('div',{className:'dm'},[
+						_('div',{className:'content'},[_('text',originalData.text)]),
+						_('div',{className:'dmMenu'},[
+							_('div',{'data-content':originalData.text},[_('text',ABP.Strings.copyComment)]),
+							_('div',{'data-text':originalData.text},[_('text',ABP.Strings.blockContent+'“'+originalData.text+'”')]),
+							_('div',{'data-mid':originalData.hash},[_('text',ABP.Strings.blockUser+''+originalData.hash)]),
+							_('div',(isWhite)?{}:{'data-color':color},[_('text',isWhite?ABP.Strings.blockColorWhite:ABP.Strings.blockColor+''),_('div',{className:'color',style:{background:'#'+color}})])
+						])
+					])
+					if(originalData.mode>6){
+						dmitem.childNodes[0].innerHTML='特殊弹幕';
+						var dmMenu=dmitem.childNodes[1];
+						dmMenu.childNodes[0].style.display='none';
+						dmMenu.childNodes[2].style.display='none';
+						dmMenu.childNodes[4].style.display='none';
+					}
+					contextMenuBody.insertBefore(dmitem,aboutDiv);
+				}
+				var itemMenu=contextMenuBody.querySelectorAll('.dmMenu');
+				for(i=0;i<itemMenu.length-1;i++){
+					itemMenu[i].childNodes[0][addEventListener]('click',function(){
+						try{
+							var copy=document.createElement('input');
+							copy.style.width=0;
+							copy.style.height=0;
+							document.body.appendChild(copy);
+							copy.value=this.getAttribute('data-content');
+							copy.select();
+							var success=document.execCommand('copy');
+							document.body.removeChild(copy);
+							if(!success)
+								throw '';
+						}catch(e){
+							ABPInst.createPopup(ABP.Strings.copyFail,3e3)
+						}
+					});
+					itemMenu[i].childNodes[1][addEventListener]('click',addTextClick)
+					itemMenu[i].childNodes[2][addEventListener]('click',addUserClick)
+					itemMenu[i].childNodes[3][addEventListener]('click',addColorClick)
+				};
 				x-=containerBox.left;
 				y-=containerBox.top;
 				if( containerBox.width-x <300)
@@ -1884,7 +2089,7 @@ ABP.Strings={
 				e.stopPropagation();
 				var box=ABPInst.divComment.getBoundingClientRect(),x=e.clientX,
 				y=e.clientY;
-				showContextMenu(x,y);
+				showContextMenu(x,y,ABPInst.cmManager.getCommentFromPoint(x-box.left,y-box.top));
 			})
 			ABPInst.commentListContainer[addEventListener]('contextmenu',function(e){
 				var dmData=e.target.parentNode.data
@@ -1907,13 +2112,14 @@ ABP.Strings={
 				var box=ABPInst.divComment.getBoundingClientRect(),
 				x=e.touches[0].clientX,
 				y=e.touches[0].clientY,
+				dmList=ABPInst.cmManager.getCommentFromPoint(x-box.left,y-box.top);
 				draggingStartX = x;
 				draggingStartY = y;
 				touchContextTimer=setTimeout(function(){
 					ignoreDragging = true;
 					touchContextTimer=null;
 					activingContext=!0;
-					showContextMenu(x,y);
+					showContextMenu(x,y,dmList);
 				},300);
 			});
 			ABPInst.playerUnit.querySelector('.shield').addEventListener('touchstart touchmove touchend',function(e){e.stopPropagation()})
@@ -1986,11 +2192,44 @@ ABP.Strings={
 					activingContext=!0;
 			})
 
-			var saveConfigurations = function() {
-				localStorage.YHP_PlayerVolume = ABPInst.video.volume;
-			}
-
 			var sendComment = function() {
+				var date = new Date(),
+					commentId = "" + date.getTime() + Math.random();
+				if (ABPInst.txtText.value == "" || ABPInst.txtText.disabled) return false;
+				ABPInst.playerUnit.dispatchEvent(new CustomEvent("sendcomment", {
+					"detail": {
+						"id": commentId,
+						"message": ABPInst.txtText.value,
+						"fontsize": ABPInst.commentFontSize,
+						"color": parseInt("0x" + ABPInst.commentColor),
+						"date": date.getFullYear() + "-" + pad(date.getMonth()) + "-" + pad(date.getDay()) +
+							" " + pad(date.getHours()) + ":" + pad(date.getMinutes()) + ":" + pad(date.getSeconds()),
+						"playTime": ABPInst.video.currentTime,
+						"mode": ABPInst.commentMode,
+						"pool": 0
+					}
+				}));
+				ABPInst.cmManager.send({
+					"text": ABPInst.txtText.value,
+					"mode": ABPInst.commentMode,
+					"stime": ABPInst.video.currentTime,
+					"size": ABPInst.commentFontSize,
+					"color": parseInt("0x" + ABPInst.commentColor),
+					"border": true
+				});
+				ABPInst.commentList[commentId] = {
+					"date": parseInt(date.getTime() / 1000),
+					"time": ABPInst.video.currentTime * 1000,
+					"mode": ABPInst.commentMode,
+					"user": "-",
+					"pool": 0,
+					"content": ABPInst.txtText.value
+				}
+				ABPInst.txtText.value = "";
+				ABPInst.txtText.disabled = true;
+				setTimeout(function() {
+					ABPInst.txtText.disabled = false;
+				}, ABPInst.commentCoolDown);
 			};
 
 			ABPInst.txtText.parentNode[addEventListener]("submit", function(e) {
@@ -2072,7 +2311,7 @@ ABP.Strings={
 			});
 			ABPInst.playerUnit[addEventListener]('previewData',function(e){
 				fetchedPreview(e.detail);
-			});
+			})
 			document[addEventListener]("mouseup", function(e) {
 				if (dragging) {
 					var newTime = ((e.clientX - ABPInst.barTimeHitArea.getBoundingClientRect().left) / ABPInst.barTimeHitArea.offsetWidth) * ABPInst.video.duration;
@@ -2174,6 +2413,73 @@ ABP.Strings={
 				}
 			});
 			hoverTooltip(ABPInst.barVolumeHitArea, true, -12);
+			var draggingOpacity = false;
+			ABPInst.barOpacityHitArea[addEventListener]("mousedown", function(e) {
+				draggingOpacity = true;
+			});
+			ABPInst.barOpacity.style.width = (ABPInst.cmManager.options.global.opacity * 100) + "%";
+			var updateOpacity = function(opacity) {
+				ABPInst.barOpacity.style.width = (opacity * 100) + "%";
+				ABPInst.barOpacityHitArea.tooltip(parseInt(opacity * 100) + "%");
+				saveConfigurations();
+			}
+			document[addEventListener]("mouseup", function(e) {
+				if (draggingOpacity) {
+					var newOpacity = (e.clientX - ABPInst.barOpacityHitArea.getBoundingClientRect().left) / ABPInst.barOpacityHitArea.offsetWidth;
+					if (newOpacity < 0) newOpacity = 0;
+					if (newOpacity > 1) newOpacity = 1;
+					ABPInst.cmManager.options.global.opacity = newOpacity;
+					updateOpacity(ABPInst.cmManager.options.global.opacity);
+					saveConfigurations();
+				}
+				draggingOpacity = false;
+			});
+			document[addEventListener]("mousemove", function(e) {
+				var newOpacity = (e.clientX - ABPInst.barOpacityHitArea.getBoundingClientRect().left) / ABPInst.barOpacityHitArea.offsetWidth;
+				if (newOpacity < 0) newOpacity = 0;
+				if (newOpacity > 1) newOpacity = 1;
+				if (draggingOpacity) {
+					ABPInst.cmManager.options.global.opacity = newOpacity;
+					updateOpacity(ABPInst.cmManager.options.global.opacity);
+				} else {
+					ABPInst.barOpacityHitArea.tooltip(parseInt(newOpacity * 100) + "%");
+				}
+			});
+			hoverTooltip(ABPInst.barOpacityHitArea, true, -6);
+			var draggingScale = false;
+			ABPInst.barScaleHitArea[addEventListener]("mousedown", function(e) {
+				draggingScale = true;
+			});
+			ABPInst.barScale.style.width = (ABPInst.commentScale - 0.2) / 1.8 * 100 + "%";
+			var updateScale = function(scale) {
+				ABPInst.barScale.style.width = (scale - 0.2) / 1.8 * 100 + "%";
+				ABPInst.barScaleHitArea.tooltip(parseInt(scale * 100) + "%");
+				ABPInst.cmManager.setBounds();
+				saveConfigurations();
+			}
+			document[addEventListener]("mouseup", function(e) {
+				if (draggingScale) {
+					var newScale = 0.2 + 1.8 * (e.clientX - ABPInst.barScaleHitArea.getBoundingClientRect().left) / ABPInst.barScaleHitArea.offsetWidth;
+					if (newScale < 0.2) newScale = 0.2;
+					if (newScale > 2) newScale = 2;
+					ABPInst.commentScale = newScale;
+					updateScale(ABPInst.commentScale);
+					saveConfigurations();
+				}
+				draggingScale = false;
+			});
+			document[addEventListener]("mousemove", function(e) {
+				var newScale = 0.2 + 1.8 * (e.clientX - ABPInst.barScaleHitArea.getBoundingClientRect().left) / ABPInst.barScaleHitArea.offsetWidth;
+				if (newScale < 0.2) newScale = 0.2;
+				if (newScale > 2) newScale = 2;
+				if (draggingScale) {
+					ABPInst.commentScale = newScale;
+					updateScale(ABPInst.commentScale);
+				} else {
+					ABPInst.barScaleHitArea.tooltip(parseInt(newScale * 100) + "%");
+				}
+			});
+			hoverTooltip(ABPInst.barScaleHitArea, true, -6);
 			/*Copy from scale bar*/
 			var draggingSpeed = false;
 			ABPInst.barSpeedHitArea[addEventListener]("mousedown", function(e) {
@@ -2183,6 +2489,7 @@ ABP.Strings={
 			var updateSpeed = function(speed) {
 				ABPInst.barSpeed.style.width = (speed - 0.5) / 1.5 * 100 + "%";
 				ABPInst.barSpeedHitArea.tooltip(parseInt(speed * 100) + "%");
+				ABPInst.cmManager.setBounds();
 				saveConfigurations();
 			}
 			document[addEventListener]("mouseup", function(e) {
@@ -2192,7 +2499,7 @@ ABP.Strings={
 					if (newSpeed > 2) newSpeed = 2;
 					ABPInst.commentSpeed = newSpeed;
 					updateSpeed(ABPInst.commentSpeed);
-					saveSetting.speed();
+					saveConfigurations();
 				}
 				draggingSpeed = false;
 			});
@@ -2261,6 +2568,7 @@ ABP.Strings={
 							break;
 						case 37:
 							var newTime = ABPInst.video.currentTime -= 5 * ABPInst.video.playbackRate;
+							ABPInst.cmManager.clear();
 							if (newTime < 0) newTime = 0;
 							ABPInst.video.currentTime = newTime.toFixed(3);
 							if (ABPInst.video.paused) ABPInst.btnPlay.click();
@@ -2269,6 +2577,7 @@ ABP.Strings={
 							break;
 						case 39:
 							var newTime = ABPInst.video.currentTime += 5 * ABPInst.video.playbackRate;
+							ABPInst.cmManager.clear();
 							if (newTime > ABPInst.video.duration) newTime = ABPInst.video.duration;
 							ABPInst.video.currentTime = newTime.toFixed(3);
 							if (ABPInst.video.paused) ABPInst.btnPlay.click();
@@ -2342,6 +2651,556 @@ ABP.Strings={
 				}
 			});
 		}
+		/** Create a bound CommentManager if possible **/
+		if (typeof CommentManager !== "undefined") {
+			if (ABPInst.state.autosize) {
+				var autosize = function() {
+					if (video.videoHeight === 0 || video.videoWidth === 0) {
+						return;
+					}
+					var aspectRatio = video.videoHeight / video.videoWidth;
+					// We only autosize within the bounds
+					var boundW = playerUnit.offsetWidth;
+					var boundH = playerUnit.offsetHeight;
+					var oldASR = boundH / boundW;
+
+					if (oldASR < aspectRatio) {
+						playerUnit.style.width = (boundH / aspectRatio) + "px";
+						playerUnit.style.height = boundH + "px";
+					} else {
+						playerUnit.style.width = boundW + "px";
+						playerUnit.style.height = (boundW * aspectRatio) + "px";
+					}
+
+					ABPInst.cmManager.setBounds();
+				};
+				video[addEventListener]("loadedmetadata", autosize);
+				autosize();
+			}
+		}
+		shield.init(ABPInst);
+		document_querySelector('.shield-enrty').addEventListener('click',shield.show);
+		document_querySelector('.shield_top .close').addEventListener('click',shield.show);
+		document_querySelector('.shield_item .add').addEventListener('click',shield.add);
 		return ABPInst;
 	}
-})();
+})();/*
+colpick Color Picker
+Copyright 2013 Jose Vargas. Licensed under GPL license. Based on Stefan Petre's Color Picker www.eyecon.ro, dual licensed under the MIT and GPL licenses
+
+For usage and examples: colpick.com/plugin
+ */
+
+(function ($) {
+	var colpick = function () {
+		var
+			tpl = '<div class="colpick"><div class="colpick_color"><div class="colpick_color_overlay1"><div class="colpick_color_overlay2"><div class="colpick_selector_outer"><div class="colpick_selector_inner"></div></div></div></div></div><div class="colpick_hue"><div class="colpick_hue_arrs"><div class="colpick_hue_larr"></div><div class="colpick_hue_rarr"></div></div></div><div class="colpick_new_color"></div><div class="colpick_current_color"></div><div class="colpick_hex_field"><div class="colpick_field_letter">#</div><input type="text" maxlength="6" size="6" /></div><div class="colpick_rgb_r colpick_field"><div class="colpick_field_letter">R</div><input type="text" maxlength="3" size="3" /><div class="colpick_field_arrs"><div class="colpick_field_uarr"></div><div class="colpick_field_darr"></div></div></div><div class="colpick_rgb_g colpick_field"><div class="colpick_field_letter">G</div><input type="text" maxlength="3" size="3" /><div class="colpick_field_arrs"><div class="colpick_field_uarr"></div><div class="colpick_field_darr"></div></div></div><div class="colpick_rgb_b colpick_field"><div class="colpick_field_letter">B</div><input type="text" maxlength="3" size="3" /><div class="colpick_field_arrs"><div class="colpick_field_uarr"></div><div class="colpick_field_darr"></div></div></div><div class="colpick_hsb_h colpick_field"><div class="colpick_field_letter">H</div><input type="text" maxlength="3" size="3" /><div class="colpick_field_arrs"><div class="colpick_field_uarr"></div><div class="colpick_field_darr"></div></div></div><div class="colpick_hsb_s colpick_field"><div class="colpick_field_letter">S</div><input type="text" maxlength="3" size="3" /><div class="colpick_field_arrs"><div class="colpick_field_uarr"></div><div class="colpick_field_darr"></div></div></div><div class="colpick_hsb_b colpick_field"><div class="colpick_field_letter">B</div><input type="text" maxlength="3" size="3" /><div class="colpick_field_arrs"><div class="colpick_field_uarr"></div><div class="colpick_field_darr"></div></div></div><div class="colpick_submit"></div></div>',
+			defaults = {
+				showEvent: 'click',
+				onShow: function () {},
+				onBeforeShow: function(){},
+				onHide: function () {},
+				onChange: function () {},
+				onSubmit: function () {},
+				colorScheme: 'light',
+				color: '3289c7',
+				livePreview: true,
+				flat: false,
+				layout: 'full',
+				submit: 1,
+				submitText: 'OK',
+				height: 156
+			},
+			//Fill the inputs of the plugin
+			fillRGBFields = function  (hsb, cal) {
+				var rgb = hsbToRgb(hsb);
+				$(cal).data('colpick').fields
+					.eq(1).val(rgb.r).end()
+					.eq(2).val(rgb.g).end()
+					.eq(3).val(rgb.b).end();
+			},
+			fillHSBFields = function  (hsb, cal) {
+				$(cal).data('colpick').fields
+					.eq(4).val(Math.round(hsb.h)).end()
+					.eq(5).val(Math.round(hsb.s)).end()
+					.eq(6).val(Math.round(hsb.b)).end();
+			},
+			fillHexFields = function (hsb, cal) {
+				$(cal).data('colpick').fields.eq(0).val(hsbToHex(hsb));
+			},
+			//Set the round selector position
+			setSelector = function (hsb, cal) {
+				$(cal).data('colpick').selector.css('backgroundColor', '#' + hsbToHex({h: hsb.h, s: 100, b: 100}));
+				$(cal).data('colpick').selectorIndic.css({
+					left: parseInt($(cal).data('colpick').height * hsb.s/100, 10),
+					top: parseInt($(cal).data('colpick').height * (100-hsb.b)/100, 10)
+				});
+			},
+			//Set the hue selector position
+			setHue = function (hsb, cal) {
+				$(cal).data('colpick').hue.css('top', parseInt($(cal).data('colpick').height - $(cal).data('colpick').height * hsb.h/360, 10));
+			},
+			//Set current and new colors
+			setCurrentColor = function (hsb, cal) {
+				$(cal).data('colpick').currentColor.css('backgroundColor', '#' + hsbToHex(hsb));
+			},
+			setNewColor = function (hsb, cal) {
+				$(cal).data('colpick').newColor.css('backgroundColor', '#' + hsbToHex(hsb));
+			},
+			//Called when the new color is changed
+			change = function (ev) {
+				var cal = $(this).parent().parent(), col;
+				if (this.parentNode.className.indexOf('_hex') > 0) {
+					cal.data('colpick').color = col = hexToHsb(fixHex(this.value));
+					fillRGBFields(col, cal.get(0));
+					fillHSBFields(col, cal.get(0));
+				} else if (this.parentNode.className.indexOf('_hsb') > 0) {
+					cal.data('colpick').color = col = fixHSB({
+						h: parseInt(cal.data('colpick').fields.eq(4).val(), 10),
+						s: parseInt(cal.data('colpick').fields.eq(5).val(), 10),
+						b: parseInt(cal.data('colpick').fields.eq(6).val(), 10)
+					});
+					fillRGBFields(col, cal.get(0));
+					fillHexFields(col, cal.get(0));
+				} else {
+					cal.data('colpick').color = col = rgbToHsb(fixRGB({
+						r: parseInt(cal.data('colpick').fields.eq(1).val(), 10),
+						g: parseInt(cal.data('colpick').fields.eq(2).val(), 10),
+						b: parseInt(cal.data('colpick').fields.eq(3).val(), 10)
+					}));
+					fillHexFields(col, cal.get(0));
+					fillHSBFields(col, cal.get(0));
+				}
+				setSelector(col, cal.get(0));
+				setHue(col, cal.get(0));
+				setNewColor(col, cal.get(0));
+				cal.data('colpick').onChange.apply(cal.parent(), [col, hsbToHex(col), hsbToRgb(col), cal.data('colpick').el, 0]);
+			},
+			//Change style on blur and on focus of inputs
+			blur = function (ev) {
+				$(this).parent().removeClass('colpick_focus');
+			},
+			focus = function () {
+				$(this).parent().parent().data('colpick').fields.parent().removeClass('colpick_focus');
+				$(this).parent().addClass('colpick_focus');
+			},
+			//Increment/decrement arrows functions
+			downIncrement = function (ev) {
+				ev.preventDefault ? ev.preventDefault() : ev.returnValue = false;
+				var field = $(this).parent().find('input').focus();
+				var current = {
+					el: $(this).parent().addClass('colpick_slider'),
+					max: this.parentNode.className.indexOf('_hsb_h') > 0 ? 360 : (this.parentNode.className.indexOf('_hsb') > 0 ? 100 : 255),
+					y: ev.pageY,
+					field: field,
+					val: parseInt(field.val(), 10),
+					preview: $(this).parent().parent().data('colpick').livePreview
+				};
+				$(document).mouseup(current, upIncrement);
+				$(document).mousemove(current, moveIncrement);
+			},
+			moveIncrement = function (ev) {
+				ev.data.field.val(Math.max(0, Math.min(ev.data.max, parseInt(ev.data.val - ev.pageY + ev.data.y, 10))));
+				if (ev.data.preview) {
+					change.apply(ev.data.field.get(0), [true]);
+				}
+				return false;
+			},
+			upIncrement = function (ev) {
+				change.apply(ev.data.field.get(0), [true]);
+				ev.data.el.removeClass('colpick_slider').find('input').focus();
+				$(document).off('mouseup', upIncrement);
+				$(document).off('mousemove', moveIncrement);
+				return false;
+			},
+			//Hue slider functions
+			downHue = function (ev) {
+				ev.preventDefault ? ev.preventDefault() : ev.returnValue = false;
+				var current = {
+					cal: $(this).parent(),
+					y: $(this).offset().top
+				};
+				$(document).on('mouseup touchend',current,upHue);
+				$(document).on('mousemove touchmove',current,moveHue);
+
+				var pageY = ((ev.type == 'touchstart') ? ev.originalEvent.changedTouches[0].pageY : ev.pageY );
+				change.apply(
+					current.cal.data('colpick')
+					.fields.eq(4).val(parseInt(360*(current.cal.data('colpick').height - (pageY - current.y))/current.cal.data('colpick').height, 10))
+						.get(0),
+					[current.cal.data('colpick').livePreview]
+				);
+				return false;
+			},
+			moveHue = function (ev) {
+				var pageY = ((ev.type == 'touchmove') ? ev.originalEvent.changedTouches[0].pageY : ev.pageY );
+				change.apply(
+					ev.data.cal.data('colpick')
+					.fields.eq(4).val(parseInt(360*(ev.data.cal.data('colpick').height - Math.max(0,Math.min(ev.data.cal.data('colpick').height,(pageY - ev.data.y))))/ev.data.cal.data('colpick').height, 10))
+						.get(0),
+					[ev.data.preview]
+				);
+				return false;
+			},
+			upHue = function (ev) {
+				fillRGBFields(ev.data.cal.data('colpick').color, ev.data.cal.get(0));
+				fillHexFields(ev.data.cal.data('colpick').color, ev.data.cal.get(0));
+				$(document).off('mouseup touchend',upHue);
+				$(document).off('mousemove touchmove',moveHue);
+				return false;
+			},
+			//Color selector functions
+			downSelector = function (ev) {
+				ev.preventDefault ? ev.preventDefault() : ev.returnValue = false;
+				var current = {
+					cal: $(this).parent(),
+					pos: $(this).offset()
+				};
+				current.preview = current.cal.data('colpick').livePreview;
+
+				$(document).on('mouseup touchend',current,upSelector);
+				$(document).on('mousemove touchmove',current,moveSelector);
+
+				var pageX,pageY;
+				if(ev.type == 'touchstart') {
+					pageX = ev.originalEvent.changedTouches[0].pageX,
+					pageY = ev.originalEvent.changedTouches[0].pageY;
+				} else {
+					pageX = ev.pageX;
+					pageY = ev.pageY;
+				}
+
+				change.apply(
+					current.cal.data('colpick').fields
+					.eq(6).val(parseInt(100*(current.cal.data('colpick').height - (pageY - current.pos.top))/current.cal.data('colpick').height, 10)).end()
+					.eq(5).val(parseInt(100*(pageX - current.pos.left)/current.cal.data('colpick').height, 10))
+					.get(0),
+					[current.preview]
+				);
+				return false;
+			},
+			moveSelector = function (ev) {
+				var pageX,pageY;
+				if(ev.type == 'touchmove') {
+					pageX = ev.originalEvent.changedTouches[0].pageX,
+					pageY = ev.originalEvent.changedTouches[0].pageY;
+				} else {
+					pageX = ev.pageX;
+					pageY = ev.pageY;
+				}
+
+				change.apply(
+					ev.data.cal.data('colpick').fields
+					.eq(6).val(parseInt(100*(ev.data.cal.data('colpick').height - Math.max(0,Math.min(ev.data.cal.data('colpick').height,(pageY - ev.data.pos.top))))/ev.data.cal.data('colpick').height, 10)).end()
+					.eq(5).val(parseInt(100*(Math.max(0,Math.min(ev.data.cal.data('colpick').height,(pageX - ev.data.pos.left))))/ev.data.cal.data('colpick').height, 10))
+					.get(0),
+					[ev.data.preview]
+				);
+				return false;
+			},
+			upSelector = function (ev) {
+				fillRGBFields(ev.data.cal.data('colpick').color, ev.data.cal.get(0));
+				fillHexFields(ev.data.cal.data('colpick').color, ev.data.cal.get(0));
+				$(document).off('mouseup touchend',upSelector);
+				$(document).off('mousemove touchmove',moveSelector);
+				return false;
+			},
+			//Submit button
+			clickSubmit = function (ev) {
+				var cal = $(this).parent();
+				var col = cal.data('colpick').color;
+				cal.data('colpick').origColor = col;
+				setCurrentColor(col, cal.get(0));
+				cal.data('colpick').onSubmit(col, hsbToHex(col), hsbToRgb(col), cal.data('colpick').el);
+			},
+			//Show/hide the color picker
+			show = function (ev) {
+				// Prevent the trigger of any direct parent
+				ev.stopPropagation();
+				var cal = $('#' + $(this).data('colpickId'));
+				cal.data('colpick').onBeforeShow.apply(this, [cal.get(0)]);
+				var pos = $(this).offset();
+				var top = pos.top + this.offsetHeight;
+				var left = pos.left;
+				var viewPort = getViewport();
+				var calW = cal.width();
+				if (left + calW > viewPort.l + viewPort.w) {
+					left -= calW;
+				}
+				cal.css({left: left + 'px', top: top + 'px'});
+				if (cal.data('colpick').onShow.apply(this, [cal.get(0)]) != false) {
+					cal.show();
+				}
+				//Hide when user clicks outside
+				$('html').mousedown({cal:cal}, hide);
+				cal.mousedown(function(ev){ev.stopPropagation();})
+			},
+			hide = function (ev) {
+				if (ev.data.cal.data('colpick').onHide.apply(this, [ev.data.cal.get(0)]) != false) {
+					ev.data.cal.hide();
+				}
+				$('html').off('mousedown', hide);
+			},
+			getViewport = function () {
+				var m = document.compatMode == 'CSS1Compat';
+				return {
+					l : window.pageXOffset || (m ? document.documentElement.scrollLeft : document.body.scrollLeft),
+					w : window.innerWidth || (m ? document.documentElement.clientWidth : document.body.clientWidth)
+				};
+			},
+			//Fix the values if the user enters a negative or high value
+			fixHSB = function (hsb) {
+				return {
+					h: Math.min(360, Math.max(0, hsb.h)),
+					s: Math.min(100, Math.max(0, hsb.s)),
+					b: Math.min(100, Math.max(0, hsb.b))
+				};
+			},
+			fixRGB = function (rgb) {
+				return {
+					r: Math.min(255, Math.max(0, rgb.r)),
+					g: Math.min(255, Math.max(0, rgb.g)),
+					b: Math.min(255, Math.max(0, rgb.b))
+				};
+			},
+			fixHex = function (hex) {
+				var len = 6 - hex.length;
+				if (len > 0) {
+					var o = [];
+					for (var i=0; i<len; i++) {
+						o.push('0');
+					}
+					o.push(hex);
+					hex = o.join('');
+				}
+				return hex;
+			},
+			restoreOriginal = function () {
+				var cal = $(this).parent();
+				var col = cal.data('colpick').origColor;
+				cal.data('colpick').color = col;
+				fillRGBFields(col, cal.get(0));
+				fillHexFields(col, cal.get(0));
+				fillHSBFields(col, cal.get(0));
+				setSelector(col, cal.get(0));
+				setHue(col, cal.get(0));
+				setNewColor(col, cal.get(0));
+			};
+		return {
+			init: function (opt) {
+				opt = $.extend({}, defaults, opt||{});
+				//Set color
+				if (typeof opt.color == 'string') {
+					opt.color = hexToHsb(opt.color);
+				} else if (opt.color.r != undefined && opt.color.g != undefined && opt.color.b != undefined) {
+					opt.color = rgbToHsb(opt.color);
+				} else if (opt.color.h != undefined && opt.color.s != undefined && opt.color.b != undefined) {
+					opt.color = fixHSB(opt.color);
+				} else {
+					return this;
+				}
+
+				//For each selected DOM element
+				return this.each(function () {
+					//If the element does not have an ID
+					if (!$(this).data('colpickId')) {
+						var options = $.extend({}, opt);
+						options.origColor = opt.color;
+						//Generate and assign a random ID
+						var id = 'collorpicker_' + parseInt(Math.random() * 1000);
+						$(this).data('colpickId', id);
+						//Set the tpl's ID and get the HTML
+						var cal = $(tpl).attr('id', id);
+						//Add class according to layout
+						cal.addClass('colpick_'+options.layout+(options.submit?'':' colpick_'+options.layout+'_ns'));
+						//Add class if the color scheme is not default
+						if(options.colorScheme != 'light') {
+							cal.addClass('colpick_'+options.colorScheme);
+						}
+						//Setup submit button
+						cal.find('div.colpick_submit').html(options.submitText).click(clickSubmit);
+						//Setup input fields
+						options.fields = cal.find('input').change(change).blur(blur).focus(focus);
+						cal.find('div.colpick_field_arrs').mousedown(downIncrement).end().find('div.colpick_current_color').click(restoreOriginal);
+						//Setup hue selector
+						options.selector = cal.find('div.colpick_color').on('mousedown touchstart',downSelector);
+						options.selectorIndic = options.selector.find('div.colpick_selector_outer');
+						//Store parts of the plugin
+						options.el = this;
+						options.hue = cal.find('div.colpick_hue_arrs');
+						huebar = options.hue.parent();
+						//Paint the hue bar
+						var UA = navigator.userAgent.toLowerCase();
+						var isIE = navigator.appName === 'Microsoft Internet Explorer';
+						var IEver = isIE ? parseFloat( UA.match( /msie ([0-9]{1,}[\.0-9]{0,})/ )[1] ) : 0;
+						var ngIE = ( isIE && IEver < 10 );
+						var stops = ['#ff0000','#ff0080','#ff00ff','#8000ff','#0000ff','#0080ff','#00ffff','#00ff80','#00ff00','#80ff00','#ffff00','#ff8000','#ff0000'];
+						if(ngIE) {
+							var i, div;
+							for(i=0; i<=11; i++) {
+								div = $('<div></div>').attr('style','height:8.333333%; filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='+stops[i]+', endColorstr='+stops[i+1]+'); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='+stops[i]+', endColorstr='+stops[i+1]+')";');
+								huebar.append(div);
+							}
+						} else {
+							stopList = stops.join(',');
+							huebar.attr('style','background:-webkit-linear-gradient(top,'+stopList+'); background: -o-linear-gradient(top,'+stopList+'); background: -ms-linear-gradient(top,'+stopList+'); background:-moz-linear-gradient(top,'+stopList+'); -webkit-linear-gradient(top,'+stopList+'); background:linear-gradient(to bottom,'+stopList+'); ');
+						}
+						cal.find('div.colpick_hue').on('mousedown touchstart',downHue);
+						options.newColor = cal.find('div.colpick_new_color');
+						options.currentColor = cal.find('div.colpick_current_color');
+						//Store options and fill with default color
+						cal.data('colpick', options);
+						fillRGBFields(options.color, cal.get(0));
+						fillHSBFields(options.color, cal.get(0));
+						fillHexFields(options.color, cal.get(0));
+						setHue(options.color, cal.get(0));
+						setSelector(options.color, cal.get(0));
+						setCurrentColor(options.color, cal.get(0));
+						setNewColor(options.color, cal.get(0));
+						//Append to body if flat=false, else show in place
+						if (options.flat) {
+							cal.appendTo(this).show();
+							cal.css({
+								position: 'relative',
+								display: 'block'
+							});
+						} else {
+							cal.appendTo(document.body);
+							$(this).on(options.showEvent, show);
+							cal.css({
+								position:'absolute'
+							});
+						}
+					}
+				});
+			},
+			//Shows the picker
+			showPicker: function() {
+				return this.each( function () {
+					if ($(this).data('colpickId')) {
+						show.apply(this);
+					}
+				});
+			},
+			//Hides the picker
+			hidePicker: function() {
+				return this.each( function () {
+					if ($(this).data('colpickId')) {
+						$('#' + $(this).data('colpickId')).hide();
+					}
+				});
+			},
+			//Sets a color as new and current (default)
+			setColor: function(col, setCurrent) {
+				setCurrent = (typeof setCurrent === "undefined") ? 1 : setCurrent;
+				if (typeof col == 'string') {
+					col = hexToHsb(col);
+				} else if (col.r != undefined && col.g != undefined && col.b != undefined) {
+					col = rgbToHsb(col);
+				} else if (col.h != undefined && col.s != undefined && col.b != undefined) {
+					col = fixHSB(col);
+				} else {
+					return this;
+				}
+				return this.each(function(){
+					if ($(this).data('colpickId')) {
+						var cal = $('#' + $(this).data('colpickId'));
+						cal.data('colpick').color = col;
+						cal.data('colpick').origColor = col;
+						fillRGBFields(col, cal.get(0));
+						fillHSBFields(col, cal.get(0));
+						fillHexFields(col, cal.get(0));
+						setHue(col, cal.get(0));
+						setSelector(col, cal.get(0));
+
+						setNewColor(col, cal.get(0));
+						cal.data('colpick').onChange.apply(cal.parent(), [col, hsbToHex(col), hsbToRgb(col), cal.data('colpick').el, 1]);
+						if(setCurrent) {
+							setCurrentColor(col, cal.get(0));
+						}
+					}
+				});
+			}
+		};
+	}();
+	//Color space convertions
+	var hexToRgb = function (hex) {
+		var hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
+		return {r: hex >> 16, g: (hex & 0x00FF00) >> 8, b: (hex & 0x0000FF)};
+	};
+	var hexToHsb = function (hex) {
+		return rgbToHsb(hexToRgb(hex));
+	};
+	var rgbToHsb = function (rgb) {
+		var hsb = {h: 0, s: 0, b: 0};
+		var min = Math.min(rgb.r, rgb.g, rgb.b);
+		var max = Math.max(rgb.r, rgb.g, rgb.b);
+		var delta = max - min;
+		hsb.b = max;
+		hsb.s = max != 0 ? 255 * delta / max : 0;
+		if (hsb.s != 0) {
+			if (rgb.r == max) hsb.h = (rgb.g - rgb.b) / delta;
+			else if (rgb.g == max) hsb.h = 2 + (rgb.b - rgb.r) / delta;
+			else hsb.h = 4 + (rgb.r - rgb.g) / delta;
+		} else hsb.h = -1;
+		hsb.h *= 60;
+		if (hsb.h < 0) hsb.h += 360;
+		hsb.s *= 100/255;
+		hsb.b *= 100/255;
+		return hsb;
+	};
+	var hsbToRgb = function (hsb) {
+		var rgb = {};
+		var h = hsb.h;
+		var s = hsb.s*255/100;
+		var v = hsb.b*255/100;
+		if(s == 0) {
+			rgb.r = rgb.g = rgb.b = v;
+		} else {
+			var t1 = v;
+			var t2 = (255-s)*v/255;
+			var t3 = (t1-t2)*(h%60)/60;
+			if(h==360) h = 0;
+			if(h<60) {rgb.r=t1;	rgb.b=t2; rgb.g=t2+t3}
+			else if(h<120) {rgb.g=t1; rgb.b=t2;	rgb.r=t1-t3}
+			else if(h<180) {rgb.g=t1; rgb.r=t2;	rgb.b=t2+t3}
+			else if(h<240) {rgb.b=t1; rgb.r=t2;	rgb.g=t1-t3}
+			else if(h<300) {rgb.b=t1; rgb.g=t2;	rgb.r=t2+t3}
+			else if(h<360) {rgb.r=t1; rgb.g=t2;	rgb.b=t1-t3}
+			else {rgb.r=0; rgb.g=0;	rgb.b=0}
+		}
+		return {r:Math.round(rgb.r), g:Math.round(rgb.g), b:Math.round(rgb.b)};
+	};
+	var rgbToHex = function (rgb) {
+		var hex = [
+			rgb.r.toString(16),
+			rgb.g.toString(16),
+			rgb.b.toString(16)
+		];
+		$.each(hex, function (nr, val) {
+			if (val.length == 1) {
+				hex[nr] = '0' + val;
+			}
+		});
+		return hex.join('');
+	};
+	var hsbToHex = function (hsb) {
+		return rgbToHex(hsbToRgb(hsb));
+	};
+	$.fn.extend({
+		colpick: colpick.init,
+		colpickHide: colpick.hidePicker,
+		colpickShow: colpick.showPicker,
+		colpickSetColor: colpick.setColor
+	});
+	$.extend({
+		colpick:{
+			rgbToHex: rgbToHex,
+			rgbToHsb: rgbToHsb,
+			hsbToHex: hsbToHex,
+			hsbToRgb: hsbToRgb,
+			hexToHsb: hexToHsb,
+			hexToRgb: hexToRgb
+		}
+	});
+})(jQuery);

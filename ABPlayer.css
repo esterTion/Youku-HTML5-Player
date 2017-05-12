@@ -466,9 +466,8 @@
 	right:0
 }
 .ABP-Unit .ABP-Control .ABP-CommentGroup{
-	display: none;
 	top:0;
-	right:75px;
+	right:50px;
 	bottom:0
 }
 .ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption{
@@ -626,11 +625,11 @@
 }
 .ABP-Unit .ABP-Control .ABP-Volume{
 	top:0;
-	right:115px;
+	right:140px;
 	bottom:0
 }
 .ABP-Unit.ABP-FullScreen .ABP-Control .ABP-Volume{
-	right:115px
+	right:140px
 }
 .ABP-Unit.ABP-Mini .ABP-Control .ABP-Volume{
 	right:75px
@@ -653,12 +652,12 @@
 	left:35px;
 	background:#fff;
 	border-left:1px solid #ececec;
-	width:-webkit-calc(100% - 245px);
-	width:calc(100% - 245px)
+	width:-webkit-calc(100% - 270px);
+	width:calc(100% - 270px)
 }
 .ABP-Unit.ABP-FullScreen .ABP-Control .progress-bar{
-	width:-webkit-calc(100% - 245px);
-	width:calc(100% - 245px)
+	width:-webkit-calc(100% - 270px);
+	width:calc(100% - 270px)
 }
 .ABP-Unit.ABP-Mini .ABP-Control .progress-bar{
 	width:-webkit-calc(100% - 200px);
@@ -667,12 +666,12 @@
 .ABP-Unit .ABP-Control .volume-bar{
 	position:absolute;
 	top:0;
-	right:43px;
+	right:68px;
 	bottom:0;
 	width:80px
 }
 .ABP-Unit.ABP-FullScreen .ABP-Control .volume-bar{
-	right:43px
+	right:68px
 }
 .ABP-Unit.ABP-Mini .ABP-Control .volume-bar{
 	display:none
@@ -739,20 +738,20 @@
 	width:86px;
 	font-size:11px;
 	position:absolute;
-	right:134px;
+	right:159px;
 	text-align:center;
 	line-height:22px;
 	height:20px
 }
 .ABP-Unit.ABP-FullScreen .time-label{
-	right:137px
+	right:162px
 }
 .ABP-Unit.ABP-Mini .time-label{
 	right:94px
 }
 .ABP-Unit .ABP-Control .time-jump{
 	position:absolute;
-	right:188px;
+	right:163px;
 	height:15px;
 	width:74px;
 	outline:0;

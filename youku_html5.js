@@ -288,7 +288,7 @@ function fetchSrc(extraQuery) {
                     let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
                     let langChange = document.createElement('div');
                     contextMenu.insertBefore(langChange, contextMenu.firstChild);
-                    langChange.className = 'dm';
+                    langChange.className = 'dm static';
                     langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
                     langChange = langChange.appendChild(document.createElement('div'));
                     langChange.className = 'dmMenu';
@@ -331,6 +331,65 @@ function fetchSrc(extraQuery) {
         });
     })
 }
+function ykCmtParser(json) {
+    let sizeList = [24, 22, 28];
+    let modeList = {
+        3: 1,
+        4: 5,
+        6: 4
+    };
+    for (let i of json.result) {
+        let obj = {};
+        let properties = {
+            pos: 3,
+            color: 0xffffff,
+            size: 1
+        }
+        if (!!i.propertis) {
+            properties = typeof (i.propertis) == 'string' ? JSON.parse(i.propertis) : i.propertis;
+        }
+        obj.stime = i.playat;
+        obj.size = sizeList[properties.size];
+        obj.color = properties.color & 0xffffff;
+        obj.mode = modeList[properties.pos];
+        obj.position = 'absolute';
+        obj.dbid = i.id;
+        obj.hash = i.uid + '';
+        obj.border = false;
+        obj.text = i.content;
+        abpinst.cmManager.insert(obj);
+    }
+}
+function fetchComment(m) {
+    m*=5;
+    fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=5&ct=1001&icode=' + vid, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-cache'
+    }).then(r => {
+        r.json().then(ykCmtParser)
+    }).catch(() => {
+        abpinst.createPopup('弹幕获取失败', 1e3);
+    })
+}
+let prevMinute = 0;
+function chkCmtTime() {
+    let minute = ((this.currentTime + 30) / 300) | 0;
+    if (prevMinute != minute) {
+        fetchComment(minute);
+    }
+    prevMinute = minute;
+}
+function chkSeekCmtTime() {
+    let minute = (this.currentTime / 300) | 0;
+    if (minute < prevMinute) {
+        console.log('clear timeline')
+        abpinst.cmManager.load([]);
+        prevMinute = minute;
+        fetchComment(minute);
+    }
+}
+
 window.changeSrc = function (e, t, force) {
     var div = document.getElementById('info-box');
     if ((abpinst == undefined || (currentSrc == t)) && !force)
@@ -474,7 +533,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     flashplayer.remove();
     let video = container.appendChild(document.createElement('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
-    let playerVolume = Number(localStorage.YHP_PlayerVolume) || 1;
+    let config = JSON.parse(localStorage.YHP_PlayerSettings || '{}');
     abpinst = ABP.create(document.getElementById("player"), {
         src: {
             playlist: [{
@@ -483,7 +542,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         },
         width: '100%',
         height: '100%',
-        config: { volume: playerVolume },
+        config: config,
         mobile: isMobile()
     });
     dots.init({
@@ -500,6 +559,10 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     if (savedPassword[vid])
         password = '&pwd=' + savedPassword[vid];
     fetchSrc(password);
+
+    fetchComment(0);
+    abpinst.video.addEventListener('seeking', chkSeekCmtTime);
+    abpinst.video.addEventListener('timeupdate', chkCmtTime);
     let disabled = false;
     let playerHeight = function () {
         !disabled && (document.body.className = document.body.className.replace('danmuoff', 'danmuon'));
@@ -543,3 +606,4 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         observer.observe(document.body, { childList: true, subtree: true });
     }
 })();
+window.crc_engine = () => { return ''; };
