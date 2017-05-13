@@ -361,7 +361,7 @@ function ykCmtParser(json) {
     }
 }
 function fetchComment(m) {
-    m*=5;
+    m *= 5;
     fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=5&ct=1001&icode=' + vid, {
         method: 'GET',
         credentials: 'include',
@@ -375,7 +375,7 @@ function fetchComment(m) {
 let prevMinute = 0;
 function chkCmtTime() {
     let minute = ((this.currentTime + 30) / 300) | 0;
-    if (prevMinute != minute) {
+    if (prevMinute != minute && minute * 300 < this.duration) {
         fetchComment(minute);
     }
     prevMinute = minute;
@@ -383,7 +383,6 @@ function chkCmtTime() {
 function chkSeekCmtTime() {
     let minute = (this.currentTime / 300) | 0;
     if (minute < prevMinute) {
-        console.log('clear timeline')
         abpinst.cmManager.load([]);
         prevMinute = minute;
         fetchComment(minute);

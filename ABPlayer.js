@@ -1390,8 +1390,8 @@ ABP.Strings={
 			arr.forEach(function(i){max=(i>max)?i:max});
 			max==0&&(max=1);
 			for(i in arr){
-				if(isNaN(i*1))
-					i=0;
+				if(isNaN(arr[i]))
+					arr[i]=0;
 				points.push(i*3 + ',' + (20*(1-arr[i]/max)+1) + ' ' + (i*3+3) +','+ (20*(1-arr[i]/max)+1));
 			}
 			column.setAttribute('points',points.join(' '));
