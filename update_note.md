@@ -1,5 +1,9 @@
 # 更新日志
 
+## 1.1.3
+May 14, 2017
+- +替换外链播放器（iframe模式，embed模式无法替换）
+
 ## 1.1.2
 May 13, 2017
 - *修复cent browser下canvas污染，强制使用css绘制

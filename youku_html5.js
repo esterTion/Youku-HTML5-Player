@@ -54,7 +54,16 @@ function createPopup(param) {
     });
 }
 
-let vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
+let domain = document.domain;
+let vid = '';
+let objID = '';
+if (domain == 'v.youku.com') {
+    vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
+    objID = 'object#movie_player';
+} else if (domain == 'player.youku.com') {
+    vid = location.href.match(/embed\/([a-zA-Z0-9\=]+)/);
+    objID = 'object#youku-player';
+}
 
 let knownTypes = {
     'flvhd': '标清',
@@ -494,6 +503,7 @@ let flvparam = function (select) {
     }
 };
 function init() {
+    let noticeWidth=Math.min(500,innerWidth-40);
     document.head.appendChild(document.createElement('style')).innerHTML = `#YHP_Notice{
 position:fixed;left:0;right:0;top:0;height:0;z-index:10000;transition:.5s;cursor:default
 }
@@ -501,7 +511,7 @@ position:fixed;left:0;right:0;top:0;height:0;z-index:10000;transition:.5s;cursor
 position:absolute;bottom:0;left:0;right:0;font-size:15px
 }
 #YHP_Notice>div>div{
-    border:1px #AAA solid;width:500px;margin:0 auto;padding:20px 10px 5px;background:#EFEFF4;color:#000;border-radius:5px;box-shadow:0 0 5px -2px
+    border:1px #AAA solid;width:${noticeWidth}px;margin:0 auto;padding:20px 10px 5px;background:#EFEFF4;color:#000;border-radius:5px;box-shadow:0 0 5px -2px
 }
 #YHP_Notice>div>div *{
     margin:5px 0;
@@ -527,13 +537,14 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }`
 
     window.cid = vid;
-    let container = document.querySelector('object#movie_player').parentNode;
+    let container = document.querySelector(objID).parentNode;
+    container.style.overflow='hidden'
     let flashplayer = container.firstChild;
     flashplayer.remove();
     let video = container.appendChild(document.createElement('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
     let config = JSON.parse(localStorage.YHP_PlayerSettings || '{}');
-    abpinst = ABP.create(document.getElementById("player"), {
+    abpinst = ABP.create(video.parentNode, {
         src: {
             playlist: [{
                 video: video
@@ -568,22 +579,24 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     };
     setInterval(playerHeight, 1e3);
     playerHeight();
-    let restore = document.querySelector('#module-interact').appendChild(document.createElement('div'));
-    restore.className = 'fn-phone-see';
-    restore.innerHTML = '<div class="fn"><a class="label" href="javascript:void(0);">还原flash播放器</a></div>'
-    restore.firstChild.addEventListener('click', function () {
-        if (disabled)
-            return;
-        disabled = true;
-        if (self.flvplayer && self.flvplayer.destroy) {
-            self.flvplayer.destroy();
-            self.flvplayer = {};
-        }
-        container.firstChild.style.display = 'none';
-        container.appendChild(flashplayer);
-        document.body.className = document.body.className.replace('danmuon', 'danmuoff')
-        this.parentNode.remove();
-    })
+    if (domain == 'v.youku.com') {
+        let restore = document.querySelector('#module-interact').appendChild(document.createElement('div'));
+        restore.className = 'fn-phone-see';
+        restore.innerHTML = '<div class="fn"><a class="label" href="javascript:void(0);">还原flash播放器</a></div>'
+        restore.firstChild.addEventListener('click', function () {
+            if (disabled)
+                return;
+            disabled = true;
+            if (self.flvplayer && self.flvplayer.destroy) {
+                self.flvplayer.destroy();
+                self.flvplayer = {};
+            }
+            container.firstChild.style.display = 'none';
+            container.appendChild(flashplayer);
+            document.body.className = document.body.className.replace('danmuon', 'danmuoff')
+            this.parentNode.remove();
+        })
+    }
 }
 (function () {
     if (vid === null)
@@ -592,12 +605,12 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
     flvjs.LoggingControl.enableDebug = false;
-    if (document.querySelector('object#movie_player') != null)
+    if (document.querySelector(objID) != null)
         init();
     else {
         //player node not loaded, add an observer
         let observer = new MutationObserver(function () {
-            if (document.querySelector('object#movie_player') != null) {
+            if (document.querySelector(objID) != null) {
                 observer.disconnect();
                 init();
             }
