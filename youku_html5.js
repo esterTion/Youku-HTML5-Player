@@ -293,8 +293,8 @@ function fetchSrc(extraQuery) {
             }
             switchLang(currentLang);
             if (firstTime) {
+                let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
                 if (audioLangs.length > 1) {
-                    let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
                     let langChange = document.createElement('div');
                     contextMenu.insertBefore(langChange, contextMenu.firstChild);
                     langChange.className = 'dm static';
@@ -314,6 +314,17 @@ function fetchSrc(extraQuery) {
                         currentLang = lang;
                         changeSrc('', currentSrc, true);
                     });
+                }
+
+                if (domain != 'v.youku.com') {
+                    let toMain = document.createElement('div');
+                    contextMenu.insertBefore(toMain, contextMenu.firstChild);
+                    toMain.id = 'main_link';
+                    toMain.innerHTML = '前往主站播放';
+                    toMain.addEventListener('click', function () {
+                        abpinst.video.pause();
+                        window.open('http://v.youku.com/v_show/id_' + vid + '.html');
+                    })
                 }
 
                 if (json.data.preview)
@@ -503,7 +514,7 @@ let flvparam = function (select) {
     }
 };
 function init() {
-    let noticeWidth=Math.min(500,innerWidth-40);
+    let noticeWidth = Math.min(500, innerWidth - 40);
     document.head.appendChild(document.createElement('style')).innerHTML = `#YHP_Notice{
 position:fixed;left:0;right:0;top:0;height:0;z-index:10000;transition:.5s;cursor:default
 }
@@ -538,7 +549,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 
     window.cid = vid;
     let container = document.querySelector(objID).parentNode;
-    container.style.overflow='hidden'
+    container.style.overflow = 'hidden'
     let flashplayer = container.firstChild;
     flashplayer.remove();
     let video = container.appendChild(document.createElement('video'));
