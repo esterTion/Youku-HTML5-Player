@@ -54,7 +54,7 @@ function createPopup(param) {
     });
 }
 
-let domain = document.domain;
+let domain = location.href.match(/:\/\/([^\/]+)/)[1];
 let vid = '';
 let objID = '';
 if (domain == 'v.youku.com') {
