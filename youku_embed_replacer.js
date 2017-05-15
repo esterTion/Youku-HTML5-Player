@@ -5,9 +5,9 @@ function replacer(i) {
     if (ykvid != null) {
         i.YHP_replacing = true;
         let ifr = document.createElement('iframe');
-        ifr.height = i.offsetHeight;
-        ifr.width = i.offsetWidth
-        ifr.frameborder = 0;
+        ifr.height = i.offsetHeight||i.height||480;
+        ifr.width = i.offsetWidth||i.width||848;
+        ifr.setAttribute('frameborder',0);
         ifr.setAttribute('allowfullscreen','');
         ifr.src = '//player.youku.com/embed/' + ykvid[1];
         i.parentNode.insertBefore(ifr, i);
