@@ -1,22 +1,36 @@
-function replacer(i) {
+function embed_checker(i) {
     if (i.YHP_replacing)
         return;
-    let ykvid = (i.src + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\/v\.swf/);
+    let ykvid = (i.src + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\//);
     if (ykvid != null) {
-        i.YHP_replacing = true;
-        let ifr = document.createElement('iframe');
-        ifr.height = i.offsetHeight||i.height||480;
-        ifr.width = i.offsetWidth||i.width||848;
-        ifr.setAttribute('frameborder',0);
-        ifr.setAttribute('allowfullscreen','');
-        ifr.src = '//player.youku.com/embed/' + ykvid[1];
-        i.parentNode.insertBefore(ifr, i);
-        i.remove();
+        replacer(i, ykvid);
     }
 }
+function object_checker(i) {
+    if (i.YHP_replacing)
+        return;
+    let src = i.querySelector('param[name=movie]');
+    if (src == null) return;
+    let ykvid = (src.value + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\//);
+    if (ykvid != null) {
+        replacer(i, ykvid);
+    }
+}
+function replacer(i, ykvid) {
+    i.YHP_replacing = true;
+    let ifr = _('iframe', {
+        height: i.height || i.offsetHeight || 480,
+        width: i.width || i.offsetWidth || 848,
+        frameborder: 0,
+        allowfullscreen: '',
+        src: '//player.youku.com/embed/' + ykvid[1],
+    });
+    i.parentNode.insertBefore(ifr, i);
+    i.remove();
+}
 function finder() {
-    let embed = Array.from(document.querySelectorAll('embed'));
-    embed.forEach(replacer)
+    Array.from(document.querySelectorAll('embed')).forEach(embed_checker);
+    Array.from(document.querySelectorAll('object')).forEach(object_checker);
 }
 finder();
 let observer = new MutationObserver(finder);

@@ -141,35 +141,6 @@ ABP.Strings={
 	$ = function(e) {
 		return document.getElementById(e);
 	};
-	var _ = function(type, props, children, callback) {
-		var elem = null;
-		if (type === "text") {
-			return document.createTextNode(props);
-		} else {
-			elem = document.createElement(type);
-		}
-		for (var n in props) {
-			if (n !== "style" && n !== "className") {
-				elem.setAttribute(n, props[n]);
-			} else if (n === "className") {
-				elem.className = props[n];
-			} else {
-				for (var x in props.style) {
-					elem.style[x] = props.style[x];
-				}
-			}
-		}
-		if (children) {
-			for (var i = 0; i < children.length; i++) {
-				if (children[i] != null)
-					elem.appendChild(children[i]);
-			}
-		}
-		if (callback && typeof callback === "function") {
-			callback(elem);
-		}
-		return elem;
-	};
 
 	var findRow = function(node) {
 		var i = 1;
@@ -826,7 +797,7 @@ ABP.Strings={
 			_('div',{className:'Context-Menu-Background'}),
 			_('div',{className:'Context-Menu-Body'},[
 				_('div',{id:'Player-Stats-Toggle'},[_('text',ABP.Strings.showStats)]),
-				_('div',{id:'Player-Speed-Control',className:'dm'},[_('div',{className:'content'},[_('text',ABP.Strings.playSpeed)]),_('div',{className:'dmMenu',style:{top:'-37px'}},[
+				_('div',{id:'Player-Speed-Control',className:'dm static'},[_('div',{className:'content'},[_('text',ABP.Strings.playSpeed)]),_('div',{className:'dmMenu',style:{top:'-37px'}},[
 					_('div',{'data-speed':0.5},[_('text',0.5)]),
 					_('div',{'data-speed':1},[_('text',1)]),
 					_('div',{'data-speed':1.25},[_('text',1.25)]),
@@ -1987,6 +1958,8 @@ ABP.Strings={
 				}
 				var itemMenu=contextMenuBody.querySelectorAll('.dmMenu');
 				for(i=0;i<itemMenu.length-1;i++){
+					if(hasClass(itemMenu[i].parentNode,'static'))
+						continue;
 					itemMenu[i].childNodes[0][addEventListener]('click',function(){
 						try{
 							var copy=document.createElement('input');

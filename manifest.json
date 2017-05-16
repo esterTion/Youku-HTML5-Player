@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Youku HTML5 Player",
-  "version": "1.1.5.1",
+  "version": "1.1.6",
   "description": "告别flash与广告\n\n开源仓库：https://github.com/esterTion/Youku-HTML5-Player\n本扩展使用组件：\nflvjs：(github)esterTion/flv.js\nABPlayer-billibili-ver(有修改)",
   "content_scripts": [
     {
@@ -11,6 +11,7 @@
       ],
       "all_frames": true,
       "js": [
+        "dom_gen.js",
         "hookFetch.js",
         "crypto/tripledes.js",
         "crypto/mode-ecb.js",
@@ -39,6 +40,7 @@
       ],
       "all_frames": true,
       "js": [
+        "dom_gen.js",
         "youku_embed_replacer.js"
       ],
       "run_at": "document_end"

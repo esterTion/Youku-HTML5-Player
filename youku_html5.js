@@ -37,8 +37,7 @@ function createPopup(param) {
     if (document.querySelector('#YHP_Notice') != null)
         document.querySelector('#YHP_Notice').remove();
 
-    let div = document.createElement('div');
-    div.id = 'YHP_Notice';
+    let div = _('div', { id: 'YHP_Notice' });
     let str = '<div><div>' + param.content + '<hr><div style="text-align: right;">';
     if (param.showConfirm) {
         str += '<input value="' + param.confirmBtn + '" type="button" class="confirm">';
@@ -242,14 +241,10 @@ function switchLang(lang) {
     srcUrl = audioLangs[lang].src;
     availableSrc = audioLangs[lang].available;
 
-    for (let i = 0, div; i < availableSrc.length; i++) {
-        div = document.createElement('div');
-        div.setAttribute('changeto', JSON.stringify(availableSrc[i]));
-        div.setAttribute('name', availableSrc[i][0]);
-        if (availableSrc[i][0] == currentSrc)
-            div.className = 'on';
-        div.appendChild(document.createTextNode(availableSrc[i][1]));
-        abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination').appendChild(div);
+    for (let i = 0; i < availableSrc.length; i++) {
+        abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination').appendChild(_('div', {
+            changeto: JSON.stringify(availableSrc[i]), name: availableSrc[i][0], className: availableSrc[i][0] == currentSrc ? 'on' : ''
+        }, [_('text', availableSrc[i][1])]));
     }
     if (audioLangs.length > 1)
         abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
@@ -295,17 +290,15 @@ function fetchSrc(extraQuery) {
             if (firstTime) {
                 let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
                 if (audioLangs.length > 1) {
-                    let langChange = document.createElement('div');
-                    contextMenu.insertBefore(langChange, contextMenu.firstChild);
-                    langChange.className = 'dm static';
-                    langChange.appendChild(document.createElement('div')).innerHTML = '音频语言';
-                    langChange = langChange.appendChild(document.createElement('div'));
-                    langChange.className = 'dmMenu';
+                    let childs = [];
                     for (let lang in audioLangs) {
-                        let div = langChange.appendChild(document.createElement('div'));
-                        div.innerHTML = knownLangs[lang] || lang;
-                        div.setAttribute('data-lang', lang);
+                        childs.push(_('div', { 'data-lang': lang }, [_('text', knownLangs[lang] || lang)]));
                     }
+                    let langChange = _('div', { className: 'dm static' }, [
+                        _('div', {}, [_('text', '音频语言')]),
+                        _('div', { className: 'dmMenu' }, childs)
+                    ]);
+                    contextMenu.insertBefore(langChange, contextMenu.firstChild);
                     langChange.addEventListener('click', function (e) {
                         let lang = e.target.getAttribute('data-lang');
                         if (lang == currentLang)
@@ -317,10 +310,8 @@ function fetchSrc(extraQuery) {
                 }
 
                 if (domain != 'v.youku.com') {
-                    let toMain = document.createElement('div');
+                    let toMain = _('div', { id: 'main_link' }, [_('text', '前往主站播放')]);
                     contextMenu.insertBefore(toMain, contextMenu.firstChild);
-                    toMain.id = 'main_link';
-                    toMain.innerHTML = '前往主站播放';
                     toMain.addEventListener('click', function () {
                         abpinst.video.pause();
                         window.open('http://v.youku.com/v_show/id_' + vid + '.html');
@@ -450,16 +441,23 @@ let createPlayer = function (e) {
     self.flvplayer.attachMediaElement(document.querySelector('video'));
     self.flvplayer.load();
 }
-let retry = 0;
 let load_fail = function (type, info, detail) {
     if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid') {
         console.error('意外无效地址，重新获取地址');
         fetchSrc(tempPwd);
         return;
     }
-    var div = document.createElement('div');
+    var div = _('div', {
+        style: {
+            width: '100%',
+            height: '100%',
+            textAlign: 'center',
+            background: 'rgba(0,0,0,0.8)',
+            position: 'absolute',
+            color: '#FFF'
+        }
+    });
     div.innerHTML = '<div style="position:relative;top:50%"><div style="position:relative;font-size:16px;line-height:16px;top:-8px">加载视频失败，无法播放该视频</div></div>';
-    div.setAttribute('style', 'width:100%;height:100%;text-align:center;background:rgba(0,0,0,0.8);position:absolute;color:#FFF');
     document.querySelector('.ABP-Video').insertBefore(div, document.querySelector('.ABP-Video>:first-child'));
     document.getElementById('info-box').remove();
     createPopup({
@@ -515,7 +513,7 @@ let flvparam = function (select) {
 };
 function init() {
     let noticeWidth = Math.min(500, innerWidth - 40);
-    document.head.appendChild(document.createElement('style')).innerHTML = `#YHP_Notice{
+    document.head.appendChild(_('style')).innerHTML = `#YHP_Notice{
 position:fixed;left:0;right:0;top:0;height:0;z-index:10000;transition:.5s;cursor:default
 }
 #YHP_Notice>div{
@@ -552,7 +550,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     container.style.overflow = 'hidden'
     let flashplayer = container.firstChild;
     flashplayer.remove();
-    let video = container.appendChild(document.createElement('video'));
+    let video = container.appendChild(_('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
     let config = JSON.parse(localStorage.YHP_PlayerSettings || '{}');
     abpinst = ABP.create(video.parentNode, {
@@ -591,9 +589,13 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     setInterval(playerHeight, 1e3);
     playerHeight();
     if (domain == 'v.youku.com') {
-        let restore = document.querySelector('#module-interact').appendChild(document.createElement('div'));
-        restore.className = 'fn-phone-see';
-        restore.innerHTML = '<div class="fn"><a class="label" href="javascript:void(0);">还原flash播放器</a></div>'
+        let restore = document.querySelector('#module-interact').appendChild(_('div', { className: 'fn-phone-see' }, [
+            _('div', { className: 'fn' }, [
+                _('a', { className: 'label', href: 'javascript:void(0);' }, [
+                    _('text', '还原flash播放器')
+                ])
+            ])
+        ]));
         restore.firstChild.addEventListener('click', function () {
             if (disabled)
                 return;
@@ -616,17 +618,98 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
     flvjs.LoggingControl.enableDebug = false;
-    if (document.querySelector(objID) != null)
-        init();
-    else {
-        //player node not loaded, add an observer
-        let observer = new MutationObserver(function () {
-            if (document.querySelector(objID) != null) {
-                observer.disconnect();
-                init();
+    if (domain == 'v.youku.com') {
+        if (document.querySelector(objID) != null)
+            init();
+        else {
+            //player node not loaded, add an observer
+            let observer = new MutationObserver(function () {
+                if (document.querySelector(objID) != null) {
+                    observer.disconnect();
+                    init();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    } else if (domain == 'player.youku.com') {
+        let container = document.querySelector(objID);
+        if (container == null) return;
+        container = container.parentNode;
+        container.firstChild.style.display = 'none';
+        let div = container.appendChild(_('div', {
+            style: {
+                height: '100%',
+                width: '100%',
+                cursor: 'pointer',
             }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
+        }));
+        fetch('https://play.youku.com/play/get.json?ct=10&vid=' + vid, {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-cache'
+        }).then(function (r) {
+            r.json().then(function (json) {
+                if (!json.data.video) {
+                    createPopup({ content: '<p style="font-size:16px">获取视频信息出错，详细错误：</p>' + JSON.stringify(json.data.error), showConfirm: false });
+                    return;
+                }
+                let img = div.appendChild(_('div', {
+                    style: {
+                        backgroundImage: 'url(' + json.data.video.img_hd.replace('http:', '') + ')',
+                        backgroundPosition: 'center center',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: '100% auto',
+                        filter: 'blur(5px)',
+                        width: '100%',
+                        height: '100%',
+                        position: 'absolute'
+                    }
+                }))
+                let info = div.appendChild(_('a', {
+                    target: '_blank', href: 'http://v.youku.com/v_show/id_' + vid + '.html', style: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        lineHeight: '30px',
+                        height: '60px',
+                        width: '100%',
+                        position: 'relative',
+                        top: 'calc(50% - 40px)',
+                        color: '#EEE',
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap',
+                        background: 'linear-gradient(to bottom,transparent,rgba(0,0,0,.7) 10px,rgba(0,0,0,.7) 70px,transparent)',
+                        padding: '10px 0',
+                        textDecoration: 'none'
+                    }
+                }));
+                info.addEventListener('click', function (e) { e.stopPropagation() });
+
+                let title = info.appendChild(_('div', {
+                    style: {
+                        flex: 1,
+                        height: '30px',
+                        textOverflow: 'ellipsis',
+                        fontSize: '20px',
+                        overflow: 'hidden'
+                    }
+                }, [_('text', json.data.video.title)]));
+
+                let uploader = info.appendChild(_('div', {
+                    style: {
+                        flex: 1,
+                        height: '30px',
+                        textOverflow: 'ellipsis',
+                        color: '#AAA',
+                        overflow: 'hidden'
+                    }
+                }, [_('text', '上传者：' + json.data.video.username)]));
+
+                div.addEventListener('click', function () {
+                    div.remove();
+                    init();
+                })
+            })
+        })
     }
 })();
 window.crc_engine = () => { return ''; };
