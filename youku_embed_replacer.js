@@ -18,6 +18,9 @@ function object_checker(i) {
 }
 function replacer(i, ykvid) {
     i.YHP_replacing = true;
+    if (/^[\d]+$/.test(ykvid[1])) {
+        ykvid[1] = 'X' + btoa(ykvid[1] * 4)
+    }
     let ifr = _('iframe', {
         height: i.height || i.offsetHeight || 480,
         width: i.width || i.offsetWidth || 848,
