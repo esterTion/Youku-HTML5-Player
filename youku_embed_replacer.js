@@ -4,6 +4,14 @@ function embed_checker(i) {
     let ykvid = (i.src + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\//);
     if (ykvid != null) {
         replacer(i, ykvid);
+        return;
+    }
+    if (/static\.youku\.com.+loader\.swf/.test(i.src + '')) {
+        ykvid = (i.getAttribute('flashvars') + '').match(/VideoIDS\=([a-zA-Z0-9\=]+)/);
+        if (ykvid != null) {
+            replacer(i, ykvid);
+            return;
+        }
     }
 }
 function object_checker(i) {
