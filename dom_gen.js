@@ -27,3 +27,5 @@ var _ = function (type, props, children, callback) {
     }
     return elem;
 };
+
+let isChrome=/chrome/i.test(navigator.userAgent);

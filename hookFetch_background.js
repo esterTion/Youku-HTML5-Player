@@ -1,7 +1,7 @@
 /*
   fetch hooking code from https://github.com/spacemeowx2/DouyuHTML5Player/blob/b5a54240f1b31d53a8530af83444b10027fe6dca/src/background.js#L8
 */
-function convertHeader (headers) {
+function convertHeader(headers) {
   let out = {}
   for (let key of headers.keys()) {
     out[key] = headers.get(key)
@@ -25,8 +25,8 @@ chrome.runtime.onConnect.addListener(port => {
     port.onMessage.addListener(msg => {
       let chain = Promise.resolve()
       if (msg.method === 'fetch') {
-      	if(msg.args[1].headers != undefined)
-        msg.args[1].headers = Object2Headers(msg.args[1].headers);
+        if (msg.args[1].headers != undefined)
+          msg.args[1].headers = Object2Headers(msg.args[1].headers);
         chain = chain.then(() => fetch.apply(null, msg.args)).then(r => {
           response = r
           return {
@@ -47,8 +47,8 @@ chrome.runtime.onConnect.addListener(port => {
         })
       } else if (msg.method === 'reader.read') {
         chain = chain.then(() => reader.read()).then(r => {
-          if(r.value!=undefined)
-          	r.value = Array.from(r.value)
+          if (r.value != undefined)
+            r.value = Array.from(r.value)
           return r
         })
       } else if (msg.method === 'reader.cancel') {
@@ -66,4 +66,42 @@ chrome.runtime.onConnect.addListener(port => {
       })
     })
   }
+})
+
+let playerCount = {};
+chrome.runtime.onMessage.addListener((message, sender) => {
+  let id = sender.tab.id;
+  if (message.icon) {
+    chrome.browserAction.enable(id);
+    switch (message.state) {
+      case 'playing':
+        playerCount[id].playing++;
+        break;
+      case 'pending':
+        playerCount[id].pending++;
+        break;
+      case 'pending-dec':
+        playerCount[id].pending--;
+        break;
+    }
+    let titleStr = [];
+    if (playerCount[id].pending != 0)
+      titleStr.push(playerCount[id].pending + '个视频等待播放');
+    if (playerCount[id].playing != 0)
+      titleStr.push(playerCount[id].playing + '个视频正在播放');
+    chrome.browserAction.setTitle({ title: titleStr.join('\n'), tabId: id });
+  }
+})
+chrome.tabs.onUpdated.addListener((id, changeInfo) => {
+  if (changeInfo.status != 'loading')
+    return;
+  playerCount[id] = {
+    playing: 0,
+    pending: 0
+  }
+  chrome.browserAction.disable();
+  chrome.browserAction.setTitle({ title: '没有可替换的播放器', tabId: id });
+});
+chrome.tabs.onRemoved.addListener((id, removeInfo) => {
+  delete playerCount[id];
 })

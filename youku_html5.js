@@ -512,6 +512,7 @@ let flvparam = function (select) {
     }
 };
 function init() {
+    isChrome && chrome.runtime.sendMessage({ icon: true, state: 'playing' });
     let noticeWidth = Math.min(500, innerWidth - 40);
     document.head.appendChild(_('style')).innerHTML = `#YHP_Notice{
 position:fixed;left:0;right:0;top:0;height:0;z-index:10000;transition:.5s;cursor:default
@@ -705,9 +706,11 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 }, [_('text', '上传者：' + json.data.video.username)]));
 
                 div.addEventListener('click', function () {
+                    isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });
                     div.remove();
                     init();
-                })
+                });
+                isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending' });
             })
         })
     }

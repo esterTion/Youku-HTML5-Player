@@ -1,7 +1,7 @@
 /*
   Code Source: https://github.com/spacemeowx2/DouyuHTML5Player/blob/b5a54240f1b31d53a8530af83444b10027fe6dca/src/hookfetch.js
 */
-if( /chrome/i.test(navigator.userAgent) && location.protocol=='https:' ){
+if( isChrome && location.protocol=='https:' ){
   console.log('chrome+https环境，替换fetch');
 
 (function () {
