@@ -17,112 +17,112 @@ var ABP = {
 	"version": "0.8.0"
 };
 ABP.Strings={
-	statsPlayer:'播放器尺寸：',
-	statsVideo:'视频分辨率：',
-	statsBuffer:'可用缓冲：',
-	statsBufferClip:'缓冲片段：',
-	statsMozParse:'已解析帧：',
-	statsMozDecode:'已解码帧：',
-	statsMozPaint:'已绘制帧：',
-	statsWebkitDecode:'已解码帧：',
-	statsPresent:'已显示帧：',
-	statsDrop:'已丢弃帧：',
-	statsMimetype:'文件格式：',
-	statsVideoBitrate:'本段视频码率：',
-	statsAudioBitrate:'本段音频码率：',
-	statsCurrentBitrate:'本段码率：',
-	statsRealtimeBitrate:'实时码率：',
-	overallBitrate:'总体码率：',
-	statsDownloadSpeed:'下载速度：',
+	statsPlayer:_t('statsPlayer'),
+	statsVideo:_t('statsVideo'),
+	statsBuffer:_t('statsBuffer'),
+	statsBufferClip:_t('statsBufferClip'),
+	statsMozParse:_t('statsMozParse'),
+	statsMozDecode:_t('statsMozDecode'),
+	statsMozPaint:_t('statsMozPaint'),
+	statsWebkitDecode:_t('statsWebkitDecode'),
+	statsPresent:_t('statsPresent'),
+	statsDrop:_t('statsDrop'),
+	statsMimetype:_t('statsMimetype'),
+	statsVideoBitrate:_t('statsVideoBitrate'),
+	statsAudioBitrate:_t('statsAudioBitrate'),
+	statsCurrentBitrate:_t('statsCurrentBitrate'),
+	statsRealtimeBitrate:_t('statsRealtimeBitrate'),
+	overallBitrate:_t('overallBitrate'),
+	statsDownloadSpeed:_t('statsDownloadSpeed'),
 	
-	sendSmall:"小字号",
-	sendMid:"中字号",
-	sendSize:'弹幕字号',
-	sendMode:"弹幕模式",
-	sendTop:"顶端渐隐",
-	sendScroll:"滚动字幕",
-	sendBottom:"底端渐隐",
-	send:"发送",
-	sendStyle:"弹幕样式",
-	sendColor:"弹幕颜色",
+	sendSmall:_t('sendSmall'),
+	sendMid:_t('sendMid'),
+	sendSize:_t('sendSize'),
+	sendMode:_t('sendMode'),
+	sendTop:_t('sendTop'),
+	sendScroll:_t('sendScroll'),
+	sendBottom:_t('sendBottom'),
+	send:_t('send'),
+	sendStyle:_t('sendStyle'),
+	sendColor:_t('sendColor'),
 
 	
-	commentSpeed:"弹幕速度",
-	commentScale:"弹幕比例",
-	commentOpacity:"弹幕不透明度",
-	commentBlock:"弹幕屏蔽设定",
+	commentSpeed:_t('commentSpeed'),
+	commentScale:_t('commentScale'),
+	commentOpacity:_t('commentOpacity'),
+	commentBlock:_t('commentBlock'),
 	
-	playSpeed:"播放速度",
-	playSpeedReset:"还原正常速度",
+	playSpeed:_t('playSpeed'),
+	playSpeedReset:_t('playSpeedReset'),
 	
-	displayScaleD:"默认",
-	displayScaleF:"全屏",
+	displayScaleD:_t('displayScaleD'),
+	displayScaleF:_t('displayScaleF'),
 	
-	shieldTypeText:'文字',
-	shieldTypeUser:'用户',
-	shieldTypeColor:'颜色',
-	shieldTypeSetting:'设置',
-	shieldAdd:'添加屏蔽……',
-	shieldUseRegex:'启用正则',
-	shieldBlockTop:'屏蔽顶端弹幕',
-	shieldBlockBottom:'屏蔽底端弹幕',
-	shieldBlockVisitor:'屏蔽游客弹幕',
-	shieldRepeat:'去除刷屏弹幕',
+	shieldTypeText:_t('shieldTypeText'),
+	shieldTypeUser:_t('shieldTypeUser'),
+	shieldTypeColor:_t('shieldTypeColor'),
+	shieldTypeSetting:_t('shieldTypeSetting'),
+	shieldAdd:_t('shieldAdd'),
+	shieldUseRegex:_t('shieldUseRegex'),
+	shieldBlockTop:_t('shieldBlockTop'),
+	shieldBlockBottom:_t('shieldBlockBottom'),
+	shieldBlockVisitor:_t('shieldBlockVisitor'),
+	shieldRepeat:_t('shieldRepeat'),
 	
-	viewers:' 观众',
-	comments:' 弹幕',
-	commentTime:"时间",
-	commentContent:"评论",
-	commentDate:"发送日期",
+	viewers:_t('viewers'),
+	comments:_t('comments'),
+	commentTime:_t('commentTime'),
+	commentContent:_t('commentContent'),
+	commentDate:_t('commentDate'),
 	
-	showStats:'显示统计信息',
+	showStats:_t('showStats'),
 	
-	loadingMeta:'正在加载视频信息',
-	switching:'正在切换',
-	fetchURL:'正在获取视频地址',
-	buffering:'正在缓冲',
-	play:'播放',
-	pause:'暂停',
-	mute:'静音',
-	unmute:'取消静音',
-	muteNotSupported:'不支持静音',
-	fullScreen:"全屏",
-	exitFullScreen:"退出全屏",
-	webFull:"网页全屏",
-	exitWebFull:"退出网页全屏",
-	wideScreen:"宽屏模式",
-	exitWideScreen:"退出宽屏",
-	sendTooltip:"毁灭地喷射白光!da!",
-	showComment:"显示弹幕",
-	hideComment:"隐藏弹幕",
-	loopOn:"洗脑循环 on",
-	loopOff:"洗脑循环 off",
-	usingCanvas:'正在使用Canvas',
-	usingCSS:'正在使用CSS',
-	useCSS:'使用CSS绘制弹幕',
-	autoOpacityOn:'关闭自动不透明度',
-	autoOpacityOff:'开启自动不透明度',
+	loadingMeta:_t('loadingMeta'),
+	switching:_t('switching'),
+	fetchURL:_t('fetchURL'),
+	buffering:_t('buffering'),
+	play:_t('play'),
+	pause:_t('pause'),
+	mute:_t('mute'),
+	unmute:_t('unmute'),
+	muteNotSupported:_t('muteNotSupported'),
+	fullScreen:_t('fullScreen'),
+	exitFullScreen:_t('exitFullScreen'),
+	webFull:_t('webFull'),
+	exitWebFull:_t('exitWebFull'),
+	wideScreen:_t('wideScreen'),
+	exitWideScreen:_t('exitWideScreen'),
+	sendTooltip:_t('sendTooltip'),
+	showComment:_t('showComment'),
+	hideComment:_t('hideComment'),
+	loopOn:_t('loopOn'),
+	loopOff:_t('loopOff'),
+	usingCanvas:_t('usingCanvas'),
+	usingCSS:_t('usingCSS'),
+	useCSS:_t('useCSS'),
+	autoOpacityOn:_t('autoOpacityOn'),
+	autoOpacityOff:_t('autoOpacityOff'),
 	
-	copyComment:'复制弹幕',
-	findComment:'定位弹幕',
-	blockContent:'屏蔽内容',
-	blockUser:'屏蔽发送者',
-	blockColor:'屏蔽颜色',
-	blockColorWhite:'不能屏蔽白色',
-	copyFail:'复制失败，浏览器不支持',
+	copyComment:_t('copyComment'),
+	findComment:_t('findComment'),
+	blockContent:_t('blockContent'),
+	blockUser:_t('blockUser'),
+	blockColor:_t('blockColor'),
+	blockColorWhite:_t('blockColorWhite'),
+	copyFail:_t('copyFail'),
 	
-	blockUserEmpty:'没有屏蔽用户',
-	blockColorEmpty:'没有屏蔽颜色',
-	repeatPcs:'条',
-	repeatUnlimited:'不限制',
+	blockUserEmpty:_t('blockUserEmpty'),
+	blockColorEmpty:_t('blockColorEmpty'),
+	repeatPcs:_t('repeatPcs'),
+	repeatUnlimited:_t('repeatUnlimited'),
 	
-	dragControlLowInc:'低速快进',
-	dragControlLowDec:'低速快退',
-	dragControlMedInc:'中速快进',
-	dragControlMedDec:'中速快退',
-	dragControlHighInc:'高速快进',
-	dragControlHighDec:'高速快退',
-	dragControlCancel:'取消跳转'
+	dragControlLowInc:_t('dragControlLowInc'),
+	dragControlLowDec:_t('dragControlLowDec'),
+	dragControlMedInc:_t('dragControlMedInc'),
+	dragControlMedDec:_t('dragControlMedDec'),
+	dragControlHighInc:_t('dragControlHighInc'),
+	dragControlHighDec:_t('dragControlHighDec'),
+	dragControlCancel:_t('dragControlCancel')
 };
 
 (function() {
@@ -480,7 +480,6 @@ ABP.Strings={
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('br'),
 
-				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozParse)]), _('span',{id:'mozParsedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozDecode)]), _('span',{id:'mozDecodedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozPaint)]), _('span',{id:'mozPaintedFrames'})]),
@@ -634,7 +633,7 @@ ABP.Strings={
 			}), _("div", {
 				"className": "ABP-CommentOption"
 			}, [_('p', {
-				className:'label'
+				className:'label',style:{display:'none'}
 			}, [_('text',ABP.Strings.useCSS), _("div", {
 				"className": "prop-checkbox"
 			})]), _("p", {
@@ -679,7 +678,7 @@ ABP.Strings={
 			]),_("div", {
 				"className": "prop-checkbox",
 				style:{
-					top:'121px'
+					top:'101px'
 				}
 			}), _("div", {
 				"className": "shield-enrty"
@@ -1123,7 +1122,6 @@ ABP.Strings={
 					this.stage.style.webkitPerspective = this.width * Math.tan(40 * Math.PI / 180) / 2 + "px";
 					//this.stage.style.zoom = scale;
 					playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Scale div.on').click();
-					this.canvasResize();
 				}
 				ABPInst.cmManager.setBounds();
 				ABPInst.cmManager.clear();
@@ -1268,8 +1266,6 @@ ABP.Strings={
 		ABPInst.btnAutoOpacity.tooltip(ABP.Strings.autoOpacityOff)
 		hoverTooltip(ABPInst.btnAutoOpacity);
 		ABPInst.btnProp = pcheck[0];
-		ABPInst.btnProp.tooltip(ABP.Strings.usingCanvas);
-		hoverTooltip(ABPInst.btnProp);
 		/** Bind the FullScreen button **/
 		var fbtn = playerUnit.getElementsByClassName("ABP-FullScreen");
 		if (fbtn.length <= 0) return;
@@ -1346,7 +1342,6 @@ ABP.Strings={
 		lastChild='>:last-child',
 		playerDimension=document_querySelector('#player-dimension'+lastChild),
 		videoDimension=document_querySelector('#video-dimension'+lastChild),
-		canvasFPS=document_querySelector('#canvas-fps'+lastChild),
 		bufferColumn=document_querySelector('#buffer-health-column'),
 		realtimeBitrateColumn=document_querySelector('#realtime-bitrate-column'),
 		downloadSpeedColumn=document_querySelector('#download-speed-column'),
@@ -1524,9 +1519,6 @@ ABP.Strings={
 				document_querySelector('#overall-bitrate').parentNode.style.display=''
 				document_querySelector('#overall-bitrate').innerHTML=to2digitFloat(overallBitrate)+' kbps';
 			}
-			
-			if(odd)
-				canvasFPS.innerHTML = ABPInst.cmManager.canvasFPS;
 			
 			if(enabledStats.gecko){
 				['mozParsedFrames','mozDecodedFrames','mozPaintedFrames'].forEach(function(name){
@@ -1775,13 +1767,7 @@ ABP.Strings={
 			});
 			if (ABP.playerConfig.autoOpacity) ABPInst.btnAutoOpacity.click();
 			ABPInst.btnProp[addEventListener]("click", function(e) {
-				this.classList.toggle("on");
-				var useCSS=this.classList.contains("on");
-				ABPInst.cmManager.useCSS(useCSS);
-				this.tooltip(useCSS ? ABP.Strings.usingCSS : ABP.Strings.usingCanvas);
-				saveConfigurations();
 			});
-			if (ABP.playerConfig.useCSS) ABPInst.btnProp.click();
 			var fullscreenChangeHandler = function() {
 				if (!document.isFullScreen() && hasClass(playerUnit, "ABP-FullScreen")) {
 					removeClass(playerUnit, "ABP-FullScreen");

@@ -42,7 +42,7 @@ function createPopup(param) {
     if (param.showConfirm) {
         str += '<input value="' + param.confirmBtn + '" type="button" class="confirm">';
     }
-    str += '<input value="' + ('关闭') + '" type="button" class="close">'
+    str += '<input value="' + _t('close') + '" type="button" class="close">'
     str += '</div></div></div>';
     div.innerHTML = str;
     document.body.appendChild(div);
@@ -65,10 +65,10 @@ if (domain == 'v.youku.com') {
 }
 
 let knownTypes = {
-    'flvhd': '标清',
-    'mp4hd': '高清',
-    'mp4hd2': '超清',
-    'mp4hd3': '原画'
+    'flvhd': _t('flvhd'),
+    'mp4hd': _t('mp4hd'),
+    'mp4hd2': _t('mp4hd2'),
+    'mp4hd3': _t('mp4hd3')
 };
 let legacyTypes = {
     'flvhd': 'flv',
@@ -213,7 +213,7 @@ let passwordCB = function () {
     let password = document.querySelector('#YHP_Notice input[type=text]');
     if (password.value.length == 0) {
         let container = document.querySelector('#YHP_Notice .confirm').parentNode;
-        container.insertBefore(document.createElement('span'), container.firstChild).outerHTML = '<span style="color:#F00">空密码</span>';
+        container.insertBefore(document.createElement('span'), container.firstChild).outerHTML = '<span style="color:#F00">' + _t('emptyPW') + '</span>';
         setTimeout(function () {
             let toremove = container.firstChild;
             if (toremove.nodeName.toLowerCase() == 'span')
@@ -247,7 +247,7 @@ function switchLang(lang) {
         }, [_('text', availableSrc[i][1])]));
     }
     if (audioLangs.length > 1)
-        abpinst.createPopup('当前音频语言：' + (knownLangs[lang] || lang), 3e3);
+        abpinst.createPopup(_t('currentLang') + (knownLangs[lang] || lang), 3e3);
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
@@ -267,20 +267,20 @@ function fetchSrc(extraQuery) {
                 let error = json.data.error;
                 if (error.code == -202) {
                     createPopup({
-                        content: '<p style="font-size:16px">视频需要密码访问，请输入密码：</p><input placeholder="输入视频密码" type="text"><br><label><input type="checkbox">记住密码</label>',
+                        content: '<p style="font-size:16px">' + _t('needPW') + '</p><input placeholder="' + _t('enterPW') + '" type="text"><br><label><input type="checkbox">' + _t('rememberPW') + '</label>',
                         showConfirm: true,
-                        confirmBtn: '提交'
+                        confirmBtn: _t('submit')
                     });
                     document.querySelector('#YHP_Notice .confirm').addEventListener('click', passwordCB);
                 } else if (error.code == -203) {
                     createPopup({
-                        content: '<p style="font-size:16px">视频访问密码错误，请重新输入密码：</p><input placeholder="输入视频密码" type="text"><br><label><input type="checkbox">记住密码</label>',
+                        content: '<p style="font-size:16px">' + _t('wrongPW') + '</p><input placeholder="' + _t('enterPW') + '" type="text"><br><label><input type="checkbox">' + _t('rememberPW') + '</label>',
                         showConfirm: true,
-                        confirmBtn: '提交'
+                        confirmBtn: _t('submit')
                     });
                     document.querySelector('#YHP_Notice .confirm').addEventListener('click', passwordCB);
                 } else {
-                    createPopup({ content: '<p style="font-size:16px">获取视频地址出错，详细错误：</p>' + JSON.stringify(json.data.error), showConfirm: false });
+                    createPopup({ content: '<p style="font-size:16px">' + _t('fetchSourceErr') + '</p>' + JSON.stringify(json.data.error), showConfirm: false });
                 }
                 return;
             } else {
@@ -295,7 +295,7 @@ function fetchSrc(extraQuery) {
                         childs.push(_('div', { 'data-lang': lang }, [_('text', knownLangs[lang] || lang)]));
                     }
                     let langChange = _('div', { className: 'dm static' }, [
-                        _('div', {}, [_('text', '音频语言')]),
+                        _('div', {}, [_('text', _t('audioLang'))]),
                         _('div', { className: 'dmMenu' }, childs)
                     ]);
                     contextMenu.insertBefore(langChange, contextMenu.firstChild);
@@ -310,7 +310,7 @@ function fetchSrc(extraQuery) {
                 }
 
                 if (domain != 'v.youku.com') {
-                    let toMain = _('div', { id: 'main_link' }, [_('text', '前往主站播放')]);
+                    let toMain = _('div', { id: 'main_link' }, [_('text', _t('toYouku'))]);
                     contextMenu.insertBefore(toMain, contextMenu.firstChild);
                     toMain.addEventListener('click', function () {
                         abpinst.video.pause();
@@ -337,7 +337,7 @@ function fetchSrc(extraQuery) {
         })
     }).catch(function (e) {
         createPopup({
-            content: '<p style="font-size:16px">获取视频地址出错，详细错误：</p>' + e.message,
+            content: '<p style="font-size:16px">' + _t('fetchSourceErr') + '</p>' + e.message,
             showConfirm: false
         });
     })
@@ -380,7 +380,8 @@ function fetchComment(m) {
     }).then(r => {
         r.json().then(ykCmtParser)
     }).catch(() => {
-        abpinst.createPopup('弹幕获取失败', 1e3);
+        if (abpinst.cmManager.display)
+            abpinst.createPopup(_t('fetchCommentErr'), 1e3);
     })
 }
 let prevMinute = 0;
@@ -457,11 +458,11 @@ let load_fail = function (type, info, detail) {
             color: '#FFF'
         }
     });
-    div.innerHTML = '<div style="position:relative;top:50%"><div style="position:relative;font-size:16px;line-height:16px;top:-8px">加载视频失败，无法播放该视频</div></div>';
+    div.innerHTML = '<div style="position:relative;top:50%"><div style="position:relative;font-size:16px;line-height:16px;top:-8px">' + _t('loadErr') + '</div></div>';
     document.querySelector('.ABP-Video').insertBefore(div, document.querySelector('.ABP-Video>:first-child'));
     document.getElementById('info-box').remove();
     createPopup({
-        content: '<p style="font-size:16px">播放错误</p><div style="white-space:pre-wrap">' + JSON.stringify({ type, info, detail }, null, '  ') + '</div>',
+        content: '<p style="font-size:16px">' + _t('playErr') + '</p><div style="white-space:pre-wrap">' + JSON.stringify({ type, info, detail }, null, '  ') + '</div>',
         showConfirm: false
     });
 }
@@ -481,7 +482,7 @@ let flvparam = function (select) {
                 let arr = [];
                 if (urls == null) {
                     abpinst.video.play();
-                    abpinst.createPopup('切换失败，该语言/清晰度暂时不能播放', 3e3);
+                    abpinst.createPopup(_t('switchErr'), 3e3);
                     return;
                 }
                 urls.forEach(function (i) {
@@ -501,7 +502,7 @@ let flvparam = function (select) {
     }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
     if (srcUrl[select].partial) {
-        setTimeout(function () { abpinst.createPopup('本视频仅可播放部分片段，请确认付费状态', 3e3) }, 4e3);
+        setTimeout(function () { abpinst.createPopup(_t('partialAvailable'), 3e3) }, 4e3);
     }
     if (srcUrl[select].segments) {
         var totalSize = 0;
@@ -593,7 +594,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         let restore = document.querySelector('#module-interact').appendChild(_('div', { className: 'fn-phone-see' }, [
             _('div', { className: 'fn' }, [
                 _('a', { className: 'label', href: 'javascript:void(0);' }, [
-                    _('text', '还原flash播放器')
+                    _('text', _t('restoreFlash'))
                 ])
             ])
         ]));
@@ -651,7 +652,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         }).then(function (r) {
             r.json().then(function (json) {
                 if (!json.data.video) {
-                    createPopup({ content: '<p style="font-size:16px">获取视频信息出错，详细错误：</p>' + JSON.stringify(json.data.error), showConfirm: false });
+                    createPopup({ content: '<p style="font-size:16px">' + _t('fetchInfoErr') + '</p>' + JSON.stringify(json.data.error), showConfirm: false });
                     return;
                 }
                 let img = div.appendChild(_('div', {
@@ -703,7 +704,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                         color: '#AAA',
                         overflow: 'hidden'
                     }
-                }, [_('text', '上传者：' + json.data.video.username)]));
+                }, [_('text', _t('uploader') + json.data.video.username)]));
 
                 div.addEventListener('click', function () {
                     isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });

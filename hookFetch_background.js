@@ -69,6 +69,7 @@ chrome.runtime.onConnect.addListener(port => {
 })
 
 let playerCount = {};
+let _t=function(s){return chrome.i18n.getMessage(s)}
 chrome.runtime.onMessage.addListener((message, sender) => {
   let id = sender.tab.id;
   if (message.icon) {
@@ -86,9 +87,9 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     }
     let titleStr = [];
     if (playerCount[id].pending != 0)
-      titleStr.push(playerCount[id].pending + '个视频等待播放');
+      titleStr.push(playerCount[id].pending + _t('iconPending'));
     if (playerCount[id].playing != 0)
-      titleStr.push(playerCount[id].playing + '个视频正在播放');
+      titleStr.push(playerCount[id].playing + _t('iconPlaying'));
     chrome.browserAction.setTitle({ title: titleStr.join('\n'), tabId: id });
   }
 })
@@ -100,7 +101,7 @@ chrome.tabs.onUpdated.addListener((id, changeInfo) => {
     pending: 0
   }
   chrome.browserAction.disable();
-  chrome.browserAction.setTitle({ title: '没有可替换的播放器', tabId: id });
+  chrome.browserAction.setTitle({ title: _t('iconIdle'), tabId: id });
 });
 chrome.tabs.onRemoved.addListener((id, removeInfo) => {
   delete playerCount[id];

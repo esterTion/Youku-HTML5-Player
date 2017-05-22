@@ -29,3 +29,4 @@ var _ = function (type, props, children, callback) {
 };
 
 let isChrome=/chrome/i.test(navigator.userAgent);
+let _t=function(s){return chrome.i18n.getMessage(s)}

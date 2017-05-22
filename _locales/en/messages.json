@@ -1,0 +1,368 @@
+{
+    "statsPlayer": {
+        "message": "Player dimension："
+    },
+    "statsVideo": {
+        "message": "Video resolution："
+    },
+    "statsBuffer": {
+        "message": "Available buffer："
+    },
+    "statsBufferClip": {
+        "message": "Buffer clips："
+    },
+    "statsMozParse": {
+        "message": "Parsed frames："
+    },
+    "statsMozDecode": {
+        "message": "Decoded frames："
+    },
+    "statsMozPaint": {
+        "message": "Painted frames："
+    },
+    "statsWebkitDecode": {
+        "message": "Decoded frames："
+    },
+    "statsPresent": {
+        "message": "Presented frames："
+    },
+    "statsDrop": {
+        "message": "Dropped frames："
+    },
+    "statsMimetype": {
+        "message": "MIME type："
+    },
+    "statsVideoBitrate": {
+        "message": "Video bitrate："
+    },
+    "statsAudioBitrate": {
+        "message": "Audio bitrate："
+    },
+    "statsCurrentBitrate": {
+        "message": "Current bitrate："
+    },
+    "statsRealtimeBitrate": {
+        "message": "Realtime bitrate："
+    },
+    "overallBitrate": {
+        "message": "Overall bitrate："
+    },
+    "statsDownloadSpeed": {
+        "message": "Download speed："
+    },
+    "sendSmall": {
+        "message": "Small"
+    },
+    "sendMid": {
+        "message": "Middle"
+    },
+    "sendSize": {
+        "message": "Comment size"
+    },
+    "sendMode": {
+        "message": "Comment mode"
+    },
+    "sendTop": {
+        "message": "Top"
+    },
+    "sendScroll": {
+        "message": "Scroll"
+    },
+    "sendBottom": {
+        "message": "Bottom"
+    },
+    "send": {
+        "message": "Send"
+    },
+    "sendStyle": {
+        "message": "Comment style"
+    },
+    "sendColor": {
+        "message": "Comment color"
+    },
+    "commentSpeed": {
+        "message": "Comment speed"
+    },
+    "commentScale": {
+        "message": "Comment scale"
+    },
+    "commentOpacity": {
+        "message": "Comment opacity"
+    },
+    "commentBlock": {
+        "message": "Filtering list"
+    },
+    "playSpeed": {
+        "message": "Playback speed"
+    },
+    "playSpeedReset": {
+        "message": "Reset"
+    },
+    "displayScaleD": {
+        "message": "Default"
+    },
+    "displayScaleF": {
+        "message": "Fill"
+    },
+    "shieldTypeText": {
+        "message": "Text"
+    },
+    "shieldTypeUser": {
+        "message": "User"
+    },
+    "shieldTypeColor": {
+        "message": "Color"
+    },
+    "shieldTypeSetting": {
+        "message": "Settings"
+    },
+    "shieldAdd": {
+        "message": "Add new……"
+    },
+    "shieldUseRegex": {
+        "message": "Use regular expression"
+    },
+    "shieldBlockTop": {
+        "message": "Filter top comment"
+    },
+    "shieldBlockBottom": {
+        "message": "Filter bottom comment"
+    },
+    "shieldBlockVisitor": {
+        "message": "Filter non-members\" comment"
+    },
+    "shieldRepeat": {
+        "message": "Filter repeated comment"
+    },
+    "viewers": {
+        "message": " Viewers"
+    },
+    "comments": {
+        "message": " Comments"
+    },
+    "commentTime": {
+        "message": "Time"
+    },
+    "commentContent": {
+        "message": "Content"
+    },
+    "commentDate": {
+        "message": "Send date"
+    },
+    "showStats": {
+        "message": "Show playback statstics"
+    },
+    "loadingMeta": {
+        "message": "Loading video metadata"
+    },
+    "switching": {
+        "message": "Switching"
+    },
+    "fetchURL": {
+        "message": "Fetching video source"
+    },
+    "buffering": {
+        "message": "Loading"
+    },
+    "play": {
+        "message": "Play"
+    },
+    "pause": {
+        "message": "Pause"
+    },
+    "mute": {
+        "message": "Mute"
+    },
+    "unmute": {
+        "message": "Unmute"
+    },
+    "muteNotSupported": {
+        "message": "Mute not supported"
+    },
+    "fullScreen": {
+        "message": "Enter fullscreen"
+    },
+    "exitFullScreen": {
+        "message": "Exit fullscreen"
+    },
+    "webFull": {
+        "message": "Enter webpage fullscreen"
+    },
+    "exitWebFull": {
+        "message": "Exit webpage fullscreen"
+    },
+    "wideScreen": {
+        "message": "Enter widescreen"
+    },
+    "exitWideScreen": {
+        "message": "Exit widescreen"
+    },
+    "sendTooltip": {
+        "message": "Shoot!"
+    },
+    "showComment": {
+        "message": "Show comments"
+    },
+    "hideComment": {
+        "message": "Hide comments"
+    },
+    "loopOn": {
+        "message": "Loop on"
+    },
+    "loopOff": {
+        "message": "Loop off"
+    },
+    "usingCanvas": {
+        "message": "Using canvas"
+    },
+    "usingCSS": {
+        "message": "Using CSS"
+    },
+    "useCSS": {
+        "message": "Draw with CSS"
+    },
+    "autoOpacityOn": {
+        "message": "Turn off auto opacity"
+    },
+    "autoOpacityOff": {
+        "message": "Turn on auto opacity"
+    },
+    "copyComment": {
+        "message": "Copy contents"
+    },
+    "findComment": {
+        "message": "Find comment"
+    },
+    "blockContent": {
+        "message": "Filter content "
+    },
+    "blockUser": {
+        "message": "Filter sender "
+    },
+    "blockColor": {
+        "message": "Filter color"
+    },
+    "blockColorWhite": {
+        "message": "Can\"t filter"
+    },
+    "copyFail": {
+        "message": "Copying failed: not supported by browser"
+    },
+    "blockUserEmpty": {
+        "message": "Nobody filtered yet"
+    },
+    "blockColorEmpty": {
+        "message": "No color filtered yet"
+    },
+    "repeatPcs": {
+        "message": ""
+    },
+    "repeatUnlimited": {
+        "message": "No limits"
+    },
+    "dragControlLowInc": {
+        "message": "Slow forward"
+    },
+    "dragControlLowDec": {
+        "message": "Slow rewind"
+    },
+    "dragControlMedInc": {
+        "message": "Medium forward"
+    },
+    "dragControlMedDec": {
+        "message": "Medium rewind"
+    },
+    "dragControlHighInc": {
+        "message": "Fast forward"
+    },
+    "dragControlHighDec": {
+        "message": "Fast rewind"
+    },
+    "dragControlCancel": {
+        "message": "Cancelling"
+    },
+    "extName": {
+        "message": "Youku HTML5 Player"
+    },
+    "extDesc": {
+        "message": "Farewell to flash and ads. \n\nOpen source：https://github.com/esterTion/Youku-HTML5-Player"
+    },
+    "iconPending": {
+        "message": " video(s) pending playback"
+    },
+    "iconPlaying": {
+        "message": " video(s) playing"
+    },
+    "iconIdle": {
+        "message": "No replacable player found"
+    },
+    "close": {
+        "message": "Close"
+    },
+    "flvhd": {
+        "message": "Fast"
+    },
+    "mp4hd": {
+        "message": "SD"
+    },
+    "mp4hd2": {
+        "message": "HD"
+    },
+    "mp4hd3": {
+        "message": "FHD"
+    },
+    "emptyPW": {
+        "message": "Empty password. "
+    },
+    "currentLang": {
+        "message": "Current audio language："
+    },
+    "needPW": {
+        "message": "Video requires password access, please enter password："
+    },
+    "enterPW": {
+        "message": "Enter access password"
+    },
+    "rememberPW": {
+        "message": "Remember password"
+    },
+    "submit": {
+        "message": "Submit"
+    },
+    "wrongPW": {
+        "message": "Video access password incorrect, please reenter password："
+    },
+    "fetchSourceErr": {
+        "message": "Failed fetching video source, error details："
+    },
+    "audioLang": {
+        "message": "Audio language"
+    },
+    "toYouku": {
+        "message": "Play on youku.com"
+    },
+    "fetchCommentErr": {
+        "message": "Failed fetching comment"
+    },
+    "loadErr": {
+        "message": "Load video failed, cannot play this video"
+    },
+    "playErr": {
+        "message": "Playback error"
+    },
+    "switchErr": {
+        "message": "Switching failed, this language / definition cannot be played"
+    },
+    "partialAvailable": {
+        "message": "You have limited access on viewing this video, please check your payment status"
+    },
+    "restoreFlash": {
+        "message": "Restore flash player"
+    },
+    "fetchInfoErr": {
+        "message": "Failed fetching video info, error details："
+    },
+    "uploader": {
+        "message": "Uploader："
+    }
+}
