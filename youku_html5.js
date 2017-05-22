@@ -370,6 +370,7 @@ function ykCmtParser(json) {
         obj.text = i.content;
         abpinst.cmManager.insert(obj);
     }
+    shield.shield();
 }
 function fetchComment(m) {
     m *= 5;
@@ -425,6 +426,9 @@ window.changeSrc = function (e, t, force) {
             localStorage.YHP_PreferedType = setPrefer;
         }
         flvparam(t);
+        abpinst.cmManager.load([]);
+        prevMinute = 0;
+        fetchComment(0);
     }
 }
 window.overallBitrate = 0;

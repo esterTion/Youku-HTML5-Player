@@ -120,14 +120,9 @@
 	object-fit: fill
 }
 .ABP-Unit .ABP-Video .ABP-Container{
-	-webkit-transform:matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
-	transform:matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 	position:absolute;
 	display:block;
 	overflow:hidden;
-	-ms-transform-origin:0 0;
-	transform-origin:0 0;
-	-webkit-transform-origin:0 0;
 	margin:0;
 	border:0;
 	top:0;
@@ -135,7 +130,8 @@
 	bottom:0;
 	right:0;
 	touch-callout:none;
-	-webkit-user-select:none
+	-webkit-user-select:none;
+	transition:opacity .2s
 }
 .ABP-Unit .ABP-Video .ABP-Container .cmt{
 	-webkit-transform:matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
@@ -472,7 +468,7 @@
 }
 .ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption{
 	width:120px;
-	height:156px;
+	height:136px;
 	padding:10px;
 	background:rgba(255,255,255,.9);
 	position:absolute;

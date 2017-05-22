@@ -431,7 +431,7 @@ ABP.Strings={
 			]),
 			_("div", {
 				"className": "ABP-Container"
-			}),playlist[0],_('div',{className:'Player-Stats'},[
+			},[_('div',{className:'cmt',style:{left:0}},[_('text','　')])]),playlist[0],_('div',{className:'Player-Stats'},[
 				/*
 				dimension
 					player
