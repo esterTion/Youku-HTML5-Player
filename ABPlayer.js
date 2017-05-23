@@ -480,6 +480,7 @@ ABP.Strings={
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('br'),
 
+				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozParse)]), _('span',{id:'mozParsedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozDecode)]), _('span',{id:'mozDecodedFrames'})]),
 				_('div',{className:'gecko'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsMozPaint)]), _('span',{id:'mozPaintedFrames'})]),
@@ -633,7 +634,7 @@ ABP.Strings={
 			}), _("div", {
 				"className": "ABP-CommentOption"
 			}, [_('p', {
-				className:'label',style:{display:'none'}
+				className:'label'
 			}, [_('text',ABP.Strings.useCSS), _("div", {
 				"className": "prop-checkbox"
 			})]), _("p", {
@@ -678,7 +679,7 @@ ABP.Strings={
 			]),_("div", {
 				"className": "prop-checkbox",
 				style:{
-					top:'101px'
+					top:'121px'
 				}
 			}), _("div", {
 				"className": "shield-enrty"
@@ -1122,6 +1123,7 @@ ABP.Strings={
 					this.stage.style.webkitPerspective = this.width * Math.tan(40 * Math.PI / 180) / 2 + "px";
 					//this.stage.style.zoom = scale;
 					playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Scale div.on').click();
+					this.canvasResize();
 				}
 				ABPInst.cmManager.setBounds();
 				ABPInst.cmManager.clear();
@@ -1266,6 +1268,8 @@ ABP.Strings={
 		ABPInst.btnAutoOpacity.tooltip(ABP.Strings.autoOpacityOff)
 		hoverTooltip(ABPInst.btnAutoOpacity);
 		ABPInst.btnProp = pcheck[0];
+		ABPInst.btnProp.tooltip(ABP.Strings.usingCanvas);
+		hoverTooltip(ABPInst.btnProp);
 		/** Bind the FullScreen button **/
 		var fbtn = playerUnit.getElementsByClassName("ABP-FullScreen");
 		if (fbtn.length <= 0) return;
@@ -1342,6 +1346,7 @@ ABP.Strings={
 		lastChild='>:last-child',
 		playerDimension=document_querySelector('#player-dimension'+lastChild),
 		videoDimension=document_querySelector('#video-dimension'+lastChild),
+		canvasFPS=document_querySelector('#canvas-fps'+lastChild),
 		bufferColumn=document_querySelector('#buffer-health-column'),
 		realtimeBitrateColumn=document_querySelector('#realtime-bitrate-column'),
 		downloadSpeedColumn=document_querySelector('#download-speed-column'),
@@ -1519,6 +1524,9 @@ ABP.Strings={
 				document_querySelector('#overall-bitrate').parentNode.style.display=''
 				document_querySelector('#overall-bitrate').innerHTML=to2digitFloat(overallBitrate)+' kbps';
 			}
+			
+			if(odd)
+				canvasFPS.innerHTML = ABPInst.cmManager.canvasFPS;
 			
 			if(enabledStats.gecko){
 				['mozParsedFrames','mozDecodedFrames','mozPaintedFrames'].forEach(function(name){
@@ -1767,7 +1775,13 @@ ABP.Strings={
 			});
 			if (ABP.playerConfig.autoOpacity) ABPInst.btnAutoOpacity.click();
 			ABPInst.btnProp[addEventListener]("click", function(e) {
+				this.classList.toggle("on");
+				var useCSS=this.classList.contains("on");
+				ABPInst.cmManager.useCSS(useCSS);
+				this.tooltip(useCSS ? ABP.Strings.usingCSS : ABP.Strings.usingCanvas);
+				saveConfigurations();
 			});
+			if (ABP.playerConfig.useCSS) ABPInst.btnProp.click();
 			var fullscreenChangeHandler = function() {
 				if (!document.isFullScreen() && hasClass(playerUnit, "ABP-FullScreen")) {
 					removeClass(playerUnit, "ABP-FullScreen");

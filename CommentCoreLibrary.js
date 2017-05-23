@@ -750,12 +750,27 @@ var CommentManager = (function() {
 		this.stage = stageObject;
 		this.paused = true;
 		this.pausedTime = 0;
+		this.canvas = document.createElement('canvas');
+		this.canvasStatic = document.createElement('canvas');
+		this.staticUpdate = false;
+		this.canvasFPS = 0;
+		self.canvas.style.width = '100%';
+		self.canvas.style.height = '100%';
+		self.stage.appendChild(self.canvas);
+		self.canvasStatic.style.width = '100%';
+		self.canvasStatic.style.height = '100%';
+		self.canvasStatic.style.position='absolute';
+		self.canvasStatic.style.top=0;
+		self.canvasStatic.style.left=0;
+		self.stage.appendChild(self.canvasStatic);
 		this.options = {
 			global:{
 				opacity:1,
 				scale:1,
 				className:"cmt",
-				autoOpacity:false
+				useCSS:false,
+				autoOpacity:false,
+				autoOpacityVal:1
 			},
 			scroll:{
 				opacity:1,
@@ -789,6 +804,7 @@ var CommentManager = (function() {
 				var elapsed = new Date().getTime() - lastTPos;
 				lastTPos = new Date().getTime();
 				cmMgr.onTimerEvent(elapsed,cmMgr);
+				cmMgr.sendQueueLoader();
 			},1e3/60);
 			this.paused = false;
 			this.pausedTime = Date.now() - pauseTime;
@@ -803,16 +819,19 @@ var CommentManager = (function() {
 		ticking=false,
 		canvasFPS=0,
 		onScreenCommentCount=0,
-		calcedOpacity=1,
 		autoOpacity = function(){
 			if(self.options.global.autoOpacity){
-				calcedOpacity = autoOpacityFromComment(onScreenCommentCount);
+				if(self.options.global.useCSS){
+					self.stage.style.opacity = autoOpacityFromComment(onScreenCommentCount);
+				}else{
+					self.options.global.autoOpacityVal = self.options.global.opacity * autoOpacityFromComment(onScreenCommentCount);
+				}
 			}
 		};
 		setInterval(function(){
-			if(self.options.global.autoOpacity)
-				self.stage.style.opacity=calcedOpacity
-		},200);
+			self.canvasFPS = canvasFPS;
+			canvasFPS = 0;
+		},1e3);
 		this.addEventListener('enterComment',function(){
 			onScreenCommentCount++;
 			autoOpacity();
@@ -821,6 +840,49 @@ var CommentManager = (function() {
 			onScreenCommentCount--;
 			autoOpacity();
 		});
+		this.canvasDrawerWrapper = function(now){
+			if(ticking)return;
+			if(!now)now=performance.now();
+			ticking=true;
+			canvasFPS++;
+			self.canvasDrawer(now|0);
+			ticking=false;
+		};
+		this.ttlRecalcAll=function(){
+			this.runline.forEach(ttlRecalc);
+		};
+		var sendQueue=[];
+		this.send = function(data){
+			sendQueue.push(data);
+		}
+		this.sendQueueLoader = function(){
+			var start = performance.now(),passed;
+			while(sendQueue.length > 0){
+				self.sendAsync(sendQueue.shift());
+				passed = performance.now()-start;
+				if(passed > 8)
+					return;
+			}
+		}
+		this.addEventListener('clear',function(){
+			sendQueue=[];
+		});
+		
+		requestAnimationFrame(this.canvasDrawerWrapper);
+		(function(){
+			var prevRatio = window.devicePixelRatio;
+			window.addEventListener('resize',function(){
+				var ratio = window.devicePixelRatio;
+				if(prevRatio != ratio){
+					self.runline.forEach(function(i){
+						if(i.textData)
+						commentCanvasDrawer(i)
+					})
+					prevRatio = ratio;
+				}
+				self.ttlRecalcAll();
+			})
+		})()
 	}
 
 	/** Public **/
@@ -896,6 +958,7 @@ var CommentManager = (function() {
 			this.runline[0].finish();
 		}
 		this.dispatchEvent("clear");
+		this.canvas.getContext('2d').clearRect(0,0,this.canvas.width,this.canvas.height);
 	};
 
 	CommentManager.prototype.setBounds = function(){
@@ -938,6 +1001,201 @@ var CommentManager = (function() {
 			}
 		}
 	};
+	CommentManager.prototype.canvasResize = function(){
+		try{
+		var w=this.width,h=this.height,devicePixelRatio=window.devicePixelRatio;
+		this.canvas.width = this.canvas.offsetWidth * devicePixelRatio;
+		this.canvasStatic.height = this.canvasStatic.offsetHeight * devicePixelRatio;
+		this.ttlRecalcAll();
+		canvasDrawStatic(this);
+		canvasDrawScroll(this);
+		
+		}catch(e){
+			console.error('shit happened! forcing CSS! ',e.message);
+			this.useCSS(true);
+			return;
+		}
+	};
+	var canvasDrawStatic=function(cmMgr){
+		var canvas=cmMgr.canvasStatic, ctx=canvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio,
+		canvasWidth, canvasHeight = cmMgr.height,
+		x, y,
+		maxWidth=[0];
+		cmMgr.runline.forEach(function(cmt){
+			if([4,5].indexOf(cmt.mode)!=-1){
+				maxWidth.push(cmt._width);
+			}
+		});
+		maxWidth=Math.min(cmMgr.width,Math.max.apply(Math,maxWidth));
+		canvasWidth = maxWidth;
+		
+		if(maxWidth!=canvas.offsetWidth){
+			canvas.style.width=maxWidth+'px';
+			canvas.style.left=(cmMgr.width-maxWidth)/2+'px'
+			canvas.width=maxWidth * devicePixelRatio;
+		}else{
+			ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
+		}
+		
+		ctx.globalAlpha=cmMgr.options.global.autoOpacity ? cmMgr.options.global.autoOpacityVal : cmMgr.options.global.opacity;
+		cmMgr.runline.forEach(function(cmt){
+			if(!cmt.textData)return;
+			switch(cmt.mode){
+				case 4:
+					//bottom
+					cmt.x = (canvasWidth - cmt.width) / 2;
+					x = cmt.x;
+					y = (canvasHeight - cmt.y - cmt.height);
+				break;
+				case 5:
+					//top
+					cmt.x = (canvasWidth - cmt.width) / 2;
+					x = cmt.x;
+					y = (cmt.y);
+				break;
+				default:
+					return;
+			}
+			ctx.drawImage(cmt.textData, round(x * devicePixelRatio), round(y * devicePixelRatio));
+		});
+	},
+	canvasDrawScroll=function(cmMgr){
+		var canvas=cmMgr.canvas, ctx=canvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio,
+		canvasWidth = cmMgr.width, canvasHeight,
+		x, y,
+		drawCount=0,
+		maxBottomLine=[0];
+		cmMgr.runline.forEach(function(cmt){
+			if(cmt.mode==1){
+				maxBottomLine.push(cmt._y+cmt._height);
+			}
+		});
+		maxBottomLine=Math.max.apply(Math,maxBottomLine);
+		canvasHeight=maxBottomLine;
+		
+		if(canvas.offsetHeight!=maxBottomLine){
+			canvas.style.height=maxBottomLine+'px';
+			canvas.height=maxBottomLine * devicePixelRatio;
+		}else{
+			ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
+		}
+		
+		ctx.globalAlpha=cmMgr.options.global.autoOpacity ? cmMgr.options.global.autoOpacityVal : cmMgr.options.global.opacity;
+		cmMgr.runline.forEach(function(cmt){
+			if(!cmt.textData)return;
+			switch(cmt.mode){
+				case 1:
+					//scroll
+					cmt.x = canvasWidth - cmt.rx;
+					x = (canvasWidth - cmt.rx);
+					y = cmt.y;
+				break;
+				default:
+				return;
+			}
+			ctx.drawImage(cmt.textData, round(x * devicePixelRatio), round(y * devicePixelRatio));
+		});
+	}
+	CommentManager.prototype.canvasDrawer = function(){
+		if(this.options.global.useCSS){
+			return;
+		}
+		if(this.paused){
+			requestAnimationFrame(this.canvasDrawerWrapper);
+			return;
+		}
+		var now=performance.now()|0, cmt, i, devicePixelRatio = window.devicePixelRatio, pausedTime = this.pausedTime,
+		ctx = this.canvas.getContext('2d'),
+		canvasWidth = this.width, canvasHeight = this.height,
+		x, y;
+		ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
+		ctx.globalAlpha=this.options.global.autoOpacity ? this.options.global.autoOpacityVal : this.options.global.opacity;
+		ctx.imageSmoothingEnabled = false;
+		
+		if(pausedTime!=0){
+			this.runline.forEach(function(cmt){
+				if(!cmt.textData)return;
+				switch(cmt.mode){
+					case 1:
+						cmt.prev += pausedTime;
+					break;
+					case 4:
+					case 5:
+						cmt.removeTime += pausedTime;
+					break;
+				}
+			})
+			this.pausedTime = 0;
+		}
+		
+		this.runline.forEach(function(cmt){
+			if(!cmt.textData)return;
+			switch(cmt.mode){
+				case 1:
+					//scroll
+					cmt.rx += cmt.speed * ( now - cmt.prev ) / 1e3;
+					cmt.prev = now;
+				break;
+			}
+		});
+		
+		if(this.staticUpdate){
+			canvasDrawStatic(this);
+			this.staticUpdate=false;
+		}
+		
+		canvasDrawScroll(this);
+		//this.canvas.style.opacity = this.options.global.opacity;
+		//this.canvas.getContext('2d').putImageData(ctx.getImageData(0, 0, this.canvas.width, this.canvas.height), 0, 0)
+		requestAnimationFrame(this.canvasDrawerWrapper);
+	};
+	var prevMoving=false,ceil=Math.ceil,round=Math.round,colorGetter = function(color){
+		var color = color.toString(16);
+		while(color.length<6)
+			color = '0'+color;
+		return color;
+		/*
+		var r = (color >>> 16),
+		g = (color >>> 8) & 0xff,
+		b = color & 0xff;
+		return [r,g,b];*/
+	},ttlRecalc=function(cmt){
+		if(cmt.speed){
+			var runned = cmt.dur - cmt.ttl;
+			cmt.dur = ( cmt.parent.width + cmt.width ) / cmt.speed * 1e3;
+			cmt.ttl = cmt.dur - runned;
+		}
+	},commentCanvasDrawer = function(cmt){
+		var commentCanvas = document.createElement('canvas'), commentCanvasCtx = commentCanvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio;
+		commentCanvasCtx.font = (cmt.size * devicePixelRatio) + 'px ' + font;
+		commentCanvasCtx.imageSmoothingEnabled = false;
+		cmt.width = ceil(commentCanvasCtx.measureText(cmt.text).width / devicePixelRatio)+2;
+		cmt.height = ceil(cmt.size+3)+2;
+		cmt.oriWidth = ceil(cmt.width * devicePixelRatio);
+		cmt.oriHeight = ceil(cmt.height * devicePixelRatio);
+		
+		commentCanvas.width = cmt.oriWidth;
+		commentCanvas.height = cmt.oriHeight;
+		commentCanvasCtx.font = (cmt.size * devicePixelRatio) + 'px ' + font;
+		commentCanvasCtx.lineWidth = round(1 * devicePixelRatio);
+		commentCanvasCtx.strokeStyle = (cmt._color == 0) ? '#FFFFFF' : '#000000';
+		commentCanvasCtx.textBaseline = 'bottom';
+		commentCanvasCtx.textAlign = 'left';
+		
+		commentCanvasCtx.shadowBlur = round(2 * devicePixelRatio);
+		commentCanvasCtx.shadowColor = (cmt._color == 0) ? '#FFFFFF' : '#000000';
+		commentCanvasCtx.fillStyle = '#' + colorGetter(cmt.color);
+		commentCanvasCtx.strokeText(cmt.text, 1, commentCanvas.height-1);
+		commentCanvasCtx.fillText(cmt.text, 1, commentCanvas.height-1);
+		
+		if(cmt.border){
+			commentCanvasCtx.lineWidth = round(2 * devicePixelRatio);
+			commentCanvasCtx.strokeStyle = '#00ffff';
+			commentCanvasCtx.shadowBlur = 0;
+			commentCanvasCtx.strokeRect(0,0,commentCanvas.width,commentCanvas.height);
+		}
+		cmt.textData = commentCanvas;
+	};
 	CommentManager.prototype.getCommentFromPoint = function(x, y){
 		var dmList=[],dx,dy,height=this.height;
 		this.runline.forEach(function(i){
@@ -953,14 +1211,17 @@ var CommentManager = (function() {
 		return dmList;
 	};
 	CommentManager.prototype.useCSS = function(state){
+		this.options.global.useCSS = state;
+		this.clear();
+		if(!state){
+			this.stage.style.opacity='';
+			requestAnimationFrame(this.canvasDrawerWrapper);
+		}
 	};
 	CommentManager.prototype.autoOpacity = function(state){
 		this.options.global.autoOpacity = state;
-		if(!state){
-			this.stage.style.opacity = 1;
-		}
 	};
-	CommentManager.prototype.send = function(data){
+	CommentManager.prototype.sendAsync = function(data){
 		if(data.mode === 8){
 			console.log(data);
 			if(this.scripting){
@@ -972,39 +1233,64 @@ var CommentManager = (function() {
 			data = this.filter.doModify(data);
 			if(data == null || data === false) return;
 		}
-		if(data.mode === 1 || data.mode === 2 || data.mode === 6){
-			var cmt = new CSSScrollComment(this, data);
-		}else{
+		
+		//canvas break
+		if(!this.options.global.useCSS && [1,4,5].indexOf(data.mode) != -1 ){
+			var now = performance.now();
 			var cmt = new CoreComment(this, data);
-		}
-		switch(cmt.mode){
-			case 1:cmt.align = 0;break;
-			case 2:cmt.align = 2;break;
-			case 4:cmt.align = 2;break;
-			case 5:cmt.align = 0;break;
-			case 6:cmt.align = 1;break;
-		}
-		cmt.init();
-		this.stage.appendChild(cmt.dom);
-		cmt.dom.transitionStartTime=(new Date).getTime();
-		switch(cmt.mode){
-			default:
-			case 1:{this.csa.scroll.add(cmt);}break;
-			case 2:{this.csa.scrollbtm.add(cmt);}break;
-			case 4:{this.csa.bottom.add(cmt);}break;
-			case 5:{this.csa.top.add(cmt);}break;
-			case 6:{this.csa.reverse.add(cmt);}break;
-			case 17:
-			case 7:{
-				if(data.rY !== 0 || data.rZ !== 0){
-					/** TODO: revise when browser manufacturers make up their mind on Transform APIs **/
-					cmt.dom.style.transform = getRotMatrix(data.rY, data.rZ);
-					cmt.dom.style.webkitTransform = getRotMatrix(data.rY, data.rZ);
-					cmt.dom.style.OTransform = getRotMatrix(data.rY, data.rZ);
-					cmt.dom.style.MozTransform = getRotMatrix(data.rY, data.rZ);
-					cmt.dom.style.MSTransform = getRotMatrix(data.rY, data.rZ);
-				}
-			}break;
+			cmt.dom = {style:{}};
+			commentCanvasDrawer(cmt);
+			if( data.mode == 1 || data.mode == 6){
+				cmt.rx = 0;
+				cmt.x = this.width;
+				cmt.prev = now;
+				cmt.speed = ( this.width + cmt.width ) / cmt.dur * 1e3;
+			}else if ( data.mode == 4 || data.mode == 5 ){
+				cmt.removeTime = now + cmt.dur;
+			}
+			switch(cmt.mode){
+				default:
+				case 1:{this.csa.scroll.add(cmt);}break;
+				case 4:{this.csa.bottom.add(cmt);this.staticUpdate=true;}break;
+				case 5:{this.csa.top.add(cmt);this.staticUpdate=true;}break;
+			}
+		}else{
+			
+			if(data.mode === 1 || data.mode === 2 || data.mode === 6){
+				var cmt = new CSSScrollComment(this, data);
+			}else{
+				var cmt = new CoreComment(this, data);
+			}
+			switch(cmt.mode){
+				case 1:cmt.align = 0;break;
+				case 2:cmt.align = 2;break;
+				case 4:cmt.align = 2;break;
+				case 5:cmt.align = 0;break;
+				case 6:cmt.align = 1;break;
+			}
+			cmt.init();
+			this.stage.appendChild(cmt.dom);
+			cmt.dom.transitionStartTime=(new Date).getTime();
+			switch(cmt.mode){
+				default:
+				case 1:{this.csa.scroll.add(cmt);}break;
+				case 2:{this.csa.scrollbtm.add(cmt);}break;
+				case 4:{this.csa.bottom.add(cmt);}break;
+				case 5:{this.csa.top.add(cmt);}break;
+				case 6:{this.csa.reverse.add(cmt);}break;
+				case 17:
+				case 7:{
+					if(data.rY !== 0 || data.rZ !== 0){
+						/** TODO: revise when browser manufacturers make up their mind on Transform APIs **/
+						cmt.dom.style.transform = getRotMatrix(data.rY, data.rZ);
+						cmt.dom.style.webkitTransform = getRotMatrix(data.rY, data.rZ);
+						cmt.dom.style.OTransform = getRotMatrix(data.rY, data.rZ);
+						cmt.dom.style.MozTransform = getRotMatrix(data.rY, data.rZ);
+						cmt.dom.style.MSTransform = getRotMatrix(data.rY, data.rZ);
+					}
+				}break;
+			}
+			cmt.y = cmt.y;
 		}
 		cmt.originalData=data;
 		this.dispatchEvent("enterComment", cmt);
@@ -1023,8 +1309,8 @@ var CommentManager = (function() {
 			default:
 			case 1:{this.csa.scroll.remove(cmt);}break;
 			case 2:{this.csa.scrollbtm.remove(cmt);}break;
-			case 4:{this.csa.bottom.remove(cmt);}break;
-			case 5:{this.csa.top.remove(cmt);}break;
+			case 4:{this.csa.bottom.remove(cmt);this.staticUpdate=true;}break;
+			case 5:{this.csa.top.remove(cmt);this.staticUpdate=true;}break;
 			case 6:{this.csa.reverse.remove(cmt);}break;
 			case 7:break;
 		}

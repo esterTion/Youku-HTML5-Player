@@ -585,7 +585,6 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         password = '&pwd=' + savedPassword[vid];
     fetchSrc(password);
 
-    fetchComment(0);
     abpinst.video.addEventListener('seeking', chkSeekCmtTime);
     abpinst.video.addEventListener('timeupdate', chkCmtTime);
     let disabled = false;
