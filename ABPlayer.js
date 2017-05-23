@@ -135,7 +135,7 @@ ABP.Strings={
 	mouseMoved=function(e){
 		var oldPos=mousePrevPos;
 		mousePrevPos=[e.clientX,e.clientY];
-		return (oldPos[0] == mousePrevPos[0] 
+		return !(oldPos[0] == mousePrevPos[0] 
 		&& oldPos[1] == mousePrevPos[1]);
 	},
 	$ = function(e) {
@@ -1685,7 +1685,7 @@ ABP.Strings={
 				addClass(ABPInst.videoDiv, "ABP-HideCursor");
 			}, 3000);
 			ABPInst.videoDiv[addEventListener]("mousemove", function(e) {
-				if(!mouseMoved(e))
+				if(!mouseMoved(e))return;
 				if (hideCursorTimer) {
 					clearTimeout(hideCursorTimer);
 				}

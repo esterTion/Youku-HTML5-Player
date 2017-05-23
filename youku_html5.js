@@ -251,7 +251,7 @@ function switchLang(lang) {
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
-    fetch('https://play.youku.com/play/get.json?ct=10&vid=' + vid + (extraQuery || ''), {
+    fetch('http://play.youku.com/play/get.json?ct=10&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache'
@@ -649,7 +649,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 cursor: 'pointer',
             }
         }));
-        fetch('https://play.youku.com/play/get.json?ct=10&vid=' + vid, {
+        fetch('http://play.youku.com/play/get.json?ct=10&vid=' + vid, {
             method: 'GET',
             credentials: 'include',
             cache: 'no-cache'
