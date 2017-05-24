@@ -1020,7 +1020,8 @@ var CommentManager = (function() {
 		var canvas=cmMgr.canvasStatic, ctx=canvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio,
 		canvasWidth, canvasHeight = cmMgr.height,
 		x, y,
-		maxWidth=[0];
+		maxWidth=[0],
+		halfLeft;
 		cmMgr.runline.forEach(function(cmt){
 			if([4,5].indexOf(cmt.mode)!=-1){
 				maxWidth.push(cmt._width);
@@ -1028,10 +1029,11 @@ var CommentManager = (function() {
 		});
 		maxWidth=Math.min(cmMgr.width,Math.max.apply(Math,maxWidth));
 		canvasWidth = maxWidth;
+		halfLeft=(cmMgr.width-maxWidth)/2;
 		
 		if(maxWidth!=canvas.offsetWidth){
 			canvas.style.width=maxWidth+'px';
-			canvas.style.left=(cmMgr.width-maxWidth)/2+'px'
+			canvas.style.left=halfLeft+'px'
 			canvas.width=maxWidth * devicePixelRatio;
 		}else{
 			ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
@@ -1043,14 +1045,14 @@ var CommentManager = (function() {
 			switch(cmt.mode){
 				case 4:
 					//bottom
-					cmt.x = (canvasWidth - cmt.width) / 2;
-					x = cmt.x;
+					cmt.x = (canvasWidth - cmt.width) / 2+halfLeft;
+					x = cmt.x-halfLeft;
 					y = (canvasHeight - cmt.y - cmt.height);
 				break;
 				case 5:
 					//top
-					cmt.x = (canvasWidth - cmt.width) / 2;
-					x = cmt.x;
+					cmt.x = (canvasWidth - cmt.width) / 2+halfLeft;
+					x = cmt.x-halfLeft;
 					y = (cmt.y);
 				break;
 				default:

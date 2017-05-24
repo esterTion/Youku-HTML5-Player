@@ -364,5 +364,8 @@
     },
     "uploader": {
         "message": "上传者："
+    },
+    "outputUrl":{
+        "message":"输出视频地址"
     }
 }

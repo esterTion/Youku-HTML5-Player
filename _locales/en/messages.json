@@ -364,5 +364,8 @@
     },
     "uploader": {
         "message": "Uploader："
+    },
+    "outputUrl":{
+        "message":"Output all parts"
     }
 }
