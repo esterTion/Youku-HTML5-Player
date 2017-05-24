@@ -669,7 +669,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 }
                 let img = div.appendChild(_('div', {
                     style: {
-                        backgroundImage: 'url(' + json.data.video.img_hd.replace('http:', '') + ')',
+                        backgroundImage: 'url(' + json.data.video.logo + ')',
                         backgroundPosition: 'center center',
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: '100% auto',
