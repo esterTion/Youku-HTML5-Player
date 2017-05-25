@@ -367,5 +367,11 @@
     },
     "outputUrl":{
         "message":"Output all parts"
+    },
+    "noVisitorComment":{
+        "message":"Visitor can't post comments"
+    },
+    "postCommentFail":{
+        "message":"Post comment failed"
     }
 }

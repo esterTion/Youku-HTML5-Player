@@ -367,5 +367,11 @@
     },
     "outputUrl":{
         "message":"输出视频地址"
+    },
+    "noVisitorComment":{
+        "message":"游客无法发送弹幕"
+    },
+    "postCommentFail":{
+        "message":"弹幕发送失败"
     }
 }

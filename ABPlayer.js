@@ -547,11 +547,11 @@ ABP.Strings={
 						"className": "style-select",
 						"name": "commentFontSize"
 					}, [_("div", {
-						"className": "style-option",
-						"value": 18
-					}, [_("text", ABP.Strings.sendSmall)]), _("div", {
 						"className": "style-option on",
-						"value": 25
+						"value": 22
+					}, [_("text", ABP.Strings.sendSmall)]), _("div", {
+						"className": "style-option",
+						"value": 28
 					}, [_("text", ABP.Strings.sendMid)])]),
 					_("p", {
 						"className": "style-title"
@@ -885,14 +885,14 @@ ABP.Strings={
 			video: null,
 			txtText: null,
 			commentColor: 'ffffff',
-			commentFontSize: 25,
+			commentFontSize: 22,
 			commentMode: 1,
 			displayColor: null,
 			cmManager: null,
 			commentList: null,
 			commentListContainer: null,
 			lastSelectedComment: null,
-			commentCoolDown: 10000,
+			commentCoolDown: 3e3,
 			commentScale: ABP.playerConfig.scale ? ABP.playerConfig.scale : 1,
 			commentSpeed: ABP.playerConfig.speed ? ABP.playerConfig.speed : 1,
 			proportionalScale: ABP.playerConfig.prop,
@@ -940,62 +940,10 @@ ABP.Strings={
 				playerUnit.hasPopup = false;
 			},
 			loadCommentList: function(sort, order) {
-				order = order == "asc" ? -1 : 1;
-				var keysSorted = Object.keys(ABPInst.commentList).sort(function(a, b) {
-					if (ABPInst.commentList[a][sort] < ABPInst.commentList[b][sort]) return order;
-					if (ABPInst.commentList[a][sort] > ABPInst.commentList[b][sort]) return -order;
-					return 0;
-				});
-				ABPInst.commentObjArray = [];
-				for (i in keysSorted) {
-					var key = keysSorted[i];
-					var comment = ABPInst.commentList[key];
-					if (comment && comment.time) {
-						var commentObj = _("li", {}),
-							commentObjTime = _("span", {
-								"className": "cmt-time"
-							}, [_("text", formatTime(comment.time / 1000))]),
-							commentObjContent = _("span", {
-								"className": "cmt-content"
-							}, [_("text", comment.content)]),
-							commentObjDate = _("span", {
-								"className": "cmt-date"
-							}, [_("text", formatDate(comment.date, true))]);
-						hoverTooltip(commentObjContent, false, 36);
-						hoverTooltip(commentObjDate, false, 18);
-						commentObjContent.tooltip(comment.content);
-						commentObjDate.tooltip(formatDate(comment.date));
-						commentObj.appendChild(commentObjTime);
-						commentObj.appendChild(commentObjContent);
-						commentObj.appendChild(commentObjDate);
-						commentObj.data = comment;
-						commentObj.originalData=danmaku;
-						if(comment.mode==8){
-							commentObj.style.background='#ffe100';
-						}else if(comment.pool!=0){
-							commentObj.style.background='#20ff20';
-						}
-						commentObj[addEventListener]("dblclick", function(e) {
-							ABPInst.video.currentTime = this.data.time / 1000;
-							updateTime(video.currentTime);
-						});
-						ABPInst.commentObjArray.push(commentObj);
-					}
-				}
-				ABPInst.commentListContainer.style.height = ABPInst.commentObjArray.length * 24 + "px";
-				ABPInst.renderCommentList();
-				ABPInst.playerUnit.querySelector('.ABP-Comment-List-Count span#danmaku').innerHTML=ABPInst.commentObjArray.length;
 			},
 			renderCommentList: function() {
 			},
 			commentCallback: function(data) {
-				if (data.result) {
-					ABPInst.commentList[data.id] = ABPInst.commentList[data.tmp_id];
-					delete ABPInst.commentList[data.tmp_id];
-				} else {
-					delete ABPInst.commentList[data.tmp_id];
-					ABPInst.createPopup(data.error, 5000);
-				}
 			},
 			swapVideo: null
 		};
@@ -2190,14 +2138,6 @@ ABP.Strings={
 					"color": parseInt("0x" + ABPInst.commentColor),
 					"border": true
 				});
-				ABPInst.commentList[commentId] = {
-					"date": parseInt(date.getTime() / 1000),
-					"time": ABPInst.video.currentTime * 1000,
-					"mode": ABPInst.commentMode,
-					"user": "-",
-					"pool": 0,
-					"content": ABPInst.txtText.value
-				}
 				ABPInst.txtText.value = "";
 				ABPInst.txtText.disabled = true;
 				setTimeout(function() {

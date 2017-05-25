@@ -959,6 +959,7 @@ var CommentManager = (function() {
 		}
 		this.dispatchEvent("clear");
 		this.canvas.getContext('2d').clearRect(0,0,this.canvas.width,this.canvas.height);
+		this.canvasStatic.getContext('2d').clearRect(0,0,this.canvasStatic.width,this.canvasStatic.height);
 	};
 
 	CommentManager.prototype.setBounds = function(){
@@ -1033,7 +1034,7 @@ var CommentManager = (function() {
 		
 		if(maxWidth!=canvas.offsetWidth){
 			canvas.style.width=maxWidth+'px';
-			canvas.style.left=halfLeft+'px'
+			canvas.style.left='calc(50% - '+maxWidth/2+'px)'
 			canvas.width=maxWidth * devicePixelRatio;
 		}else{
 			ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);

@@ -23,6 +23,9 @@ function createPopup(param) {
 let domain = location.href.match(/:\/\/([^\/]+)/)[1];
 let vid = '';
 let objID = '';
+let categoryID = 0;
+let uid = '';
+let iid = 0;
 if (domain == 'v.youku.com') {
     vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
     objID = 'object#movie_player';
@@ -253,7 +256,7 @@ function switchLang(lang) {
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
-    fetch('http://ups.youku.com/ups/get.json?ccode=0401&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
+    fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache'
@@ -288,8 +291,28 @@ function fetchSrc(extraQuery) {
             } else {
                 response2url(json);
             }
+            let savedLang = localStorage.YHP_PreferedLang || '';
+            if (audioLangs[savedLang])
+                currentLang = savedLang;
+            else
+                delete localStorage.YHP_PreferedLang;
             switchLang(currentLang);
             if (firstTime) {
+                iid = json.data.video.id;
+                categoryID = json.data.video.category_id;
+                uid = json.data.user.uid;
+                abpinst.playerUnit.addEventListener('sendcomment', sendComment);
+                if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
+                    abpinst.video.addEventListener('ended', function () {
+                        location.href = 'id_' + json.data.videos.next.encodevid + '.html'
+                    })
+                }
+
+                if (uid == '') {
+                    abpinst.txtText.disabled = true;
+                    abpinst.txtText.placeholder = _t('noVisitorComment');
+                    abpinst.txtText.style.textAlign = 'center';
+                }
                 let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
                 if (audioLangs.length > 1) {
                     let childs = [];
@@ -301,12 +324,13 @@ function fetchSrc(extraQuery) {
                         _('div', { className: 'dmMenu' }, childs)
                     ]);
                     contextMenu.insertBefore(langChange, contextMenu.firstChild);
-                    langChange.addEventListener('click', function (e) {
+                    langChange.childNodes[1].addEventListener('click', function (e) {
                         let lang = e.target.getAttribute('data-lang');
                         if (lang == currentLang)
                             return;
                         switchLang(lang);
                         currentLang = lang;
+                        localStorage.YHP_PreferedLang = lang;
                         changeSrc('', currentSrc, true);
                     });
                 }
@@ -346,13 +370,13 @@ function fetchSrc(extraQuery) {
         });
     })
 }
+let sizeList = [24, 22, 28];
+let modeList = {
+    3: 1,
+    4: 5,
+    6: 4
+};
 function ykCmtParser(json) {
-    let sizeList = [24, 22, 28];
-    let modeList = {
-        3: 1,
-        4: 5,
-        6: 4
-    };
     for (let i of json.result) {
         let obj = {};
         let properties = {
@@ -405,6 +429,52 @@ function chkSeekCmtTime() {
         fetchComment(minute);
     }
 }
+const DANMU_POST_SERCET = "Ef9/4e4d^@g9a2M3g";
+function sendComment(e) {
+    if (uid == '')
+        return false;
+    let form = {}, post = [];
+    form.iid = iid;
+    form.type = 1;
+    form.ouid = uid;
+    form.ver = 1;
+    form.aid = 0;
+    form.content = e.detail.message;
+    form.time = Date.now() / 1e3 | 0
+    form.lid = 0
+    form.ct = 1001;
+    form.uid = uid;
+    let mode;
+    for (mode in modeList) {
+        if (modeList[mode] == e.detail.mode)
+            break;
+    }
+    form.propertis = JSON.stringify({ pos: mode, size: sizeList.indexOf(e.detail.fontsize), color: e.detail.color, effect: 0 });
+    form.cid = categoryID;
+    form.playat = e.detail.playTime * 1e3 | 0;
+    form.sign = CryptoJS.MD5(DANMU_POST_SERCET + form.time + uid + iid + form.content).toString();
+
+    for (let key in form) {
+        post.push(key + '=' + encodeURIComponent(form[key]));
+    }
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    fetch('http://service.danmu.youku.com/add?t=' + Date.now(), {
+        method: 'POST',
+        headers: headers,
+        body: post.join('&'),
+        credentials: 'include',
+        cache: 'no-cache'
+    }).then(function (r) {
+        r.json().then(function (json) {
+            if (json.code != 1) {
+                abpinst.createPopup(_t('postCommentFail') + '<br>' + JSON.stringify(json), 3e3);
+            }
+        })
+    }).catch(function (e) {
+        abpinst.createPopup(_t('postCommentFail') + '<br>' + e.message, 3e3);
+    })
+}
 
 window.changeSrc = function (e, t, force) {
     var div = document.getElementById('info-box');
@@ -450,7 +520,42 @@ let createPlayer = function (e) {
     self.flvplayer.attachMediaElement(document.querySelector('video'));
     self.flvplayer.load();
 }
+function fillWithM3u8(select) {
+    fetch(srcUrl[select].playlist_url, {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-cache'
+    }).then(function (r) {
+        r.text().then(function (playlist) {
+            //匹配m3u8的地址
+            let urls = playlist.match(/http[^\?]+/g);
+            let arr = [];
+            if (urls == null) {
+                abpinst.removePopup();
+                abpinst.createPopup(_t('switchErr'), 3e3);
+                abpinst.video.dispatchEvent(new Event('progress'));
+                return;
+            }
+            urls.forEach(function (i) {
+                if (arr.indexOf(i) == -1)
+                    arr.push(i)
+            });
+            //部分cdn识别处理
+            for (let i in arr) {
+                srcUrl[select].segments[i].url = arr[i].replace(/http:\/\/.+?\//, function (s) { return s + 'youku/' });
+            }
+            //重新创建播放器
+            srcUrl[select].fetchM3U8 = false;
+            flvparam(select);
+        })
+    })
+}
 let load_fail = function (type, info, detail) {
+    if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid' && detail.code == 403) {
+        console.warn('http cdn地址无效，尝试m3u8');
+        fillWithM3u8(currentSrc);
+        return;
+    }
     var div = _('div', {
         style: {
             width: '100%',
@@ -473,36 +578,7 @@ let flvparam = function (select) {
     currentSrc = select;
     if (srcUrl[select].fetchM3U8) {
         //rtmp视频流，使用m3u8地址播放
-        fetch(srcUrl[select].playlist_url, {
-            method: 'GET',
-            credentials: 'include',
-            cache: 'no-cache',
-            referrer: location.href
-        }).then(function (r) {
-            r.text().then(function (playlist) {
-                //匹配m3u8的地址
-                let urls = playlist.match(/http[^\?]+/g);
-                let arr = [];
-                if (urls == null) {
-                    abpinst.video.play();
-                    abpinst.removePopup();
-                    abpinst.createPopup(_t('switchErr'), 3e3);
-                    abpinst.video.dispatchEvent(new Event('progress'));
-                    return;
-                }
-                urls.forEach(function (i) {
-                    if (arr.indexOf(i) == -1)
-                        arr.push(i)
-                });
-                //部分cdn识别处理
-                for (let i in arr) {
-                    srcUrl[select].segments[i].url = arr[i].replace(/http:\/\/.+?\//, function (s) { return s + 'youku/' });
-                }
-                //重新创建播放器
-                srcUrl[select].fetchM3U8 = false;
-                flvparam(select);
-            })
-        })
+        fillWithM3u8(select);
         return;
     }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
@@ -657,7 +733,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 cursor: 'pointer',
             }
         }));
-        fetch('http://ups.youku.com/ups/get.json?ccode=0401&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid, {
+        fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid, {
             method: 'GET',
             credentials: 'include',
             cache: 'no-cache'

@@ -95,7 +95,7 @@
 	top:0;
 	left:0;
 	right:0;
-	bottom:22px;
+	bottom:44px;
 	background:#000;
 	outline:0;
 	cursor:pointer;
@@ -198,7 +198,6 @@
 	-webkit-user-select:none
 }
 .ABP-Unit .ABP-Text{
-	display:none;
 	position:absolute;
 	bottom:0;
 	left:0;
@@ -335,11 +334,11 @@
 	width:100%;
 	line-height:30px
 }
-.ABP-Unit .ABP-CommentStyle .ABP-Comment-FontOption .style-select[name="commentFontSize"] .style-option[value="18"]::after{
+.ABP-Unit .ABP-CommentStyle .ABP-Comment-FontOption .style-select[name="commentFontSize"] .style-option[value="22"]::after{
 	content:"A";
 	font-size:18px
 }
-.ABP-Unit .ABP-CommentStyle .ABP-Comment-FontOption .style-select[name="commentFontSize"] .style-option[value="25"]::after{
+.ABP-Unit .ABP-CommentStyle .ABP-Comment-FontOption .style-select[name="commentFontSize"] .style-option[value="28"]::after{
 	content:"A";
 	font-size:25px
 }
@@ -440,7 +439,7 @@
 }
 .ABP-Unit .ABP-Control{
 	position:absolute;
-	bottom:0;
+	bottom:22px;
 	left:0;
 	right:0;
 	background:#fff;
@@ -762,7 +761,7 @@
 }
 .ABP-Unit .BiliPlus-Scale-Menu {
 	position: absolute;
-	bottom: 27px;
+	bottom: 49px;
 	left: 5px;
 	width: 200px;
 	height: 70px;
@@ -1787,6 +1786,9 @@
 	color: #ccc;
 	cursor:default;
 	display:none
+}
+.Player-Stats *{
+	font-size:inherit
 }
 .Player-Stats #stats-close {
 	position: absolute;
