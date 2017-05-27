@@ -373,5 +373,11 @@
     },
     "postCommentFail":{
         "message":"Post comment failed"
+    },
+    "replaceEmbed":{
+        "message":"Replace embed players"
+    },
+    "autoSwitch":{
+        "message":"Auto jump to next episode"
     }
 }

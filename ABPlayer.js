@@ -527,7 +527,7 @@ ABP.Strings={
 				'changeTo':'full'
 			}, [_("text", ABP.Strings.displayScaleF)])
 		])
-		]),_("div", {
+		]),_('div',{className:'ABP-Bottom-Wrapper'},[_("div", {
 			"className": "ABP-Text",
 		}, [
 			_("div", {
@@ -715,7 +715,7 @@ ABP.Strings={
 			}), _("div", {
 				"className": "button ABP-Web-FullScreen icon-screen"
 			})])
-		])])]));
+		])]),_('div',{className:'ABP-Title'})])]));
 		container.appendChild(_('div',{className:'shield hidden'},[
 			_('div',{
 				className:'shield_top'
@@ -947,6 +947,16 @@ ABP.Strings={
 			},
 			swapVideo: null
 		};
+		Object.defineProperty(ABPInst,'title',{
+			get:function(){
+				return ABPInst.playerUnit.getElementsByClassName('ABP-Title')[0].innerHTML;
+			},
+			set:function(s){
+				var title=ABPInst.playerUnit.getElementsByClassName('ABP-Title')[0]
+				title.innerHTML='';
+				title.appendChild(_('text',s));
+			}
+		})
 		ABPInst.swapVideo = function(video) {
 			var bufferListener=function() {
 				if (!dragging) {
@@ -1704,7 +1714,7 @@ ABP.Strings={
 				colorOn=!colorOn
 			});
 			var saveConfigurations = function() {
-				localStorage.YHP_PlayerSettings=JSON.stringify({
+				chrome.storage.sync.set({PlayerSettings:{
 					"volume": ABPInst.video.volume,
 					"opacity": ABPInst.cmManager.options.global.opacity,
 					"scale": ABPInst.commentScale,
@@ -1712,7 +1722,7 @@ ABP.Strings={
 					"commentVisible":ABPInst.cmManager.display,
 					"useCSS":ABPInst.cmManager.options.global.useCSS,
 					"autoOpacity":ABPInst.cmManager.options.global.autoOpacity
-				});
+				}});
 			}
 			ABPInst.btnAutoOpacity[addEventListener]("click", function(e) {
 				this.classList.toggle("on");
@@ -1736,6 +1746,7 @@ ABP.Strings={
 					ABPInst.btnFull.className = "button ABP-FullScreen icon-screen-full";
 					ABPInst.btnFull.tooltip(ABP.Strings.fullScreen);
 					ABPInst.state.fullscreen=!!document.isFullScreen();
+					ABPInst.cmManager&&ABPInst.cmManager.setBounds();
 					//ABPInst.btnLoop.click();ABPInst.btnLoop.click();
 				}
 			}

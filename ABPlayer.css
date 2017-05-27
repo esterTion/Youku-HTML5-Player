@@ -171,16 +171,47 @@
 	-webkit-text-stroke:1px white
 }
 .ABP-Unit .ABP-Bottom{
-	-webkit-transition:opacity .1s linear;
-	transition:opacity .1s linear;
 	-webkit-appearance:none;
 	-webkit-user-select:none;
 }
-.ABP-Unit.ABP-FullScreen .ABP-Video.ABP-HideCursor ~ .ABP-Bottom{
-	opacity:0
+.ABP-Bottom .ABP-Bottom-Wrapper {
+	transition: .2s ease-out;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 }
-.ABP-Unit.ABP-FullScreen .ABP-Player .ABP-Bottom:hover{
-	opacity:1
+.ABP-Unit.ABP-FullScreen .ABP-Video.ABP-HideCursor ~ .ABP-Bottom .ABP-Bottom-Wrapper {
+	-webkit-transform: translateY(44px);
+	transform: translateY(44px);
+	opacity: 0;
+}
+.ABP-Unit.ABP-FullScreen .ABP-Player .ABP-Bottom:hover .ABP-Bottom-Wrapper {
+	-webkit-transform: translateY(0);
+	transform: translateY(0);
+	opacity: 1;
+}
+.ABP-Title {
+	height: 35px;
+	font-size: 16px;
+	color: #F3F3F3;
+	font-weight: bold;
+	text-align: left;
+	position: absolute;
+	padding: 5px 20px 0 20px;
+	background: linear-gradient(to bottom,rgba(0,0,0,.6),rgba(0,0,0,.6) 25px,transparent);
+	transition: .2s ease-out;
+	display: none;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width: calc(100% - 40px);
+}
+.ABP-FullScreen .ABP-Title:not(:empty) {
+	display: block;
+}
+.ABP-Video.ABP-HideCursor ~ .ABP-Bottom .ABP-Title {
+	-webkit-transform: translateY(-35px);
+	transform: translateY(-35px);
 }
 #ABP-Tooltip{
 	position:absolute;
@@ -1785,7 +1816,8 @@
 	border-radius: 10px;
 	color: #ccc;
 	cursor:default;
-	display:none
+	display:none;
+	z-index:1
 }
 .Player-Stats *{
 	font-size:inherit

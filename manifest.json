@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "__MSG_extDesc__",
   "content_scripts": [
     {
@@ -53,10 +53,14 @@
     "default_icon": "icon.png"
   },
   "permissions": [
-    "*://*/*"
+    "*://*/*",
+    "storage"
   ],
   "icons": {
     "48": "icon.png"
   },
-  "default_locale": "en"
+  "default_locale": "en",
+  "options_ui": {
+    "page": "options.html"
+  }
 }

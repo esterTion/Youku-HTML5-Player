@@ -302,9 +302,14 @@ function fetchSrc(extraQuery) {
                 categoryID = json.data.video.category_id;
                 uid = json.data.user.uid;
                 abpinst.playerUnit.addEventListener('sendcomment', sendComment);
+                abpinst.title = json.data.video.title;
                 if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
                     abpinst.video.addEventListener('ended', function () {
-                        location.href = 'id_' + json.data.videos.next.encodevid + '.html'
+                        chrome.storage.sync.get('auto_switch', function (item) {
+                            item = Object.assign({ auto_switch: true }, item);
+                            if (item.auto_switch)
+                                location.href = 'id_' + json.data.videos.next.encodevid + '.html'
+                        })
                     })
                 }
 
@@ -593,6 +598,17 @@ let flvparam = function (select) {
         overallBitrate = srcUrl[select].filesize / srcUrl.duration * 8
     }
 };
+let ABPConfig;
+if (localStorage.YHP_PlayerSettings != undefined) {
+    chrome.storage.sync.set({ PlayerSettings: JSON.parse(localStorage.YHP_PlayerSettings) });
+    delete localStorage.YHP_PlayerSettings;
+}
+function chkInit() {
+    chrome.storage.sync.get('PlayerSettings', function (item) {
+        ABPConfig = item.PlayerSettings || {};
+        init();
+    })
+}
 function init() {
     isChrome && chrome.runtime.sendMessage({ icon: true, state: 'playing' });
     let noticeWidth = Math.min(500, innerWidth - 40);
@@ -643,7 +659,6 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     flashplayer.remove();
     let video = container.appendChild(_('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
-    let config = JSON.parse(localStorage.YHP_PlayerSettings || '{}');
     abpinst = ABP.create(video.parentNode, {
         src: {
             playlist: [{
@@ -652,7 +667,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         },
         width: '100%',
         height: '100%',
-        config: config,
+        config: ABPConfig,
         mobile: isMobile()
     });
     dots.init({
@@ -710,13 +725,13 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     flvjs.LoggingControl.enableDebug = false;
     if (domain == 'v.youku.com') {
         if (document.querySelector(objID) != null)
-            init();
+            chkInit();
         else {
             //player node not loaded, add an observer
             let observer = new MutationObserver(function () {
                 if (document.querySelector(objID) != null) {
                     observer.disconnect();
-                    init();
+                    chkInit();
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true });
@@ -797,7 +812,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 div.addEventListener('click', function () {
                     isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });
                     div.remove();
-                    init();
+                    chkInit();
                 });
                 isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending' });
             })

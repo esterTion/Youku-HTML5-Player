@@ -373,5 +373,11 @@
     },
     "postCommentFail":{
         "message":"弹幕发送失败"
+    },
+    "replaceEmbed":{
+        "message":"替换外链播放器"
+    },
+    "autoSwitch":{
+        "message":"自动切换剧集"
     }
 }

@@ -17,7 +17,11 @@ function embed_checker(i) {
 function object_checker(i) {
     if (i.YHP_replacing)
         return;
-    let src = i.querySelector('param[name=movie]');
+    let src = null;
+    Array.from(i.childNodes).forEach(function (i) {
+        if (i.name == 'movie')
+            src = i
+    });
     if (src == null) return;
     let ykvid = (src.value + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\//);
     if (ykvid != null) {
@@ -40,9 +44,14 @@ function replacer(i, ykvid) {
     i.remove();
 }
 function finder() {
-    Array.from(document.querySelectorAll('embed')).forEach(embed_checker);
-    Array.from(document.querySelectorAll('object')).forEach(object_checker);
+    Array.from(document.getElementsByTagName('embed')).forEach(embed_checker);
+    Array.from(document.getElementsByTagName('object')).forEach(object_checker);
 }
-finder();
-let observer = new MutationObserver(finder);
-observer.observe(document.body, { childList: true, subtree: true });
+chrome.storage.sync.get('replace_embed', function (item) {
+    item = Object.assign({ replace_embed: true }, item);
+    if (item.replace_embed) {
+        finder();
+        let observer = new MutationObserver(finder);
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+})
