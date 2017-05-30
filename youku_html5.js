@@ -305,7 +305,7 @@ function fetchSrc(extraQuery) {
                 abpinst.title = json.data.video.title;
                 if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
                     abpinst.video.addEventListener('ended', function () {
-                        chrome.storage.sync.get('auto_switch', function (item) {
+                        readStorage('auto_switch', function (item) {
                             item = Object.assign({ auto_switch: true }, item);
                             if (item.auto_switch)
                                 location.href = 'id_' + json.data.videos.next.encodevid + '.html'
@@ -600,11 +600,11 @@ let flvparam = function (select) {
 };
 let ABPConfig;
 if (localStorage.YHP_PlayerSettings != undefined) {
-    chrome.storage.sync.set({ PlayerSettings: JSON.parse(localStorage.YHP_PlayerSettings) });
+    saveStorage({ PlayerSettings: JSON.parse(localStorage.YHP_PlayerSettings) });
     delete localStorage.YHP_PlayerSettings;
 }
 function chkInit() {
-    chrome.storage.sync.get('PlayerSettings', function (item) {
+    readStorage('PlayerSettings', function (item) {
         ABPConfig = item.PlayerSettings || {};
         init();
     })

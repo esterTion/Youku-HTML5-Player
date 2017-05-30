@@ -1714,7 +1714,7 @@ ABP.Strings={
 				colorOn=!colorOn
 			});
 			var saveConfigurations = function() {
-				chrome.storage.sync.set({PlayerSettings:{
+				saveStorage({PlayerSettings:{
 					"volume": ABPInst.video.volume,
 					"opacity": ABPInst.cmManager.options.global.opacity,
 					"scale": ABPInst.commentScale,

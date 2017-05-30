@@ -1,12 +1,17 @@
 {
-    "addons": {
-        "{579e2d44-4478-4d57-b2ac-e17831a37eae}": {
-            "updates": [
-                {
-                    "version": "1.2.1.1",
-                    "update_link": "https://estertion.github.io/Youku-HTML5-Player/signed.xpi?ver=1.2.1.1"
-                }
-            ]
+  "addons": {
+    "{579e2d44-4478-4d57-b2ac-e17831a37eae}": {
+      "updates": [
+        {
+          "version": "1.2.1.2",
+          "update_link": "https://estertion.github.io/Youku-HTML5-Player/signed.xpi?ver=1.2.1.2",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "50.0"
+            }
+          }
         }
+      ]
     }
+  }
 }

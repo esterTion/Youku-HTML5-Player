@@ -47,7 +47,7 @@ function finder() {
     Array.from(document.getElementsByTagName('embed')).forEach(embed_checker);
     Array.from(document.getElementsByTagName('object')).forEach(object_checker);
 }
-chrome.storage.sync.get('replace_embed', function (item) {
+readStorage('replace_embed', function (item) {
     item = Object.assign({ replace_embed: true }, item);
     if (item.replace_embed) {
         finder();
