@@ -4,7 +4,8 @@
 ![](icon.png)
 
 [更新日志](update_note.md)
-- *测试发现，uBlock扩展会导致本扩展无法正常工作，请禁用后在优酷站点刷新一次，再次启用即会正常*
+- *uBlock扩展会导致本扩展无法正常工作，请禁用后在优酷站点刷新一次，再次启用即会正常*
+> [@xinggsf]测试得出：放行tip.soku.com即可，如果还不行，放行g.alicdn.com和log.mmstat.com的东西即可
 
 ## 安装
 - [Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/)([xpi直接安装](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
