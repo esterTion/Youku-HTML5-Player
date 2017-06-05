@@ -26,9 +26,16 @@ let objID = '';
 let categoryID = 0;
 let uid = '';
 let iid = 0;
+const cnaFake = 'YGRkZGRkZGRkZGRkZGRkZGRW';
 if (domain == 'v.youku.com') {
     vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
     objID = 'object#movie_player';
+    if(!document.cookie.match('cna=')) {
+        let cookieDate = new Date();
+        cookieDate.setTime(cookieDate.getTime() + 864000000000/* 1e4 *  24 * 60 * 60 * 1000 */);
+        let expires = '; expires=' + cookieDate.toGMTString() + "; path=/";
+        document.cookie = 'cna=' + cnaFake + expires;
+    }
 } else if (domain == 'player.youku.com') {
     vid = location.href.match(/embed\/([a-zA-Z0-9\=]+)/);
     objID = 'object#youku-player';
@@ -256,7 +263,7 @@ function switchLang(lang) {
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
-    fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
+    fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=192.168.1.1&utid=' + cnaFake + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache'
