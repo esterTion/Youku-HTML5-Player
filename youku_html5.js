@@ -29,6 +29,11 @@ let iid = 0;
 if (domain == 'v.youku.com') {
     vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
     objID = 'object#movie_player';
+    if(!document.cookie.match('cna=')) {
+        let cookieDate = new Date();
+        cookieDate.setTime(cookieDate.getTime() + 864000000000/* 1e4 *  24 * 60 * 60 * 1000 */);
+        document.cookie = 'cna=ThisIsAFakeCookie; expires=' + cookieDate.toGMTString() + "; path=/";
+    }
 } else if (domain == 'player.youku.com') {
     vid = location.href.match(/embed\/([a-zA-Z0-9\=]+)/);
     objID = 'object#youku-player';
