@@ -27,7 +27,7 @@ let categoryID = 0;
 let uid = '';
 let iid = 0;
 if (domain == 'v.youku.com') {
-    vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)\.html/);
+    vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)/);
     objID = 'object#movie_player';
 } else if (domain == 'player.youku.com') {
     vid = location.href.match(/embed\/([a-zA-Z0-9\=]+)/);
@@ -256,7 +256,7 @@ function switchLang(lang) {
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
-    fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
+    fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + getCookie('cna') + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache'
@@ -611,46 +611,6 @@ function chkInit() {
 }
 function init() {
     isChrome && chrome.runtime.sendMessage({ icon: true, state: 'playing' });
-    let noticeWidth = Math.min(500, innerWidth - 40);
-    document.head.appendChild(_('style')).innerHTML = `#YHP_Notice{
-position:fixed;left:0;right:0;top:0;height:0;z-index:20000;transition:.5s;cursor:default
-}
-.YHP_down_banner{
-margin:2px;padding:2px;color:#FFFFFF;font-size:13px;font-weight:bold;background-color:green
-}
-.YHP_down_btn{
-margin:2px;padding:4px;color:#1E90FF;font-size:14px;font-weight:bold;border:#1E90FF 2px solid;display:inline-block;border-radius:5px
-}
-@keyframes pop-iframe-in{0%{opacity:0;transform:scale(.7);}100%{opacity:1;transform:scale(1)}}
-@keyframes pop-iframe-out{0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(.7)}}
-#YHP_Notice>div{
-position:absolute;bottom:0;left:0;right:0;font-size:15px
-}
-#YHP_Notice>div>div{
-    border:1px #AAA solid;width:${noticeWidth}px;margin:0 auto;padding:20px 10px 5px;background:#EFEFF4;color:#000;border-radius:5px;box-shadow:0 0 5px -2px
-}
-#YHP_Notice>div>div *{
-    margin:5px 0;
-}
-#YHP_Notice input[type=text]{
-    border: none;border-bottom: 1px solid #AAA;width: 60%;background: transparent
-}
-#YHP_Notice input[type=text]:active{
-    border-bottom-color:#4285f4
-}
-#YHP_Notice input[type=button] {
-	border-radius: 2px;
-	border: #adadad 1px solid;
-	padding: 3px;
-	margin: 0 5px;
-    width:50px
-}
-#YHP_Notice input[type=button]:hover {
-	background: #FFF;
-}
-#YHP_Notice input[type=button]:active {
-	background: #CCC;
-}`
 
     window.cid = vid;
     let container = document.querySelector(objID).parentNode;
@@ -720,6 +680,46 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     if (vid === null)
         return;
     vid = vid[1];
+    let noticeWidth = Math.min(500, innerWidth - 40);
+    document.head.appendChild(_('style')).innerHTML = `#YHP_Notice{
+position:fixed;left:0;right:0;top:0;height:0;z-index:20000;transition:.5s;cursor:default
+}
+.YHP_down_banner{
+margin:2px;padding:2px;color:#FFFFFF;font-size:13px;font-weight:bold;background-color:green
+}
+.YHP_down_btn{
+margin:2px;padding:4px;color:#1E90FF;font-size:14px;font-weight:bold;border:#1E90FF 2px solid;display:inline-block;border-radius:5px
+}
+@keyframes pop-iframe-in{0%{opacity:0;transform:scale(.7);}100%{opacity:1;transform:scale(1)}}
+@keyframes pop-iframe-out{0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(.7)}}
+#YHP_Notice>div{
+position:absolute;bottom:0;left:0;right:0;font-size:15px
+}
+#YHP_Notice>div>div{
+    border:1px #AAA solid;width:${noticeWidth}px;margin:0 auto;padding:20px 10px 5px;background:#EFEFF4;color:#000;border-radius:5px;box-shadow:0 0 5px -2px
+}
+#YHP_Notice>div>div *{
+    margin:5px 0;
+}
+#YHP_Notice input[type=text]{
+    border: none;border-bottom: 1px solid #AAA;width: 60%;background: transparent
+}
+#YHP_Notice input[type=text]:active{
+    border-bottom-color:#4285f4
+}
+#YHP_Notice input[type=button] {
+	border-radius: 2px;
+	border: #adadad 1px solid;
+	padding: 3px;
+	margin: 0 5px;
+    width:50px
+}
+#YHP_Notice input[type=button]:hover {
+	background: #FFF;
+}
+#YHP_Notice input[type=button]:active {
+	background: #CCC;
+}`
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
     flvjs.LoggingControl.enableDebug = false;
@@ -735,10 +735,41 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true });
+            if (getCookie('cna') == '') {
+                var cnaPopShowed = false,
+                    showCnaPop = function () {
+                        if (getCookie('cna') == '' && !cnaPopShowed) {
+                            cnaPopShowed = true;
+                            createPopup({ content: '<p style="font-size:16px">' + _t('fetchInfoErr') + '</p>' + _t('mayBlocked'), showConfirm: false });
+                        } else {
+                            location.reload();
+                        }
+                    }
+                window.addEventListener('load', showCnaPop);
+                setInterval(showCnaPop, 1e3);
+            }
         }
     } else if (domain == 'player.youku.com') {
         let container = document.querySelector(objID);
         if (container == null) return;
+        if (getCookie('cna') == '') {
+            var cnaScr = _('script', { src: 'https://log.mmstat.com/eg.js' });
+            cnaScr.addEventListener('load', function () {
+                var tempListener = function (e) {
+                    document.removeEventListener('cna', tempListener);
+                    document.cookie = 'cna=' + e.detail + '; domain=youku.com; max-age=604800; path=/';
+                    console.log('cna set to ' + e.detail);
+                    location.reload();
+                };
+                document.addEventListener('cna', tempListener);
+                document.head.appendChild(_('script', {}, [_(
+                    'text',
+                    'document.dispatchEvent(new CustomEvent("cna",{detail:window.goldlog.Etag}))'
+                )]));
+            });
+            document.head.appendChild(cnaScr);
+            return;
+        }
         container = container.parentNode;
         container.firstChild.style.display = 'none';
         let div = container.appendChild(_('div', {
@@ -748,7 +779,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 cursor: 'pointer',
             }
         }));
-        fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + Date.now() + '&client_ts=' + Date.now() + '&vid=' + vid, {
+        fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + getCookie('cna') + '&client_ts=' + Date.now() + '&vid=' + vid, {
             method: 'GET',
             credentials: 'include',
             cache: 'no-cache'

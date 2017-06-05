@@ -47,3 +47,11 @@ function saveStorage(save) {
     else
         chrome.storage.sync.set(save);
 }
+function getCookie(name) {
+    var cookies = {};
+    document.cookie.replace(/\+/g,' ').split('; ').forEach(function (i) {
+        var [key, ...val] = i.split('=');
+        cookies[key] = val.join('=');
+    });
+    return cookies[name] || '';
+}
