@@ -551,7 +551,7 @@ function fillWithM3u8(select) {
             }
             //重新创建播放器
             srcUrl[select].fetchM3U8 = false;
-            flvparam(select);
+            changeSrc('', currentSrc, true);
         })
     })
 }
@@ -738,9 +738,11 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
             if (getCookie('cna') == '') {
                 var cnaPopShowed = false,
                     showCnaPop = function () {
-                        if (getCookie('cna') == '' && !cnaPopShowed) {
-                            cnaPopShowed = true;
-                            createPopup({ content: '<p style="font-size:16px">' + _t('fetchInfoErr') + '</p>' + _t('mayBlocked'), showConfirm: false });
+                        if (getCookie('cna') == '') {
+                            if (!cnaPopShowed) {
+                                cnaPopShowed = true;
+                                createPopup({ content: '<p style="font-size:16px">' + _t('fetchInfoErr') + '</p>' + _t('mayBlocked'), showConfirm: false });
+                            }
                         } else {
                             location.reload();
                         }

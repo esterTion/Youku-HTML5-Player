@@ -32,7 +32,7 @@ let isChrome = /chrome/i.test(navigator.userAgent);
 let _t = function (s) { return chrome.i18n.getMessage(s) };
 let firefoxVer = 0;
 if (!isChrome) {
-    firefoxVer = navigator.userAgent.match(/Firefox\/(\d+)/)[1];
+    firefoxVer = (navigator.userAgent.match(/Firefox\/(\d+)/) || [, 0])[1];
 }
 function readStorage(name, cb) {
     if (!isChrome && firefoxVer < 53)
@@ -49,7 +49,7 @@ function saveStorage(save) {
 }
 function getCookie(name) {
     var cookies = {};
-    document.cookie.replace(/\+/g,' ').split('; ').forEach(function (i) {
+    document.cookie.replace(/\+/g, ' ').split('; ').forEach(function (i) {
         var [key, ...val] = i.split('=');
         cookies[key] = val.join('=');
     });
