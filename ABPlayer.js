@@ -311,7 +311,7 @@ ABP.Strings={
 		elem[addEventListener]("updatetooltip", function(e) {
 			var tooltip = $("ABP-Tooltip");
 			if (tooltip && tooltip.by == e.target) {
-				tooltip.innerHTML = elem.tooltipData;
+				tooltip.textContent = elem.tooltipData;
 			}
 		});
 	}
@@ -382,7 +382,7 @@ ABP.Strings={
 		}
 		// Create the innards if empty
 		if (container.children.length > 0 && params.replaceMode) {
-			container.innerHTML = "";
+			container.textContent = "";
 		}
 		var playlist = [];
 		var danmaku = [];
@@ -949,12 +949,11 @@ ABP.Strings={
 		};
 		Object.defineProperty(ABPInst,'title',{
 			get:function(){
-				return ABPInst.playerUnit.getElementsByClassName('ABP-Title')[0].innerHTML;
+				return ABPInst.playerUnit.getElementsByClassName('ABP-Title')[0].textContent;
 			},
 			set:function(s){
 				var title=ABPInst.playerUnit.getElementsByClassName('ABP-Title')[0]
-				title.innerHTML='';
-				title.appendChild(_('text',s));
+				title.textContent=s;
 			}
 		})
 		ABPInst.swapVideo = function(video) {
@@ -1005,9 +1004,9 @@ ABP.Strings={
 							dots.runTimer();
 						try{
 							var buffer=getBuffer(video);
-							div.childNodes[0].childNodes[0].innerHTML=ABP.Strings.buffering+' '+Math.floor( (buffer.delta)*100 )/100+'s';
+							div.childNodes[0].childNodes[0].textContent=ABP.Strings.buffering+' '+Math.floor( (buffer.delta)*100 )/100+'s';
 						}catch(e){
-							div.childNodes[0].childNodes[0].innerHTML=ABP.Strings.buffering;
+							div.childNodes[0].childNodes[0].textContent=ABP.Strings.buffering;
 						}
 					break;
 					case 3:
@@ -1366,9 +1365,9 @@ ABP.Strings={
 			enabledStats.videoQuality=false;
 			addStyle+='.videoQuality{display:none}'
 		}
-		style.innerHTML=addStyle,
+		style.textContent=addStyle,
 		document.head.appendChild(style);
-		flvjsStyle.innerHTML='.flvjs{display:none}';
+		flvjsStyle.textContent='.flvjs{display:none}';
 		document.head.appendChild(flvjsStyle);
 		if(window.flvplayer==undefined){
 			enabledStats.flvjs=false;
@@ -1376,9 +1375,9 @@ ABP.Strings={
 		
 		setInterval(function(){
 			odd^=1;
-			playerDimension.innerHTML=video.offsetWidth+'x'+video.offsetHeight+' *'+devicePixelRatio;
+			playerDimension.textContent=video.offsetWidth+'x'+video.offsetHeight+' *'+devicePixelRatio;
 			if(enabledStats.videoDimension){
-				videoDimension.innerHTML=video.videoWidth+'x'+video.videoHeight;
+				videoDimension.textContent=video.videoWidth+'x'+video.videoHeight;
 			}
 			
 			var buffer={};
@@ -1388,7 +1387,7 @@ ABP.Strings={
 			buffer=buffer.delta||0
 			bufferArr.push(buffer);
 			bufferArr.shift();
-			bufferNum.innerHTML=to2digitFloat(buffer)+'s';
+			bufferNum.textContent=to2digitFloat(buffer)+'s';
 			if(playerStatsOn)
 				renderColumn(bufferColumn,bufferArr);
 			
@@ -1412,13 +1411,13 @@ ABP.Strings={
 				while(i<clipsContainer.childNodes.length){
 					clipsContainer.childNodes[i].remove();
 				}
-				clipsContainer.parentNode.parentNode.childNodes[2].innerHTML=clipsTitle.join('\n');
+				clipsContainer.parentNode.parentNode.childNodes[2].textContent=clipsTitle.join('\n');
 				document_querySelector('#buffer-clips>span>div').style.left = to2digitFloat(video.currentTime / duration*100) + '%';
 			}
 			
 			if(enabledStats.flvjs){
 				if(flvplayer._mediaInfo){
-					flvjsStyle.innerHTML='';
+					flvjsStyle.textContent='';
 					var i=0,mediaInfo=flvplayer._mediaInfo,statisticsInfo=flvplayer.statisticsInfo,currentTime=video.currentTime,segs=flvplayer._mediaDataSource.segments,timeOffset=0,off=0,bitrate,j;
 					for(j=0;j<segs.length;j++){
 						if(currentTime<=(timeOffset+segs[j].duration)/1e3){
@@ -1434,13 +1433,13 @@ ABP.Strings={
 						j=segs.length-1;
 					var currentSize=segs[j].filesize,currentDuration=segs[j].duration;
 					/*['mimeType','audioCodec','videoCodec'].forEach(function(name){
-						flvjsStats[i++].innerHTML=mediaInfo[name];
+						flvjsStats[i++].textContent=mediaInfo[name];
 					})*/
-					document_querySelector('#mimeType>:last-child').innerHTML=mediaInfo.mimeType;
-					flvjsStats[i++].innerHTML=to2digitFloat(mediaInfo.fps);
-					flvjsStats[i++].innerHTML=to2digitFloat(mediaInfo.videoDataRate)+' kbps';
-					flvjsStats[i++].innerHTML=to2digitFloat(mediaInfo.audioDataRate)+' kbps';
-					flvjsStats[i++].innerHTML=to2digitFloat(currentSize/currentDuration*8)+' kbps'
+					document_querySelector('#mimeType>:last-child').textContent=mediaInfo.mimeType;
+					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.fps);
+					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.videoDataRate)+' kbps';
+					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.audioDataRate)+' kbps';
+					flvjsStats[i++].textContent=to2digitFloat(currentSize/currentDuration*8)+' kbps'
 					
 					if(mediaInfo.bitrateMap){
 						
@@ -1449,7 +1448,7 @@ ABP.Strings={
 						if(bitrate!=undefined){
 							if(odd && lastCurrent!=(video.currentTime|0)){
 								lastCurrent=video.currentTime|0;
-								flvjsStats[i++].innerHTML=to2digitFloat(bitrate)+' kbps';
+								flvjsStats[i++].textContent=to2digitFloat(bitrate)+' kbps';
 								realtimeBitrateArr.push(bitrate);
 								realtimeBitrateArr.shift();
 								if(playerStatsOn)
@@ -1458,50 +1457,50 @@ ABP.Strings={
 								i++;
 							}
 						}else{
-							flvjsStats[i++].innerHTML='N/A';
+							flvjsStats[i++].textContent='N/A';
 						}
 					}else{
-						flvjsStats[i++].innerHTML='N/A'
+						flvjsStats[i++].textContent='N/A'
 					}
 					if(odd){
 						downloadSpeedArr.push(statisticsInfo.speed);
 						downloadSpeedArr.shift();
 						if(playerStatsOn)
 							renderColumn(downloadSpeedColumn,downloadSpeedArr);
-						flvjsStats[i++].innerHTML=to2digitFloat(statisticsInfo.speed)+' KB/s'
+						flvjsStats[i++].textContent=to2digitFloat(statisticsInfo.speed)+' KB/s'
 						flvplayer._statisticsInfo.speed=0;
 					}
 				}else{
-					flvjsStyle.innerHTML='.flvjs{display:none}';
-					document_querySelector('#mimeType>:last-child').innerHTML='video/mp4';
+					flvjsStyle.textContent='.flvjs{display:none}';
+					document_querySelector('#mimeType>:last-child').textContent='video/mp4';
 				}
 			}
 			if(!window.overallBitrate){
 				document_querySelector('#overall-bitrate').parentNode.style.display='none'
 			}else{
 				document_querySelector('#overall-bitrate').parentNode.style.display=''
-				document_querySelector('#overall-bitrate').innerHTML=to2digitFloat(overallBitrate)+' kbps';
+				document_querySelector('#overall-bitrate').textContent=to2digitFloat(overallBitrate)+' kbps';
 			}
 			
 			if(odd)
-				canvasFPS.innerHTML = ABPInst.cmManager.canvasFPS;
+				canvasFPS.textContent = ABPInst.cmManager.canvasFPS;
 			
 			if(enabledStats.gecko){
 				['mozParsedFrames','mozDecodedFrames','mozPaintedFrames'].forEach(function(name){
-					document_querySelector('#'+name).innerHTML=video[name];
+					document_querySelector('#'+name).textContent=video[name];
 				})
 			}
 			
 			if(enabledStats.webkit){
 				['webkitDecodedFrameCount','webkitDroppedFrameCount'].forEach(function(name){
-					document_querySelector('#'+name).innerHTML=video[name];
+					document_querySelector('#'+name).textContent=video[name];
 				})
 			}
 			
 			if(enabledStats.videoQuality){
 				var quality=video.getVideoPlaybackQuality();
-				document_querySelector('#totalVideoFrames').innerHTML=quality.totalVideoFrames;
-				document_querySelector('#droppedVideoFrames').innerHTML=quality.droppedVideoFrames;
+				document_querySelector('#totalVideoFrames').textContent=quality.totalVideoFrames;
+				document_querySelector('#droppedVideoFrames').textContent=quality.droppedVideoFrames;
 			}
 		},500)
 		
@@ -1907,7 +1906,7 @@ ABP.Strings={
 						])
 					])
 					if(originalData.mode>6){
-						dmitem.childNodes[0].innerHTML='特殊弹幕';
+						dmitem.childNodes[0].textContent='特殊弹幕';
 						var dmMenu=dmitem.childNodes[1];
 						dmMenu.childNodes[0].style.display='none';
 						dmMenu.childNodes[2].style.display='none';
@@ -2082,13 +2081,13 @@ ABP.Strings={
 					draggingStartX += dx;
 					if(draggingStartX-playerBox.left<50 || playerBox.right-draggingStartX<50){
 						document.querySelector('.Drag-Icon').className = 'Drag-Icon cancel';
-						document_querySelector('.Drag-Speed').innerHTML = ABP.Strings.dragControlCancel;
-						document_querySelector('.Drag-Time').innerHTML = '　';
+						document_querySelector('.Drag-Speed').textContent = ABP.Strings.dragControlCancel;
+						document_querySelector('.Drag-Time').textContent = '　';
 						cancelingDragging = true;
 					}else{
 						document.querySelector('.Drag-Icon').className = 'Drag-Icon '+ (increasing?'forward':'rewind');
-						document_querySelector('.Drag-Speed').innerHTML = ABP.Strings['dragControl' + speedStringMap[draggingSpeed] + (increasing?'Inc':'Dec')];
-						document_querySelector('.Drag-Time').innerHTML = formatTime(draggingTimeBase) +'╱'+ formatTime(duration);
+						document_querySelector('.Drag-Speed').textContent = ABP.Strings['dragControl' + speedStringMap[draggingSpeed] + (increasing?'Inc':'Dec')];
+						document_querySelector('.Drag-Time').textContent = formatTime(draggingTimeBase) +'╱'+ formatTime(duration);
 						cancelingDragging = false;
 						if(duration>0)
 							document.querySelector('.Drag-Time-Bar .fill').style.width = draggingTimeBase/duration*100 +'%'
@@ -2250,7 +2249,7 @@ ABP.Strings={
 			});
 			var updateTime = function(time) {
 				ABPInst.barTime.style.width = (time / video.duration * 100) + "%";
-				ABPInst.timeLabel.innerHTML = formatTime(time) + " / " + formatTime(video.duration);
+				ABPInst.timeLabel.textContent = formatTime(time) + " / " + formatTime(video.duration);
 			}
 			document[addEventListener]("mousemove", function(e) {
 				var newTime = ((e.clientX - ABPInst.barTimeHitArea.getBoundingClientRect().left) / ABPInst.barTimeHitArea.offsetWidth) * ABPInst.video.duration;

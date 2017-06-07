@@ -379,5 +379,8 @@
     },
     "autoSwitch":{
         "message":"Auto jump to next episode"
+    },
+    "mayBlocked":{
+        "message":"You may have enabled an ad blocker, and it had blocked some important content. Please try again after disable the blocker. \nAfter player normally loaded, you can enable blocker again. \n\nIf you had seen this note in the past, please check your network status. "
     }
 }
