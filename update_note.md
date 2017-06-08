@@ -1,5 +1,11 @@
 # 更新日志
 
+## 1.2.3
+Jun 8, 2017
+- *[flv.js版本更新](https://github.com/esterTion/flv.js/releases/tag/v2.0.3)
+- +添加网页全屏
+- +添加启用官方播放器选项
+
 ## 1.2.2.2
 Jun 7, 2017
 - *逻辑修正

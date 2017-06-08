@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "1.2.2.2",
+  "version": "1.2.3",
   "description": "__MSG_extDesc__",
   "content_scripts": [
     {
@@ -41,6 +41,16 @@
         "youku_embed_replacer.js"
       ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://v.youku.com/v_show/*"
+      ],
+      "all_frames": true,
+      "js": [
+        "official_html5_enabler.js"
+      ],
+      "run_at": "document_start"
     }
   ],
   "background": {
@@ -50,7 +60,8 @@
     "persistent": true
   },
   "browser_action": {
-    "default_icon": "icon.png"
+    "default_icon": "icon.png",
+    "default_popup": "options.html"
   },
   "permissions": [
     "*://*/*",
@@ -63,5 +74,5 @@
   "options_ui": {
     "page": "options.html"
   },
-  "minimum_chrome_version":"49.0"
+  "minimum_chrome_version": "49.0"
 }

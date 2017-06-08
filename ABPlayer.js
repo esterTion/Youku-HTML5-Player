@@ -1682,9 +1682,17 @@ ABP.Strings={
 					ABPInst.barVolume.style.width = (ABPInst.video.volume * 100) + "%";
 				}
 			});
+			var originalParent=null;
 			ABPInst.btnWebFull[addEventListener]("click", function() {
-				ABPInst.state.fullscreen = hasClass(playerUnit, "ABP-FullScreen");
+				if(originalParent==null && ABPInst.playerUnit.parentNode!=document.body){
+					var currentState=ABPInst.video.paused;
+					originalParent=ABPInst.playerUnit.parentNode;
+					document.body.appendChild(ABPInst.playerUnit);
+					if(currentState!=ABPInst.video.paused)
+						ABPInst.btnPlay.click();
+				}
 				addClass(playerUnit, "ABP-FullScreen");
+				addClass(document.body,'ABP-FullScreen');
 				ABPInst.btnFull.className = "button ABP-FullScreen icon-screen-normal";
 				ABPInst.btnFull.tooltip(ABP.Strings.exitWebFull);
 				ABPInst.state.fullscreen = true;
@@ -1762,9 +1770,17 @@ ABP.Strings={
 					playerUnit.requestFullScreen();
 				} else {
 					removeClass(playerUnit, "ABP-FullScreen");
+					removeClass(document.body,'ABP-FullScreen');
 					this.className = "button ABP-FullScreen icon-screen-full";
 					this.tooltip(ABP.Strings.fullScreen);
 					document.exitFullscreen();
+					if(originalParent!=null){
+						var currentState=ABPInst.video.paused;
+						originalParent.appendChild(ABPInst.playerUnit);
+						originalParent=null;
+						if(currentState!=ABPInst.video.paused)
+							ABPInst.btnPlay.click();
+					}
 				}
 				ABPInst.state.fullscreen = !ABPInst.state.fullscreen;
 				if (ABPInst.cmManager)

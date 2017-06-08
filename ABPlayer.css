@@ -254,7 +254,6 @@
 	transition:opacity .1s linear,color .1s linear
 }
 .ABP-Unit .ABP-FullScreenGroup .ABP-Web-FullScreen{
-	display:none;
 	position:absolute;
 	top:-22px;
 	height:20px;
@@ -264,6 +263,9 @@
 	opacity:0;
 	margin-bottom:1px;
 	pointer-events:none
+}
+body.ABP-FullScreen{
+	overflow:hidden
 }
 .ABP-Unit.ABP-FullScreen .ABP-FullScreenGroup .ABP-Web-FullScreen{
 	display:none
