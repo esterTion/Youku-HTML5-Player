@@ -1688,6 +1688,8 @@ ABP.Strings={
 					var currentState=ABPInst.video.paused;
 					originalParent=ABPInst.playerUnit.parentNode;
 					document.body.appendChild(ABPInst.playerUnit);
+					ABPInst.txtText.focus();
+					ABPInst.txtText.blur();
 					if(currentState!=ABPInst.video.paused)
 						ABPInst.btnPlay.click();
 				}
@@ -1696,6 +1698,7 @@ ABP.Strings={
 				ABPInst.btnFull.className = "button ABP-FullScreen icon-screen-normal";
 				ABPInst.btnFull.tooltip(ABP.Strings.exitWebFull);
 				ABPInst.state.fullscreen = true;
+				this.dispatchEvent(new Event('mouseout'));
 				if (ABPInst.cmManager)
 					ABPInst.cmManager.setBounds();
 				if (!ABPInst.state.allowRescale) return;
@@ -1778,6 +1781,8 @@ ABP.Strings={
 						var currentState=ABPInst.video.paused;
 						originalParent.appendChild(ABPInst.playerUnit);
 						originalParent=null;
+						ABPInst.txtText.focus();
+						ABPInst.txtText.blur();
 						if(currentState!=ABPInst.video.paused)
 							ABPInst.btnPlay.click();
 					}

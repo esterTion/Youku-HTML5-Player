@@ -1,5 +1,10 @@
 # 更新日志
 
+## 1.2.3.1
+Jun 10, 2017
+- *界面改动
+- *播放器按键控制优化
+
 ## 1.2.3
 Jun 8, 2017
 - *[flv.js版本更新](https://github.com/esterTion/flv.js/releases/tag/v2.0.3)

@@ -213,6 +213,20 @@
 	-webkit-transform: translateY(-35px);
 	transform: translateY(-35px);
 }
+@keyframes ABP-Tooltip{
+	0%{
+		transform:translateY(-5px);
+		opacity:0
+	}
+	60%{
+		transform:translateY(-5px);
+		opacity:0
+	}
+	to{
+		transform:translateY(0);
+		opacity:1
+	}
+}
 #ABP-Tooltip{
 	position:absolute;
 	font-size:12px;
@@ -226,7 +240,9 @@
 	-webkit-box-shadow:0 3px 6px rgba(0,0,0,.4);
 	box-shadow:0 3px 6px rgba(0,0,0,.4);
 	pointer-events:none;
-	-webkit-user-select:none
+	-webkit-user-select:none;
+	animation-name:ABP-Tooltip;
+	animation-duration:.3s
 }
 .ABP-Unit .ABP-Text{
 	position:absolute;
@@ -792,6 +808,20 @@ body.ABP-FullScreen{
 .ABP-Unit.ABP-FullScreen .ABP-Control .time-jump{
 	right:163px
 }
+@keyframes scale-menu-show{
+	0%{
+		opacity:0
+	}
+	30%{
+		opacity:1
+	}
+	70%{
+		opacity:1
+	}
+	100%{
+		opacity:0
+	}
+}
 .ABP-Unit .BiliPlus-Scale-Menu {
 	position: absolute;
 	bottom: 49px;
@@ -804,6 +834,7 @@ body.ABP-FullScreen{
 	padding: 5px;
 	opacity: 0;
 	transition: opacity .5s;
+	animation-duration:1.5s
 }
 .ABP-Unit.ABP-Mini .BiliPlus-Scale-Menu {
 	bottom: 27px;
@@ -899,6 +930,16 @@ body.ABP-FullScreen{
 .ABP-Unit.ABP-FullScreen .ABP-Video.ABP-HideCursor+.ABP-FullScreenProgress{
 	opacity:0;
 }
+@keyframes ABP-Popup{
+	0%{
+		transform:translateY(10px);
+		opacity:0
+	}
+	to{
+		transform:translateY(0);
+		opacity:1
+	}
+}
 .ABP-Unit .ABP-Popup{
 	position:absolute;
 	background:rgba(255,255,255,.9);
@@ -908,7 +949,9 @@ body.ABP-FullScreen{
 	border-radius:5px;
 	left:10px;
 	padding:5px 10px;
-	bottom:52px
+	bottom:52px;
+	animation-name:ABP-Popup;
+	animation-duration:.5s
 }
 .ABP-Unit .ABP-Comment-List{
 	display:none;

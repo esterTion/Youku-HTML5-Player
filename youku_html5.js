@@ -155,7 +155,7 @@ function passwordCB() {
     let password = document.querySelector('#YHP_Notice input[type=text]');
     if (password.value.length == 0) {
         let container = document.querySelector('#YHP_Notice .confirm').parentNode;
-        container.insertBefore(document.createElement('span'), container.firstChild).outerHTML = '<span style="color:#F00">' + _t('emptyPW') + '</span>';
+        container.insertBefore(_('span', { style: { color: '#F00' } }, [_('text', _t('emptyPW'))]), container.firstChild);
         setTimeout(function () {
             let toremove = container.firstChild;
             if (toremove.nodeName.toLowerCase() == 'span')
@@ -253,7 +253,7 @@ function switchLang(lang) {
         }, [_('text', availableSrc[i][1])]));
     }
     if (audioLangs.length > 1)
-        abpinst.createPopup(_t('currentLang') + (knownLangs[lang] || lang), 3e3);
+        abpinst.removePopup(), abpinst.createPopup(_t('currentLang') + (knownLangs[lang] || lang), 3e3);
 }
 function fetchSrc(extraQuery) {
     tempPwd = extraQuery;
@@ -304,6 +304,8 @@ function fetchSrc(extraQuery) {
                 uid = json.data.user.uid;
                 abpinst.playerUnit.addEventListener('sendcomment', sendComment);
                 abpinst.title = json.data.video.title;
+                document.querySelector('.BiliPlus-Scale-Menu').style.animationName='scale-menu-show';
+                setTimeout(function(){document.querySelector('.BiliPlus-Scale-Menu').style.animationName='';},2e3)
                 if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
                     abpinst.video.addEventListener('ended', function () {
                         readStorage('auto_switch', function (item) {
@@ -406,7 +408,10 @@ function ykCmtParser(json) {
     }
     shield.shield();
 }
+let fetchedPage = [];
 function fetchComment(m) {
+    if (fetchedPage[m]) return;
+    fetchedPage[m] = true;
     m *= 5;
     fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=5&ct=1001&icode=' + vid, {
         method: 'GET',
@@ -419,21 +424,11 @@ function fetchComment(m) {
             abpinst.createPopup(_t('fetchCommentErr'), 1e3);
     })
 }
-let prevMinute = 0;
 function chkCmtTime() {
-    let minute = ((this.currentTime + 30) / 300) | 0;
-    if (prevMinute != minute && minute * 300 < this.duration) {
-        fetchComment(minute);
-    }
-    prevMinute = minute;
+    fetchComment(((this.currentTime + 30) / 300) | 0);
 }
 function chkSeekCmtTime() {
-    let minute = (this.currentTime / 300) | 0;
-    if (minute < prevMinute) {
-        abpinst.cmManager.load([]);
-        prevMinute = minute;
-        fetchComment(minute);
-    }
+    fetchComment((this.currentTime / 300) | 0);
 }
 const DANMU_POST_SERCET = "Ef9/4e4d^@g9a2M3g";
 function sendComment(e) {
@@ -506,9 +501,6 @@ window.changeSrc = function (e, t, force) {
             localStorage.YHP_PreferedType = setPrefer;
         }
         flvparam(t);
-        abpinst.cmManager.load([]);
-        prevMinute = 0;
-        fetchComment(0);
     }
 }
 window.overallBitrate = 0;
@@ -625,6 +617,20 @@ function chkInit() {
         init();
     })
 }
+let tempEvent, tempEventType
+function eventPasser() {
+    switch (tempEventType) {
+        case 'keydown':
+            if (tempEvent.initKeyboardEvent) {
+                tempEvent.initKeyboardEvent('keydown', true, true, tempEvent.view, tempEvent.char, tempEvent.key, tempEvent.location, null, tempEvent.repeat);
+            }
+            break;
+    }
+    console.log('passed keydown ', tempEvent.key)
+    abpinst.playerUnit.dispatchEvent(tempEvent);
+    tempEvent = null;
+    tempEventType = '';
+}
 function init() {
     isChrome && chrome.runtime.sendMessage({ icon: true, state: 'playing' });
 
@@ -655,11 +661,30 @@ function init() {
     });
     dots.runTimer();
 
+    window.addEventListener('keydown', function (e) {
+        if (!abpinst.playerUnit.contains(e.target) && ['input', 'textarea'].indexOf(e.target.nodeName.toLowerCase()) == -1) {
+            switch (e.keyCode) {
+                case 27:
+                case 32:
+                case 37:
+                case 39:
+                case 38:
+                case 40:
+                    e.preventDefault();
+                    tempEvent = e;
+                    tempEventType = 'keydown';
+                    setTimeout(eventPasser, 0);
+                    break;
+            }
+        }
+    });
+
     let savedPassword = JSON.parse(localStorage.YHP_SavedPassword || '{}');
     let password;
     if (savedPassword[vid])
         password = '&password=' + savedPassword[vid];
     fetchSrc(password);
+    fetchComment(0);
 
     abpinst.video.addEventListener('seeking', chkSeekCmtTime);
     abpinst.video.addEventListener('timeupdate', chkCmtTime);
