@@ -1,0 +1,1 @@
+location.href = location.href.replace(document.domain, 'v.youku.com');

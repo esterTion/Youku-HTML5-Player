@@ -21,4 +21,9 @@
             console.log('关闭官方html5');
         }
     })
+    setTimeout(function () {
+        let script = document.createElement('script');
+        script.appendChild(document.createTextNode("Object.defineProperty(navigator,'userAgent',{value:navigator.userAgent.replace(/mac/ig, '')})"));
+        document.head.appendChild(script);
+    }, 0);
 })()

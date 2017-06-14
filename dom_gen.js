@@ -1,4 +1,4 @@
-let _ = function (type, props, children, callback) {
+let _ = function (type, props, children) {
     let elem = null;
     if (type === "text") {
         return document.createTextNode(props);
@@ -6,14 +6,18 @@ let _ = function (type, props, children, callback) {
         elem = document.createElement(type);
     }
     for (let n in props) {
-        if (n !== "style" && n !== "className") {
-            elem.setAttribute(n, props[n]);
-        } else if (n === "className") {
-            elem.className = props[n];
-        } else {
+        if (n === "style") {
             for (let x in props.style) {
                 elem.style[x] = props.style[x];
             }
+        } else if (n === "className") {
+            elem.className = props[n];
+        } else if (n === "event") {
+            for (let x in props.event) {
+                elem.addEventListener(x, props.event[x]);
+            }
+        } else {
+            elem.setAttribute(n, props[n]);
         }
     }
     if (children) {
@@ -21,9 +25,6 @@ let _ = function (type, props, children, callback) {
             if (children[i] != null)
                 elem.appendChild(children[i]);
         }
-    }
-    if (callback && typeof callback === "function") {
-        callback(elem);
     }
     return elem;
 };

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "1.2.3.1",
+  "version": "1.2.3.2",
   "description": "__MSG_extDesc__",
   "content_scripts": [
     {
@@ -49,6 +49,16 @@
       "all_frames": true,
       "js": [
         "official_html5_enabler.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "*://v-wb.youku.com/*"
+      ],
+      "all_frames": true,
+      "js": [
+        "v_slash_jumper.js"
       ],
       "run_at": "document_start"
     }

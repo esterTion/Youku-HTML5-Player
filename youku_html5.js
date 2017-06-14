@@ -7,18 +7,21 @@ function createPopup(param) {
     let div = _('div', { id: 'YHP_Notice' });
     let childs = [];
     if (param.showConfirm) {
-        childs.push(_('input', { value: param.confirmBtn, type: 'button', className: 'confirm' }));
+        childs.push(_('input', { value: param.confirmBtn, type: 'button', className: 'confirm', event: { click: param.onConfirm } }));
     }
-    childs.push(_('input', { value: _t('close'), type: 'button', className: 'close' }));
+    childs.push(_('input', {
+        value: _t('close'), type: 'button', className: 'close', event: {
+            click: function () {
+                div.style.height = 0;
+                setTimeout(function () { div.remove() }, 500);
+            }
+        }
+    }));
     div.appendChild(_('div', {}, [_('div', {},
         param.content.concat([_('hr'), _('div', { style: { textAlign: 'right' } }, childs)])
     )]));
     document.body.appendChild(div);
     div.style.height = div.firstChild.offsetHeight + 'px';
-    document.querySelector('#YHP_Notice .close').addEventListener('click', function () {
-        div.style.height = 0;
-        setTimeout(function () { div.remove() }, 500);
-    });
 }
 
 let domain = location.href.match(/:\/\/([^\/]+)/)[1];
@@ -155,11 +158,10 @@ function passwordCB() {
     let password = document.querySelector('#YHP_Notice input[type=text]');
     if (password.value.length == 0) {
         let container = document.querySelector('#YHP_Notice .confirm').parentNode;
-        container.insertBefore(_('span', { style: { color: '#F00' } }, [_('text', _t('emptyPW'))]), container.firstChild);
+        let note = _('span', { style: { color: '#F00' } }, [_('text', _t('emptyPW'))]);
+        container.insertBefore(note, container.firstChild);
         setTimeout(function () {
-            let toremove = container.firstChild;
-            if (toremove.nodeName.toLowerCase() == 'span')
-                toremove.remove();
+            note.remove();
         }, 3e3);
     } else {
         password = password.value;
@@ -174,6 +176,12 @@ function passwordCB() {
         document.querySelector('#YHP_Notice .close').click();
     }
 };
+function passwordKeyDown(e) {
+    if (e.keyCode == 13) {
+        this.blur();
+        document.querySelector('#YHP_Notice .confirm').click();
+    }
+}
 
 function padStart(str, pad, len) {
     if (typeof (str) != 'string')
@@ -206,12 +214,15 @@ function generate_downlink() {
         }
     }
     if (childs.length > 0) {
-        document.querySelector('#panel_down').appendChild(_('div', { className: 'YHP_down' }, childs));
-        document.querySelector('#panel_down .YHP_down').addEventListener('click', function (e) {
-            if (e.target.className == 'YHP_output') {
-                urlsOutput(e.target.getAttribute('data-type'));
+        document.querySelector('#panel_down').appendChild(_('div', {
+            className: 'YHP_down', event: {
+                click: function (e) {
+                    if (e.target.className == 'YHP_output') {
+                        urlsOutput(e.target.getAttribute('data-type'));
+                    }
+                }
             }
-        })
+        }, childs));
     }
 }
 function urlsOutput(type) {
@@ -223,19 +234,23 @@ function urlsOutput(type) {
     if (urls.length == 0) return;
     urls = "data:text/plain," + urls.join('%0A');
     let div = _('div', { id: 'urls-output' }, [
-        _('div', { style: { position: 'fixed', top: 0, left: 0, zIndex: 20000, width: '100%', height: '100%', background: 'rgba(0,0,0,.5)', animationFillMode: 'forwards', animationName: 'pop-iframe-in', animationDuration: '.5s' } }, [
-            _('iframe', { src: urls, style: { background: '#e4e7ee', position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%' } }),
-            _('div', { className: 'closeBox', style: { position: 'absolute', top: '5%', right: '8%', fontSize: '40px', color: '#FFF' } }, [_('text', '×')])
-        ])
+        _('div', {
+            style: { position: 'fixed', top: 0, left: 0, zIndex: 20000, width: '100%', height: '100%', background: 'rgba(0,0,0,.5)', animationFillMode: 'forwards', animationName: 'pop-iframe-in', animationDuration: '.5s' },
+            event: {
+                click: function (e) {
+                    if (e.target == this || e.target.className == 'closeBox') {
+                        div.firstChild.style.animationName = 'pop-iframe-out'
+                        setTimeout(function () {
+                            div.remove();
+                        }, 5e2);
+                    }
+                }
+            }
+        }, [
+                _('iframe', { src: urls, style: { background: '#e4e7ee', position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%' } }),
+                _('div', { className: 'closeBox', style: { position: 'absolute', top: '5%', right: '8%', fontSize: '40px', color: '#FFF' } }, [_('text', '×')])
+            ])
     ]);
-    div.firstChild.addEventListener('click', function (e) {
-        if (e.target == this || e.target.className == 'closeBox') {
-            div.firstChild.style.animationName = 'pop-iframe-out'
-            setTimeout(function () {
-                div.remove();
-            }, 5e2);
-        }
-    });
     document.body.appendChild(div)
 }
 
@@ -273,18 +288,18 @@ function fetchSrc(extraQuery) {
                 let error = json.data.error;
                 if (error.code == -2002) {
                     createPopup({
-                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('needPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text' }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
+                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('needPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text', event: { keydown: passwordKeyDown } }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
                         showConfirm: true,
-                        confirmBtn: _t('submit')
+                        confirmBtn: _t('submit'),
+                        onConfirm: passwordCB
                     });
-                    document.querySelector('#YHP_Notice .confirm').addEventListener('click', passwordCB);
                 } else if (error.code == -2003) {
                     createPopup({
-                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('wrongPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text' }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
+                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('wrongPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text', event: { keydown: passwordKeyDown } }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
                         showConfirm: true,
-                        confirmBtn: _t('submit')
+                        confirmBtn: _t('submit'),
+                        onConfirm: passwordCB
                     });
-                    document.querySelector('#YHP_Notice .confirm').addEventListener('click', passwordCB);
                 } else {
                     createPopup({ content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', JSON.stringify(json.data.error))], showConfirm: false });
                 }
@@ -304,8 +319,8 @@ function fetchSrc(extraQuery) {
                 uid = json.data.user.uid;
                 abpinst.playerUnit.addEventListener('sendcomment', sendComment);
                 abpinst.title = json.data.video.title;
-                document.querySelector('.BiliPlus-Scale-Menu').style.animationName='scale-menu-show';
-                setTimeout(function(){document.querySelector('.BiliPlus-Scale-Menu').style.animationName='';},2e3)
+                document.querySelector('.BiliPlus-Scale-Menu').style.animationName = 'scale-menu-show';
+                setTimeout(function () { document.querySelector('.BiliPlus-Scale-Menu').style.animationName = ''; }, 2e3)
                 if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
                     abpinst.video.addEventListener('ended', function () {
                         readStorage('auto_switch', function (item) {
@@ -329,27 +344,32 @@ function fetchSrc(extraQuery) {
                     }
                     let langChange = _('div', { className: 'dm static' }, [
                         _('div', {}, [_('text', _t('audioLang'))]),
-                        _('div', { className: 'dmMenu' }, childs)
+                        _('div', {
+                            className: 'dmMenu', event: {
+                                click: function (e) {
+                                    let lang = e.target.getAttribute('data-lang');
+                                    if (lang == currentLang)
+                                        return;
+                                    switchLang(lang);
+                                    currentLang = lang;
+                                    localStorage.YHP_PreferedLang = lang;
+                                    changeSrc('', currentSrc, true);
+                                }
+                            }
+                        }, childs)
                     ]);
                     contextMenu.insertBefore(langChange, contextMenu.firstChild);
-                    langChange.childNodes[1].addEventListener('click', function (e) {
-                        let lang = e.target.getAttribute('data-lang');
-                        if (lang == currentLang)
-                            return;
-                        switchLang(lang);
-                        currentLang = lang;
-                        localStorage.YHP_PreferedLang = lang;
-                        changeSrc('', currentSrc, true);
-                    });
                 }
 
                 if (domain != 'v.youku.com') {
-                    let toMain = _('div', { id: 'main_link' }, [_('text', _t('toYouku'))]);
-                    contextMenu.insertBefore(toMain, contextMenu.firstChild);
-                    toMain.addEventListener('click', function () {
-                        abpinst.video.pause();
-                        window.open('http://v.youku.com/v_show/id_' + vid + '.html');
-                    })
+                    contextMenu.insertBefore(_('div', {
+                        id: 'main_link', event: {
+                            click: function () {
+                                abpinst.video.pause();
+                                window.open('http://v.youku.com/v_show/id_' + vid + '.html');
+                            }
+                        }
+                    }, [_('text', _t('toYouku'))]), contextMenu.firstChild);
                 } else {
                     document.querySelector('#fn_download').addEventListener('click', generate_downlink);
                 }
@@ -696,25 +716,28 @@ function init() {
     playerHeight();
     if (domain == 'v.youku.com') {
         let restore = document.querySelector('#module-interact').appendChild(_('div', { className: 'fn-phone-see' }, [
-            _('div', { className: 'fn' }, [
-                _('a', { className: 'label', href: 'javascript:void(0);' }, [
-                    _('text', _t('restoreFlash'))
+            _('div', {
+                className: 'fn', event: {
+                    click: function () {
+                        if (disabled)
+                            return;
+                        disabled = true;
+                        if (self.flvplayer && self.flvplayer.destroy) {
+                            self.flvplayer.destroy();
+                            self.flvplayer = {};
+                        }
+                        container.firstChild.style.display = 'none';
+                        container.appendChild(flashplayer);
+                        document.body.className = document.body.className.replace('danmuon', 'danmuoff')
+                        this.parentNode.remove();
+                    }
+                }
+            }, [
+                    _('a', { className: 'label', href: 'javascript:void(0);' }, [
+                        _('text', _t('restoreFlash'))
+                    ])
                 ])
-            ])
         ]));
-        restore.firstChild.addEventListener('click', function () {
-            if (disabled)
-                return;
-            disabled = true;
-            if (self.flvplayer && self.flvplayer.destroy) {
-                self.flvplayer.destroy();
-                self.flvplayer = {};
-            }
-            container.firstChild.style.display = 'none';
-            container.appendChild(flashplayer);
-            document.body.className = document.body.className.replace('danmuon', 'danmuoff')
-            this.parentNode.remove();
-        })
     }
 }
 (function () {
@@ -797,19 +820,22 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
         let container = document.querySelector(objID);
         if (container == null) return;
         if (getCookie('cna') == '') {
-            let cnaScr = _('script', { src: 'https://log.mmstat.com/eg.js' });
-            cnaScr.addEventListener('load', function () {
-                let tempListener = function (e) {
-                    document.removeEventListener('cna', tempListener);
-                    document.cookie = 'cna=' + e.detail + '; domain=youku.com; max-age=604800; path=/';
-                    console.log('cna set to ' + e.detail);
-                    location.reload();
-                };
-                document.addEventListener('cna', tempListener);
-                document.head.appendChild(_('script', {}, [_(
-                    'text',
-                    'document.dispatchEvent(new CustomEvent("cna",{detail:window.goldlog.Etag}))'
-                )]));
+            let cnaScr = _('script', {
+                src: 'https://log.mmstat.com/eg.js', event: {
+                    load: function () {
+                        let tempListener = function (e) {
+                            document.removeEventListener('cna', tempListener);
+                            document.cookie = 'cna=' + e.detail + '; domain=youku.com; max-age=604800; path=/';
+                            console.log('cna set to ' + e.detail);
+                            location.reload();
+                        };
+                        document.addEventListener('cna', tempListener);
+                        document.head.appendChild(_('script', {}, [_(
+                            'text',
+                            'document.dispatchEvent(new CustomEvent("cna",{detail:window.goldlog.Etag}))'
+                        )]));
+                    }
+                }
             });
             document.head.appendChild(cnaScr);
             return;
@@ -860,9 +886,8 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                         background: 'linear-gradient(to bottom,transparent,rgba(0,0,0,.7) 10px,rgba(0,0,0,.7) 70px,transparent)',
                         padding: '10px 0',
                         textDecoration: 'none'
-                    }
+                    }, event: { click: function (e) { e.stopPropagation() } }
                 }));
-                info.addEventListener('click', function (e) { e.stopPropagation() });
 
                 let title = info.appendChild(_('div', {
                     style: {
