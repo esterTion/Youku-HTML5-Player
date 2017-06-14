@@ -17,11 +17,36 @@
 - 清晰度切换位于播放器左下角，采用智能记忆模式
 - （如一个视频有 标 高 超，点了高后会记住高清，但是点超后会清除，如果进入一个有原画的会选择原画（最高清晰度））
 - 弹幕开关、设置、屏蔽，播放器音量均会自动记忆
-- 含有多个音频语言的视频可以在右键菜单中切换，暂时没有记忆所选语言的功能
+- 含有多个音频语言的视频可以在右键菜单中切换，同类剧集间切换时临时记忆所选语言
 - 多个语言的视频中，选择的语言为临时记忆，在剧集内切换时保留，打开其他没有同种语言的视频会丢弃已记忆语言
+- 在视频播放器下方功能区中，下载按钮现在正如其名，含有下载功能
 
 ### 使用组件
 - [flv.js](https://github.com/esterTion/flv.js/releases)
 - ABPlayer-bilibili-ver（有改动）
 
-![](https://estertion.win/wp-content/uploads/2017/05/ff8818f4f0d7578622f50355d268000a1b34e920.jpg)
+![](https://estertion.win/wp-content/uploads/2017/06/227b73c94a8766549bb100e67443cd145fdad09a.png)
+![](https://estertion.win/wp-content/uploads/2017/06/d0af1f732f6fffbd47543d6ee070198df57f8349.png)
+
+# English Version
+## Youku HTML5 Player extension
+Author: esterTion
+
+- *uBlock Origin extension may conflict with playback, please disable it and refresh Youku page once, then you can enable it again*
+> [@xinggsf] tested that you can bypass urls matching `tip.soku.com`, `g.alicdn.com` and `log.mmstat.com`
+
+## Install
+
+- [Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/)([xpi direct install](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
+- [Chrome](https://chrome.google.com/webstore/detail/youku-html5-player/fpnknfakcmgkbhccgpgnbaddggjligol)([crx mirror](https://estertion.github.io/Youku-HTML5-Player/signed.crx))（Published with help from [xiaoC](http://www.jijidown.com)）(chrome 49.0+)
+
+## Some feature notes
+- Video quality switch located at bottom-left corner of player, and uses smart memorize mode
+- (If a vid has *Fast SD HD*, once clicked SD it will be remembered, but memory will clear after clicking HD. If you enter a vid with FHD quality then that will be selected (highest quality) )
+- Comment switch, player settings, block preferences, volume state will be automatic memorized
+- Video with multiple language can be selected in context menu, and will be memorized temporarily when switching between episodes
+- In the functional area below the player, the download(下载) button will now act as its name, leads to download links
+
+### Component used
+- [flv.js](https://github.com/esterTion/flv.js/releases)
+- ABPlayer-bilibili-ver（modified）
