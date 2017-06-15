@@ -560,6 +560,7 @@ function fillWithM3u8(select) {
             });
             //部分cdn识别处理
             for (let i in arr) {
+                delete srcUrl[select].segments[i].redirectedURL;
                 srcUrl[select].segments[i].url = arr[i].replace(/http:\/\/.+?\//, function (s) { return s + 'youku/' });
             }
             //重新创建播放器
@@ -646,7 +647,6 @@ function eventPasser() {
             }
             break;
     }
-    console.log('passed keydown ', tempEvent.key)
     abpinst.playerUnit.dispatchEvent(tempEvent);
     tempEvent = null;
     tempEventType = '';
