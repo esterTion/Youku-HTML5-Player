@@ -17,11 +17,12 @@ sessionStorage.removeItem('P_l_h5')
 - 没有记忆播放位置功能
 - 没有播放速度改变界面（可手动在控制台改变）
 - 整体界面处于初期阶段，没有动态效果、进度条预览等
+- 部分视频cdn跨域配置不正确会导致无法播放，遇到console报错`Access-Control-Allow-Origin`相关请联系优酷，并带上cdn ip地址报错
 
 ---
 优酷目前启用html5的逻辑：
-- mac
-- chrome34+或safari
+- Mac，且
+- chrome34+或safari，且
 - cna最后一位比U小[0-9A-T]（这个不知道是不是随机的）
 
 ![](http://wx4.sinaimg.cn/large/763783e4gy1fgdpjds2xcj20bx09amx6.jpg)
