@@ -315,6 +315,7 @@ function fetchSrc(extraQuery) {
             switchLang(currentLang);
             if (firstTime) {
                 iid = json.data.video.id;
+                fetchComment(0);
                 categoryID = json.data.video.category_id;
                 uid = json.data.user.uid;
                 abpinst.playerUnit.addEventListener('sendcomment', sendComment);
@@ -433,7 +434,7 @@ function fetchComment(m) {
     if (fetchedPage[m]) return;
     fetchedPage[m] = true;
     m *= 5;
-    fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=5&ct=1001&icode=' + vid, {
+    fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=5&ct=1001&iid=' + iid, {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache'
@@ -661,6 +662,9 @@ function init() {
     flashplayer.remove();
     let video = container.appendChild(_('video'));
     window.flvplayer = { unload: function () { }, destroy: function () { } };
+    resizeSensor(video.parentNode, function () {
+        window.dispatchEvent(new Event('resize'));
+    });
     abpinst = ABP.create(video.parentNode, {
         src: {
             playlist: [{
@@ -704,7 +708,6 @@ function init() {
     if (savedPassword[vid])
         password = '&password=' + savedPassword[vid];
     fetchSrc(password);
-    fetchComment(0);
 
     abpinst.video.addEventListener('seeking', chkSeekCmtTime);
     abpinst.video.addEventListener('timeupdate', chkCmtTime);
@@ -726,7 +729,7 @@ function init() {
                             self.flvplayer.destroy();
                             self.flvplayer = {};
                         }
-                        container.firstChild.style.display = 'none';
+                        abpinst.playerUnit.style.display = 'none';
                         container.appendChild(flashplayer);
                         document.body.className = document.body.className.replace('danmuon', 'danmuoff')
                         this.parentNode.remove();
@@ -783,6 +786,12 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }
 #YHP_Notice input[type=button]:active {
 	background: #CCC;
+}
+.w1300 .playBox_thx, .w1300.danmuon .playBox_thx .playArea .player, .w1300.danmuon .expandBox .expandCont, .w1300.danmuon .moveright .listArea, .w1300.danmuon .moveleft .listArea{
+    height:781px;
+}
+.expandBox .expandCont a.expandlink .txt{
+    padding-top:300px;
 }`)]))
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;

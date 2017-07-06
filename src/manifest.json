@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "1.2.3.2",
+  "version": "1.2.4",
   "description": "__MSG_extDesc__",
   "content_scripts": [
     {
@@ -12,6 +12,7 @@
       "all_frames": true,
       "js": [
         "dom_gen.js",
+        "resizeSensor.js",
         "md5.js",
         "hookFetch.js",
         "flv.min.js",
