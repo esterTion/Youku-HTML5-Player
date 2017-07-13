@@ -385,5 +385,26 @@
     },
     "officialHtml5":{
         "message":"启用官方html5播放器（不稳定）"
+    },
+    "settings":{
+        "message":"设置"
+    },
+    "settComment":{
+		"message":"弹幕偏好设置"
+	},
+	"recordPlaySpeed":{
+		"message":"将当前速度设为默认"
+	},
+	"settPlayer":{
+		"message":"播放器偏好设置"
+	},
+	"autoPlay":{
+		"message":"自动开始播放"
+	},
+	"defaultFull":{
+		"message":"自动进入全屏模式"
+	},
+    "settExtension":{
+        "message":"扩展偏好设置"
     }
 }

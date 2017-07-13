@@ -385,5 +385,26 @@
     },
     "officialHtml5":{
         "message":"Enable official html5 player (unstable)"
+    },
+    "settings":{
+        "message":"Settings"
+    },
+    "settComment":{
+		"message":"Comment preferences"
+	},
+	"recordPlaySpeed":{
+		"message":"Set current speed as default"
+	},
+	"settPlayer":{
+		"message":"Player preferences"
+	},
+	"autoPlay":{
+		"message":"Start playback automatically"
+	},
+	"defaultFull":{
+		"message":"Enter fullscreen mode automatically"
+	},
+    "settExtension":{
+        "message":"Extension preferences"
     }
 }

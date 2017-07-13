@@ -241,6 +241,7 @@
 	box-shadow:0 3px 6px rgba(0,0,0,.4);
 	pointer-events:none;
 	-webkit-user-select:none;
+	z-index:2;
 	animation-name:ABP-Tooltip;
 	animation-duration:.3s
 }
@@ -511,172 +512,35 @@ body.ABP-FullScreen{
 }
 .ABP-Unit .ABP-Control .ABP-CommentGroup{
 	top:0;
-	right:50px;
+	right:75px;
 	bottom:0
 }
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption{
-	width:120px;
-	height:156px;
-	padding:10px;
-	background:rgba(255,255,255,.9);
-	position:absolute;
-	left:-68px;
-	bottom:25px;
-	border-radius:5px;
-	-webkit-box-shadow:0 0 10px rgba(0,0,0,.2);
-	box-shadow:0 0 10px rgba(0,0,0,.2);
-	-webkit-transition:opacity .1s ease-in-out;
-	transition:opacity .1s ease-in-out;
-	pointer-events:none;
-	opacity:0
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .label{
-	margin:0;
-	text-align:left;
-	color:#666;
-	font-weight:bold;
-	font-size:12px
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .shield-enrty{
-	border-radius:5px;
-	border:1px solid #000;
-	color:#666;
-	font-weight:bold;
-	cursor:pointer
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .opacity-bar,.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .scale-bar,.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .speed-bar{
-	position:relative;
-	height:10px;
-	margin-bottom:8px
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .scale-bar{
-	width:auto
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .prop-checkbox{
-	position:absolute;
-	top:10px;
-	right:12px;
-	width:16px;
-	height:16px;
-	border-radius:5px;
-	background-color:#ccc;
-	border:solid 2px #949494;
-	cursor:pointer;
-	-webkit-transition:all .1s ease-in-out;
-	transition:all .1s ease-in-out
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .prop-checkbox:hover{
-	background-color:#ddd
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .prop-checkbox.on{
-	border-color:#00a0d8;
-	background-color:#ddd
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .prop-checkbox.on::after{
-	content:"";
-	background-color:#00a0d8;
-	position:absolute;
-	left:2px;
-	top:2px;
-	border-radius:2px;
-	width:12px;
-	height:12px
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .opacity-bar .bar,.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .scale-bar .bar,.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption .speed-bar .bar{
-	width:100%;
-	top:2px;
-	left:0
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup .ABP-CommentOption::after{
-	content:" ";
-	position:absolute;
-	left:0;
-	bottom:-5px;
-	height:5px;
-	width:100%
-}
-.ABP-Unit .ABP-Control .ABP-CommentGroup:hover .ABP-CommentShow.on+.ABP-CommentOption,.ABP-Unit .ABP-Control .ABP-CommentGroup:active .ABP-CommentShow.on+.ABP-CommentOption{
-	pointer-events:auto;
-	opacity:1;
-	cursor:default
-}
-.ABP-Unit.ABP-FullScreen .ABP-Control .ABP-CommentGroup,.ABP-Unit.ABP-Mini .ABP-Control .ABP-CommentGroup{
+.ABP-Unit.ABP-Mini .ABP-Control .ABP-CommentGroup{
 	right:50px
 }
 .ABP-Unit .ABP-Control .ABP-PlaySpeedGroup{
 	top:0;
-	right:25px;
+	right:50px;
 	bottom:0
 }
-.ABP-Unit.ABP-FullScreen .ABP-Control .ABP-PlaySpeedGroup,.ABP-Unit.ABP-Mini .ABP-Control .ABP-PlaySpeedGroup{
+.ABP-Unit.ABP-Mini .ABP-Control .ABP-PlaySpeedGroup{
 	right:25px
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption{
-	width:120px;
-	height:58px;
-	padding:10px;
-	background:rgba(255,255,255,.9);
-	position:absolute;
-	left:-95px;
-	bottom:25px;
-	border-radius:5px;
-	-webkit-box-shadow:0 0 10px rgba(0,0,0,.2);
-	box-shadow:0 0 10px rgba(0,0,0,.2);
-	-webkit-transition:opacity .1s ease-in-out;
-	transition:opacity .1s ease-in-out;
-	pointer-events:none;
-	opacity:0
-}
-.ABP-Unit.ABP-FullScreen .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption,.ABP-Unit.ABP-Mini .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption{
-	left: -93px
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption.ABP-PlaySpeedOption .label{
-	margin:0;
-	text-align:left;
-	color:#666;
-	font-weight:bold;
-	font-size:12px
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption .playSpeed-bar{
-	position:relative;
-	height:10px;
-	margin-bottom:8px
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption .playSpeed-bar .bar{
-	width:100%;
-	top:2px;
-	left:0
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption .play-speed-reset{
-	border-radius:5px;
-	border:1px solid #000;
-	color:#666;
-	font-weight:bold;
-	cursor:pointer
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup:hover .ABP-PlaySpeedOption,.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup:active .ABP-PlaySpeedOption{
-	pointer-events:auto;
-	opacity:1;
-	cursor:default
-}
-.ABP-Unit .ABP-Control .ABP-PlaySpeedGroup .ABP-PlaySpeedOption::after{
-	content:" ";
-	position:absolute;
-	left:0;
-	bottom:-5px;
-	height:5px;
-	width:100%
 }
 .ABP-Unit .ABP-Control .ABP-Volume{
 	top:0;
-	right:140px;
+	right:165px;
 	bottom:0
-}
-.ABP-Unit.ABP-FullScreen .ABP-Control .ABP-Volume{
-	right:140px
 }
 .ABP-Unit.ABP-Mini .ABP-Control .ABP-Volume{
 	right:75px
+}
+.ABP-Unit .ABP-Control .ABP-Setting{
+	top:0;
+	right:25px;
+	bottom:0
+}
+.ABP-Unit.ABP-Mini .ABP-Control .ABP-Setting{
+	display:none;
 }
 .ABP-Unit .ABP-Control .ABP-WideScreen{
 	display:none;
@@ -696,12 +560,8 @@ body.ABP-FullScreen{
 	left:35px;
 	background:#fff;
 	border-left:1px solid #ececec;
-	width:-webkit-calc(100% - 270px);
-	width:calc(100% - 270px)
-}
-.ABP-Unit.ABP-FullScreen .ABP-Control .progress-bar{
-	width:-webkit-calc(100% - 270px);
-	width:calc(100% - 270px)
+	width:-webkit-calc(100% - 295px);
+	width:calc(100% - 295px)
 }
 .ABP-Unit.ABP-Mini .ABP-Control .progress-bar{
 	width:-webkit-calc(100% - 200px);
@@ -710,17 +570,14 @@ body.ABP-FullScreen{
 .ABP-Unit .ABP-Control .volume-bar{
 	position:absolute;
 	top:0;
-	right:68px;
+	right:93px;
 	bottom:0;
 	width:80px
-}
-.ABP-Unit.ABP-FullScreen .ABP-Control .volume-bar{
-	right:68px
 }
 .ABP-Unit.ABP-Mini .ABP-Control .volume-bar{
 	display:none
 }
-.ABP-Unit .ABP-Control .bar{
+.ABP-Unit .bar{
 	cursor:pointer;
 	width:-webkit-calc(100% - 20px);
 	width:calc(100% - 20px);
@@ -732,7 +589,7 @@ body.ABP-FullScreen{
 	background:#949494;
 	border-radius:6px
 }
-.ABP-Unit .ABP-Control .bar::after{
+.ABP-Unit .bar::after{
 	content:"";
 	width:100%;
 	height:18px;
@@ -741,19 +598,19 @@ body.ABP-FullScreen{
 	top:-6px;
 	left:0
 }
-.ABP-Unit .ABP-Control .bar .load,.ABP-Unit .ABP-Control .bar .dark{
+.ABP-Unit .bar .load,.ABP-Unit .bar .dark{
 	position:absolute;
 	height:0;
 	height:100%;
 	border-radius:6px
 }
-.ABP-Unit .ABP-Control .bar .load{
+.ABP-Unit .bar .load{
 	background:#00a0d8
 }
-.ABP-Unit .ABP-Control .bar .dark{
+.ABP-Unit .bar .dark{
 	background:#007bb1
 }
-.ABP-Unit .ABP-Control .bar .dark:before{
+.ABP-Unit .bar .dark:before{
 	position:absolute;
 	top:-3px;
 	right:-6px;
@@ -766,7 +623,7 @@ body.ABP-FullScreen{
 	content:"";
 	cursor:pointer
 }
-.ABP-Unit .ABP-Control .bar .dark::after{
+.ABP-Unit .bar .dark::after{
 	position:absolute;
 	right:-3px;
 	width:6px;
@@ -782,20 +639,20 @@ body.ABP-FullScreen{
 	width:86px;
 	font-size:11px;
 	position:absolute;
-	right:159px;
+	right:184px;
 	text-align:center;
 	line-height:22px;
 	height:20px
 }
 .ABP-Unit.ABP-FullScreen .time-label{
-	right:162px
+	right:187px
 }
 .ABP-Unit.ABP-Mini .time-label{
 	right:94px
 }
 .ABP-Unit .ABP-Control .time-jump{
 	position:absolute;
-	right:163px;
+	right:188px;
 	height:15px;
 	width:74px;
 	outline:0;
@@ -804,9 +661,6 @@ body.ABP-FullScreen{
 }
 .ABP-Unit.ABP-Mini .ABP-Control .time-jump{
 	right:96px
-}
-.ABP-Unit.ABP-FullScreen .ABP-Control .time-jump{
-	right:163px
 }
 @keyframes scale-menu-show{
 	0%{
@@ -1804,7 +1658,7 @@ body.ABP-FullScreen{
 	background:none;
 }
 .Context-Menu-Body>div.dm::after {
-	background-image: url("https://www.biliplus.com/image/UIButtonBarArrowRight@2x.png");
+	background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAkCAYAAACJ8xqgAAABV0lEQVRIia3WXytEQRgG8PkcO/M+z/z5aEoppUREUkIUm7CsVm2bXMhyQSQSvthyoWXOuZx3Tp3bX89z5vS+Y4wxJgCPQfyXqfEEYJzov39ffqjBaGUxCCZTNABv+pTkco4m8S/6pMBqjkbwSY3SynqjvvgHNeqd22wkdbyvkNRutQ5qrEaDcCdHvciNGo0d7E3RCE6i47U+qeVBjgbgSo16sttIKjJUowk4biR1cqlGA9mbokEw8cCFGo0i/RyN5JkaTcAgRxNwXCPpMIJ/KGugXmSUo57sqsDk5CSvHpycFmPRuaPG4YicF2OBPMwx1feL8PuNmmSvGIPIbqtmvxgLwu3WvzcoxvIprh4OSbiRY15kVIzR2rVqA9YDK9VWQCCXWkvqthgDsFBtjbLD+WqLPlo7V+0qEoDZapcldjjTqvlajBljTHS8+6+JdxWWoc+J/rOG9QNQa80wbFp1UAAAAABJRU5ErkJggg==");
 	content: "";
 	position: absolute;
 	right: 5px;
@@ -1982,4 +1836,148 @@ body.ABP-FullScreen{
 	background:#00a0d8;
 	height:2px;
 	width:0
+}
+.ABP-Settings{
+	position:absolute;
+	top:0;
+	bottom:44px;
+	right:0;
+	width:0;
+	background:#FFF;
+	border:none;
+	transition:width .3s;
+	overflow:hidden;
+	cursor:default
+}
+.ABP-Settings.expand{
+	border:solid 1px #ccc;
+	width:300px
+}
+.ABP-Mini .ABP-Settings{
+	display:none
+}
+.ABP-Settings>:first-child{
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	width:300px;
+	height:100%;
+	overflow-y:auto;
+	-webkit-overflow-scrolling:touch
+}
+.ABP-Settings-Top{
+	width:100%;
+	height:30px;
+	border-bottom:3px solid #ccc;
+	background:#FAFAFA
+}
+.ABP-Settings-Close {
+	margin-left: 8px;
+	line-height: 30px;
+	font-size: 40px;
+	color: #888;
+	cursor:pointer;
+	display:inline
+}
+.ABP-Settings-Container{
+	margin:5px 10px
+}
+.ABP-Unit .ABP-Settings .label{
+	margin:0;
+	text-align:left;
+	color:#666;
+	font-weight:bold;
+	font-size:12px;
+	position:relative
+}
+.ABP-Unit .ABP-Settings .label.big{
+	font-size:16px;
+	margin-top:10px
+}
+.ABP-Unit .ABP-Settings .label.prop{
+	line-height:24px;
+	padding-left:25px
+}
+.ABP-Unit .ABP-Settings .shield-enrty{
+	border-radius:5px;
+	border:1px solid #000;
+	color:#666;
+	font-weight:bold;
+	cursor:pointer;
+	padding:2px 0;
+	text-align:center
+}
+.ABP-Unit .ABP-Settings .opacity-bar,.ABP-Unit .ABP-Settings .scale-bar,.ABP-Unit .ABP-Settings .speed-bar{
+	position:relative;
+	height:10px;
+	margin-bottom:8px
+}
+.ABP-Unit .ABP-Settings .scale-bar{
+	width:auto
+}
+.ABP-Unit .ABP-Settings .prop-checkbox{
+	position:absolute;
+	top:2px;
+	left:0px;
+	width:16px;
+	height:16px;
+	border-radius:5px;
+	background-color:#ccc;
+	border:solid 2px #949494;
+	cursor:pointer;
+	-webkit-transition:all .1s ease-in-out;
+	transition:all .1s ease-in-out
+}
+.ABP-Unit .ABP-Settings .prop-checkbox:hover{
+	background-color:#ddd
+}
+.ABP-Unit .ABP-Settings .prop-checkbox.on{
+	border-color:#00a0d8;
+	background-color:#ddd
+}
+.ABP-Unit .ABP-Settings .prop-checkbox.on::after{
+	content:"";
+	background-color:#00a0d8;
+	position:absolute;
+	left:2px;
+	top:2px;
+	border-radius:2px;
+	width:12px;
+	height:12px
+}
+.ABP-Unit .ABP-Settings .opacity-bar .bar,.ABP-Unit .ABP-Settings .scale-bar .bar,.ABP-Unit .ABP-Settings .speed-bar .bar{
+	width:100%;
+	top:2px;
+	left:0
+}
+.ABP-Unit .ABP-Settings::after{
+	content:" ";
+	position:absolute;
+	left:0;
+	bottom:-5px;
+	height:5px;
+	width:100%
+}
+.ABP-Unit .ABP-Settings .playSpeed-bar{
+	position:relative;
+	height:10px;
+	margin-bottom:8px
+}
+.ABP-Unit .ABP-Settings .playSpeed-bar .bar{
+	width:100%;
+	top:2px;
+	left:0
+}
+.ABP-Unit .ABP-Settings .play-speed-reset{
+	border-radius:5px;
+	border:1px solid #000;
+	color:#666;
+	font-weight:bold;
+	cursor:pointer;
+	padding:2px 0;
+	text-align:center
+}
+#blockVisitor{
+	display:none
 }

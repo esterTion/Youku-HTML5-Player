@@ -102,6 +102,7 @@ ABP.Strings={
 	useCSS:_t('useCSS'),
 	autoOpacityOn:_t('autoOpacityOn'),
 	autoOpacityOff:_t('autoOpacityOff'),
+	settings:_t('settings'),
 	
 	copyComment:_t('copyComment'),
 	findComment:_t('findComment'),
@@ -122,7 +123,13 @@ ABP.Strings={
 	dragControlMedDec:_t('dragControlMedDec'),
 	dragControlHighInc:_t('dragControlHighInc'),
 	dragControlHighDec:_t('dragControlHighDec'),
-	dragControlCancel:_t('dragControlCancel')
+	dragControlCancel:_t('dragControlCancel'),
+	
+	settComment:_t('settComment'),
+	recordPlaySpeed:_t('recordPlaySpeed'),
+	settPlayer:_t('settPlayer'),
+	autoPlay:_t('autoPlay'),
+	defaultFull:_t('defaultFull')
 };
 
 (function() {
@@ -631,81 +638,13 @@ ABP.Strings={
 				"className": "button-group ABP-CommentGroup"
 			}, [_("div", {
 				"className": "button ABP-CommentShow icon-comment on"
-			}), _("div", {
-				"className": "ABP-CommentOption"
-			}, [_('p', {
-				className:'label'
-			}, [_('text',ABP.Strings.useCSS), _("div", {
-				"className": "prop-checkbox"
-			})]), _("p", {
-				"className": "label"
-			}, [_("text", ABP.Strings.commentSpeed)]), _("div", {
-				"className": "speed-bar"
-			}, [
-				_("div", {
-					"className": "bar"
-				}, [
-					_("div", {
-						"className": "load"
-					})
-				]),
-			]), _("p", {
-				"className": "label"
-			}, [_("text", ABP.Strings.commentScale)]), _("div", {
-				"className": "scale-bar"
-			}, [
-				_("div", {
-					"className": "bar"
-				}, [
-					_("div", {
-						"className": "load"
-					})
-				]),
-			]), _("p", {
-				"className": "label"
-			}, [_("text", ABP.Strings.commentOpacity)]), _("div", {
-				"className": "opacity-bar",
-				style:{
-					width:'calc(100% - 25px)'
-				}
-			}, [
-				_("div", {
-					"className": "bar"
-				}, [
-					_("div", {
-						"className": "load"
-					})
-				]),
-			]),_("div", {
-				"className": "prop-checkbox",
-				style:{
-					top:'121px'
-				}
-			}), _("div", {
-				"className": "shield-enrty"
-			}, [
-				_("text", ABP.Strings.commentBlock),
-			])])]), _("div", {
+			})]), _("div", {
 				"className": "button-group ABP-PlaySpeedGroup"
 			},[_("div", {
 				"className": "button ABP-Loop icon-loop"
-			}), _("div", {
-				"className": "ABP-PlaySpeedOption"
-			},[_("p", {
-				"className": "label"
-			}, [_("text", ABP.Strings.playSpeed)]), _("div", {
-				"className": "playSpeed-bar"
-			}, [
-				_("div", {
-					"className": "bar"
-				}, [
-					_("div", {
-						"className": "load"
-					})
-				]),
-			]), _("div",{
-				"className": "play-speed-reset"
-			},[_("text", ABP.Strings.playSpeedReset)])])]), _("div", {
+			})]), _("div", {
+				"className": "button ABP-Setting icon-gear"
+			}),_("div", {
 				"className": "button ABP-WideScreen icon-tv"
 			}),
 			_("div", {
@@ -746,7 +685,7 @@ ABP.Strings={
 						_('div',{className:'shield_toggle',id:'useReg'},[_('text',ABP.Strings.shieldUseRegex)]),
 						_('div',{className:'shield_toggle',id:'blockTop'},[_('text',ABP.Strings.shieldBlockTop)]),
 						_('div',{className:'shield_toggle',id:'blockBottom'},[_('text',ABP.Strings.shieldBlockBottom)]),
-						_('div',{className:'shield_toggle',id:'blockVisitor',style:{display:'none'}},[_('text',ABP.Strings.shieldBlockVisitor)]),
+						_('div',{className:'shield_toggle',id:'blockVisitor'},[_('text',ABP.Strings.shieldBlockVisitor)]),
 						_('div',{className:'shield_slide',id:'repeat'},[
 							_('div',{className:'fill'}),
 							_('div',{className:'button'}),
@@ -793,6 +732,99 @@ ABP.Strings={
 				"className": "ABP-Comment-List-Container-Inner"
 			})])
 		]));
+		container.appendChild(_('div',{className:'ABP-Settings'},[_('div',{},[
+			_('div',{className:'ABP-Settings-Top'},[_('div',{className:'ABP-Settings-Close'},[_('text','×')])]),
+			_('div',{className:'ABP-Settings-Container'},[
+			//CommentOption
+				_('p',{className:'label big'},[_('text',ABP.Strings.settComment)]),
+				_('p', {
+				className:'label prop'
+			}, [_('text',ABP.Strings.useCSS), _("div", {
+				"className": "prop-checkbox"
+			})]), _("p", {
+				"className": "label"
+			}, [_("text", ABP.Strings.commentSpeed)]), _("div", {
+				"className": "speed-bar"
+			}, [
+				_("div", {
+					"className": "bar"
+				}, [
+					_("div", {
+						"className": "load"
+					})
+				]),
+			]), _("p", {
+				"className": "label"
+			}, [_("text", ABP.Strings.commentScale)]), _("div", {
+				"className": "scale-bar"
+			}, [
+				_("div", {
+					"className": "bar"
+				}, [
+					_("div", {
+						"className": "load"
+					})
+				]),
+			]), _("p", {
+				"className": "label"
+			}, [_("text", ABP.Strings.commentOpacity),_("div", {
+				"className": "prop-checkbox",
+				style:{
+					top:'10px',
+					left:'calc(100% - 20px)'
+				}
+			})]), _("div", {
+				"className": "opacity-bar",
+				style:{
+					width:'calc(100% - 25px)'
+				}
+			}, [
+				_("div", {
+					"className": "bar"
+				}, [
+					_("div", {
+						"className": "load"
+					})
+				]),
+			]), _("div", {
+				"className": "shield-enrty"
+			}, [
+				_("text", ABP.Strings.commentBlock),
+			]),
+			
+			//PlaySpeedOption
+			_("p", {
+				"className": "label big"
+			}, [_("text", ABP.Strings.playSpeed)]), _("div", {
+				"className": "playSpeed-bar"
+			}, [
+				_("div", {
+					"className": "bar"
+				}, [
+					_("div", {
+						"className": "load"
+					})
+				]),
+			]), _("div",{
+				"className": "play-speed-reset"
+			},[_("text", ABP.Strings.playSpeedReset)]),
+			_('p', {
+				className:'label prop'
+			}, [_('text',ABP.Strings.recordPlaySpeed), _("div", {
+				id:'setting-recordPlaySpeed',
+				className: "prop-checkbox"
+			})]),
+			
+			//PlayerOption
+			_('p',{className:'label big'},[_('text',ABP.Strings.settPlayer)]),
+			_('p',{className:'label prop'},[_('text',ABP.Strings.autoPlay),_("div",{id:'setting-autoPlay',className:"prop-checkbox"})]),
+			_('p',{className:'label prop'},[_('text',ABP.Strings.defaultFull),_("div",{id:'setting-defaultFull',className:"prop-checkbox"})]),
+
+			_('p',{className:'label big'},[_('text',_t('settExtension'))]),
+			_('iframe',{src:chrome.extension.getURL("options.html"),style:{width:'100%',height:'80px',border:'none'}})
+			//end
+			])
+		])]));
 		container.appendChild(_('div',{className:'Context-Menu'},[
 			_('div',{className:'Context-Menu-Background'}),
 			_('div',{className:'Context-Menu-Body'},[
@@ -896,6 +928,9 @@ ABP.Strings={
 			commentScale: ABP.playerConfig.scale ? ABP.playerConfig.scale : 1,
 			commentSpeed: ABP.playerConfig.speed ? ABP.playerConfig.speed : 1,
 			proportionalScale: ABP.playerConfig.prop,
+			autoPlay: false,
+			defaultFull: false,
+			recordPlaySpeed: false,
 			defaults: {
 				w: 0,
 				h: 0
@@ -975,8 +1010,6 @@ ABP.Strings={
 			autoPlay=function(){
 				loadingNew=false;
 				video.removeEventListener('canplay',autoPlay);
-				if(video.paused)
-					ABPInst.btnPlay.click();
 				if(ABPInst.lastTime!=undefined){
 					video.currentTime=ABPInst.lastTime;
 					delete ABPInst.lastTime;
@@ -984,6 +1017,14 @@ ABP.Strings={
 				if(ABPInst.lastSpeed!=undefined){
 					video.playbackRate=ABPInst.lastSpeed;
 					delete ABPInst.lastSpeed;
+				}
+				if(video.paused && (ABPInst.autoPlay || !isFirst))
+					ABPInst.btnPlay.click();
+				if(!isFirst)
+					return;
+				isFirst=!1;
+				if(!ABPInst.state.fullscreen && ABPInst.defaultFull){
+					ABPInst.btnWebFull.click();
 				}
 			},
 			buffering=function(){
@@ -1118,6 +1159,8 @@ ABP.Strings={
 				});
 				video[addEventListener]("ratechange", function() {
 					if (video.playbackRate !== 0) {
+						if(ABPInst.recordPlaySpeed)
+							saveConfigurations();
 						updatePlaySpeed(ABPInst.video.playbackRate);
 					}
 				});
@@ -1291,6 +1334,35 @@ ABP.Strings={
 		ABPInst.btnLoop = lpbtn[0];
 		ABPInst.btnLoop.tooltip(ABP.Strings.loopOff);
 		hoverTooltip(ABPInst.btnLoop);
+		var settBtn = playerUnit.getElementsByClassName('ABP-Setting')[0],
+		settingPanel = playerUnit.getElementsByClassName('ABP-Settings')[0];
+		ABPInst.btnSetting = settBtn;
+		ABPInst.settingPanel = settingPanel;
+		ABPInst.btnSetting.tooltip(ABP.Strings.settings);
+		hoverTooltip(ABPInst.btnSetting);
+		var settingsOn = false,
+		settingClick = function(){
+			settingsOn ? removeClass(settingPanel, 'expand') : addClass(settingPanel, 'expand');
+			settingsOn ? removeClass(settBtn, 'on') : addClass(settBtn, 'on');
+			settingsOn = !settingsOn;
+		};
+		ABPInst.btnSetting.addEventListener('click',settingClick);
+		playerUnit.getElementsByClassName('ABP-Settings-Close')[0].addEventListener('click',settingClick);
+		document.getElementById('setting-autoPlay').addEventListener('click',function(){
+			ABPInst.autoPlay=!ABPInst.autoPlay;
+			ABPInst.autoPlay?addClass(this,'on'):removeClass(this,'on')
+			saveConfigurations();
+		});
+		document.getElementById('setting-defaultFull').addEventListener('click',function(){
+			ABPInst.defaultFull=!ABPInst.defaultFull;
+			ABPInst.defaultFull?addClass(this,'on'):removeClass(this,'on')
+			saveConfigurations();
+		});
+		document.getElementById('setting-recordPlaySpeed').addEventListener('click',function(){
+			ABPInst.recordPlaySpeed=!ABPInst.recordPlaySpeed;
+			ABPInst.recordPlaySpeed?addClass(this,'on'):removeClass(this,'on')
+			saveConfigurations();
+		});
 		
 		var enabledStats={
 			videoDimension:true,
@@ -1521,6 +1593,14 @@ ABP.Strings={
 		if (typeof ABP.playerConfig == "object") {
 			if (ABP.playerConfig.volume) ABPInst.video.volume = ABP.playerConfig.volume;
 			if (ABP.playerConfig.opacity) ABPInst.cmManager.options.global.opacity = ABP.playerConfig.opacity;
+			if (ABP.playerConfig.autoPlay) {ABPInst.autoPlay=true; addClass(document.getElementById('setting-autoPlay'),'on');}
+			if (ABP.playerConfig.defaultWide) {ABPInst.defaultWide=true; addClass(document.getElementById('setting-defaultWide'),'on');}
+			if (ABP.playerConfig.defaultFull) {ABPInst.defaultFull=true; addClass(document.getElementById('setting-defaultFull'),'on');}
+			if (ABP.playerConfig.recordPlaySpeed) {
+				ABPInst.recordPlaySpeed=true;
+				addClass(document.getElementById('setting-recordPlaySpeed'),'on');
+				ABPInst.lastSpeed=ABP.playerConfig.playSpeed;
+			}
 		}
 		$$('.ABP-Comment-List-Title *').click(function() {
 			var item = $$(this).attr('item'),
@@ -1723,13 +1803,17 @@ ABP.Strings={
 			});
 			var saveConfigurations = function() {
 				saveStorage({PlayerSettings:{
-					"volume": ABPInst.video.volume,
-					"opacity": ABPInst.cmManager.options.global.opacity,
-					"scale": ABPInst.commentScale,
-					"speed":ABPInst.commentSpeed,
-					"commentVisible":ABPInst.cmManager.display,
-					"useCSS":ABPInst.cmManager.options.global.useCSS,
-					"autoOpacity":ABPInst.cmManager.options.global.autoOpacity
+					volume: ABPInst.video.volume,
+					opacity: ABPInst.cmManager.options.global.opacity,
+					scale: ABPInst.commentScale,
+					speed: ABPInst.commentSpeed,
+					commentVisible: ABPInst.cmManager.display,
+					autoOpacity: ABPInst.cmManager.options.global.autoOpacity,
+					useCSS: ABPInst.cmManager.options.global.useCSS,
+					autoPlay: ABPInst.autoPlay,
+					defaultFull: ABPInst.defaultFull,
+					playSpeed: ABPInst.video.playbackRate,
+					recordPlaySpeed: ABPInst.recordPlaySpeed
 				}});
 			}
 			ABPInst.btnAutoOpacity[addEventListener]("click", function(e) {

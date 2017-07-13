@@ -702,6 +702,7 @@ function init() {
             }
         }
     });
+    document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.PlayerSeek=function(e){document.querySelector("video").currentTime=e}')]));
 
     let savedPassword = JSON.parse(localStorage.YHP_SavedPassword || '{}');
     let password;
@@ -741,6 +742,21 @@ function init() {
                     ])
                 ])
         ]));
+
+        let playarea = document.getElementById('playBox') || document.getElementById('module_basic_playarea'),
+            isMini = false;
+        window.addEventListener('scroll', function () {
+            let box = playarea.getBoundingClientRect();
+            if ((box.bottom < 0) && !isMini) {
+                isMini = true;
+                abpinst.playerUnit.className = 'ABP-Unit ABP-Mini';
+                window.dispatchEvent(new Event('resize'));
+            } else if ((box.bottom > 0) && isMini) {
+                isMini = false;
+                abpinst.playerUnit.className = 'ABP-Unit';
+                window.dispatchEvent(new Event('resize'));
+            }
+        })
     }
 }
 (function () {
@@ -787,12 +803,26 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 #YHP_Notice input[type=button]:active {
 	background: #CCC;
 }
+.playBox_thx, .danmuon .playBox_thx .playArea .player, .danmuon .expandBox .expandCont, .danmuon .moveright .listArea, .danmuon .moveleft .listArea{
+    height:658px;
+}
 .w1300 .playBox_thx, .w1300.danmuon .playBox_thx .playArea .player, .w1300.danmuon .expandBox .expandCont, .w1300.danmuon .moveright .listArea, .w1300.danmuon .moveleft .listArea{
     height:781px;
 }
 .expandBox .expandCont a.expandlink .txt{
     padding-top:300px;
-}`)]))
+}
+.ABP-Mini {
+    position: fixed;
+    width: 360px !important;
+    height: 225px !important;
+    margin: 0 0 0 980px;
+    background: transparent;
+    bottom: 60px;
+}
+@media screen and (max-width:1359px){.ABP-Mini{
+    margin: 0 0 0 760px;
+}}`)]))
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
     flvjs.LoggingControl.enableDebug = false;
