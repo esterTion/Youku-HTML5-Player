@@ -813,7 +813,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     padding-top:300px;
 }
 .ABP-Mini {
-    position: fixed;
+    position: fixed !important;
     width: 360px !important;
     height: 225px !important;
     margin: 0 0 0 980px;
