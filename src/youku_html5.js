@@ -44,6 +44,11 @@ let knownTypes = {
     'mp4hd2': _t('mp4hd2'),
     'mp4hd3': _t('mp4hd3')
 };
+let typeDropMap = {
+    'mp4hd3': 'mp4hd2',
+    'mp4hd2': 'mp4hd',
+    'mp4hd': 'flvhd'
+}
 let knownLangs = {
     "default": "默认",
     "guoyu": "国语",
@@ -76,6 +81,7 @@ let tempPwd = '';
 let highestType;
 function response2url(json) {
     let data = {};
+    let savedLang = localStorage.YHP_PreferedLang || '';
     for (let val of json.data.stream) {
         if (!data[val.audio_lang])
             data[val.audio_lang] = {};
@@ -99,6 +105,8 @@ function response2url(json) {
         }
         audioLangs.length++;
         if (currentLang == '')
+            currentLang = lang;
+        if (savedLang == lang)
             currentLang = lang;
         let videoid = videoids[lang] || vid;
         for (let type in knownTypes) {
@@ -143,8 +151,9 @@ function response2url(json) {
             if (audioLangs[lang].src[type]) {
                 selected = [type, knownTypes[type]];
                 audioLangs[lang].available.push(selected);
-                if (firstTime && !hitPrefer)
+                if (firstTime && !hitPrefer && currentLang == lang) {
                     currentSrc = type;
+                }
                 if (prefer == type)
                     hitPrefer = true;
             }
@@ -307,11 +316,6 @@ function fetchSrc(extraQuery) {
             } else {
                 response2url(json);
             }
-            let savedLang = localStorage.YHP_PreferedLang || '';
-            if (audioLangs[savedLang])
-                currentLang = savedLang;
-            else
-                delete localStorage.YHP_PreferedLang;
             switchLang(currentLang);
             if (firstTime) {
                 iid = json.data.video.id;
@@ -351,6 +355,13 @@ function fetchSrc(extraQuery) {
                                     let lang = e.target.getAttribute('data-lang');
                                     if (lang == currentLang)
                                         return;
+                                    while (audioLangs[lang].src[currentSrc] == undefined) {
+                                        if (typeDropMap[currentSrc] == undefined) {
+                                            abpinst.createPopup('切换错误，没有清晰度', 3e3)
+                                            return false;
+                                        }
+                                        currentSrc = typeDropMap[currentSrc];
+                                    }
                                     switchLang(lang);
                                     currentLang = lang;
                                     localStorage.YHP_PreferedLang = lang;
