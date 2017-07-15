@@ -444,8 +444,7 @@ let fetchedPage = [];
 function fetchComment(m) {
     if (fetchedPage[m]) return;
     fetchedPage[m] = true;
-    m *= 5;
-    fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=5&ct=1001&iid=' + iid, {
+    fetch('http://service.danmu.youku.com/list?mat=' + m + '&mcount=1&ct=1001&iid=' + iid, {
         method: 'GET',
         credentials: 'include',
         cache: 'no-cache'
@@ -457,10 +456,10 @@ function fetchComment(m) {
     })
 }
 function chkCmtTime() {
-    fetchComment(((this.currentTime + 30) / 300) | 0);
+    fetchComment(((this.currentTime + 30) / 60) | 0);
 }
 function chkSeekCmtTime() {
-    fetchComment((this.currentTime / 300) | 0);
+    fetchComment((this.currentTime / 60) | 0);
 }
 const DANMU_POST_SERCET = "Ef9/4e4d^@g9a2M3g";
 function sendComment(e) {
