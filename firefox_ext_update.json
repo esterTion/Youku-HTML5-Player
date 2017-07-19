@@ -3,8 +3,8 @@
     "{579e2d44-4478-4d57-b2ac-e17831a37eae}": {
       "updates": [
         {
-          "version": "1.2.5.4",
-          "update_link": "https://estertion.github.io/Youku-HTML5-Player/signed.xpi?ver=1.2.5.4",
+          "version": "1.2.5.5",
+          "update_link": "https://estertion.github.io/Youku-HTML5-Player/signed.xpi?ver=1.2.5.5",
           "applications": {
             "gecko": {
               "strict_min_version": "50.0"

@@ -712,7 +712,8 @@ function init() {
             }
         }
     });
-    document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.PlayerSeek=function(e){document.querySelector("video").currentTime=e}')]));
+    if (domain == 'v.youku.com')
+        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.PlayerSeek=function(e){document.querySelector("video").currentTime=e}')]));
 
     let savedPassword = JSON.parse(localStorage.YHP_SavedPassword || '{}');
     let password;
@@ -821,8 +822,9 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }
 .expandBox .expandCont a.expandlink .txt{
     padding-top:300px;
-}
-.ABP-Mini {
+}`)]))
+    if (domain == 'v.youku.com')
+        document.head.appendChild(_('style', {}, [_('text', `.ABP-Mini {
     position: fixed !important;
     width: 360px !important;
     height: 225px !important;
