@@ -612,7 +612,7 @@ function reloadBackup() {
     if (currentSegment.backup_url && currentSegment.backup_url.length) {
         currentSegment.url = currentSegment.backup_url.shift();
         console.log('load backup url for segment', currentSegmentIndex);
-        if (abpinst.video.buffered.length == 0) {
+        if (abpinst.video.buffered.length == 0 && abpinst.lastTime == undefined) {
             flvplayer._transmuxer._controller._pendingSeekTime = (abpinst.video.currentTime * 1e3) | 0;
         }
         flvplayer._transmuxer._controller._internalAbort();
@@ -667,7 +667,7 @@ let flvparam = function (select) {
     if (srcUrl[select].fetchM3U8) {
         //rtmp视频流，使用m3u8地址播放
         fillWithM3u8(select);
-        changeSrc('',select,true);
+        changeSrc('', select, true);
         return;
     }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
