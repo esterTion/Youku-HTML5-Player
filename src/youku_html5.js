@@ -130,11 +130,15 @@ function response2url(json) {
                         });
                         audioLangs[lang].src[type].fetchM3U8 = true;
                     } else {
-                        audioLangs[lang].src[type].segments.push({
+                        let seg = {
                             filesize: part.size | 0,
                             duration: part.total_milliseconds_video | 0,
-                            url: part.cdn_url
-                        })
+                            url: part.cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) { return s + 'youku/' })
+                        };
+                        if (part.cdn_backup && part.cdn_backup.length) {
+                            seg.backup_url = part.cdn_backup;
+                        }
+                        audioLangs[lang].src[type].segments.push(seg)
                     }
                     time += part.total_milliseconds_video | 0;
                 }
@@ -279,136 +283,156 @@ function switchLang(lang) {
     if (audioLangs.length > 1)
         abpinst.removePopup(), abpinst.createPopup(_t('currentLang') + (knownLangs[lang] || lang), 3e3);
 }
+let fetchSrcSuccess;
 function fetchSrc(extraQuery) {
+    fetchSrcSuccess = false;
     tempPwd = extraQuery;
-    fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
-        method: 'GET',
-        credentials: 'include',
-        cache: 'no-cache'
-    }).then(function (r) {
-        r.json().then(function (json) {
-            if (json.data.error) {
-                /*
-                处理错误
-                -2002 需要密码
-                -2003 密码错误
-                */
-                dots.stopTimer();
-                let error = json.data.error;
-                if (error.code == -2002) {
-                    createPopup({
-                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('needPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text', event: { keydown: passwordKeyDown } }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
-                        showConfirm: true,
-                        confirmBtn: _t('submit'),
-                        onConfirm: passwordCB
-                    });
-                } else if (error.code == -2003) {
-                    createPopup({
-                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('wrongPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text', event: { keydown: passwordKeyDown } }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
-                        showConfirm: true,
-                        confirmBtn: _t('submit'),
-                        onConfirm: passwordCB
-                    });
-                } else {
-                    createPopup({ content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', JSON.stringify(json.data.error))], showConfirm: false });
-                }
-                return;
-            } else {
-                response2url(json);
+    document.head.appendChild(_('script', {
+        src: '//ups.youku.com/ups/get.json?callback=YHP_fetchSrc&ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''),
+        event: {
+            error: function (e) {
+                this.remove();
+                createPopup({
+                    content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', e.message)],
+                    showConfirm: false
+                });
+            },
+            load: function () {
+                this.remove();
+                setTimeout(fetchSrcChecker, 500);
             }
-            switchLang(currentLang);
-            if (firstTime) {
-                iid = json.data.video.id;
-                fetchComment(0);
-                categoryID = json.data.video.category_id;
-                uid = json.data.user.uid;
-                abpinst.playerUnit.addEventListener('sendcomment', sendComment);
-                abpinst.title = json.data.video.title;
-                document.querySelector('.BiliPlus-Scale-Menu').style.animationName = 'scale-menu-show';
-                setTimeout(function () { document.querySelector('.BiliPlus-Scale-Menu').style.animationName = ''; }, 2e3)
-                if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
-                    abpinst.video.addEventListener('ended', function () {
-                        readStorage('auto_switch', function (item) {
-                            item = Object.assign({ auto_switch: true }, item);
-                            if (item.auto_switch)
-                                location.href = 'id_' + json.data.videos.next.encodevid + '.html'
-                        })
-                    })
-                }
-
-                if (uid == '') {
-                    abpinst.txtText.disabled = true;
-                    abpinst.txtText.placeholder = _t('noVisitorComment');
-                    abpinst.txtText.style.textAlign = 'center';
-                }
-                let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
-                if (audioLangs.length > 1) {
-                    let childs = [];
-                    for (let lang in audioLangs) {
-                        childs.push(_('div', { 'data-lang': lang }, [_('text', knownLangs[lang] || lang)]));
-                    }
-                    let langChange = _('div', { className: 'dm static' }, [
-                        _('div', {}, [_('text', _t('audioLang'))]),
-                        _('div', {
-                            className: 'dmMenu', event: {
-                                click: function (e) {
-                                    let lang = e.target.getAttribute('data-lang');
-                                    if (lang == currentLang)
-                                        return;
-                                    while (audioLangs[lang].src[currentSrc] == undefined) {
-                                        if (typeDropMap[currentSrc] == undefined) {
-                                            abpinst.createPopup('切换错误，没有清晰度', 3e3)
-                                            return false;
-                                        }
-                                        currentSrc = typeDropMap[currentSrc];
-                                    }
-                                    switchLang(lang);
-                                    currentLang = lang;
-                                    localStorage.YHP_PreferedLang = lang;
-                                    changeSrc('', currentSrc, true);
-                                }
-                            }
-                        }, childs)
-                    ]);
-                    contextMenu.insertBefore(langChange, contextMenu.firstChild);
-                }
-
-                if (domain != 'v.youku.com') {
-                    contextMenu.insertBefore(_('div', {
-                        id: 'main_link', event: {
-                            click: function () {
-                                abpinst.video.pause();
-                                window.open('http://v.youku.com/v_show/id_' + vid + '.html');
-                            }
-                        }
-                    }, [_('text', _t('toYouku'))]), contextMenu.firstChild);
-                } else {
-                    document.querySelector('#fn_download').addEventListener('click', generate_downlink);
-                }
-
-                if (json.data.preview)
-                    abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
-                        detail: {
-                            code: 0, data: {
-                                img_x_len: 10,
-                                img_y_len: 10,
-                                img_x_size: 128,
-                                img_y_size: 72,
-                                image: json.data.preview.thumb,
-                                step: json.data.preview.timespan / 1e3
-                            }
-                        }
-                    }))
-            }
-            firstTime = false;
-            changeSrc('', currentSrc, true);
-        })
-    }).catch(function (e) {
+        }
+    }))
+}
+document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchSrc(json){window.dispatchEvent(new CustomEvent("YHP_fetchSrc",{detail:json}))}')]))
+window.addEventListener('YHP_fetchSrc', function (e) {
+    fetchSrcThen(e.detail);
+})
+function fetchSrcChecker() {
+    if (!fetchSrcSuccess) {
         createPopup({
-            content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', e.message)],
+            content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))])],
             showConfirm: false
         });
-    })
+    }
+}
+function fetchSrcThen(json) {
+    fetchSrcSuccess = true;
+    if (json.data.error) {
+        /*
+        处理错误
+        -2002 需要密码
+        -2003 密码错误
+        */
+        dots.stopTimer();
+        let error = json.data.error;
+        if (error.code == -2002) {
+            createPopup({
+                content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('needPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text', event: { keydown: passwordKeyDown } }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
+                showConfirm: true,
+                confirmBtn: _t('submit'),
+                onConfirm: passwordCB
+            });
+        } else if (error.code == -2003) {
+            createPopup({
+                content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('wrongPW'))]), _('input', { placeholder: _t('enterPW'), type: 'text', event: { keydown: passwordKeyDown } }), _('br'), _('label', {}, [_('input', { type: 'checkbox' }), _('text', _t('rememberPW'))])],
+                showConfirm: true,
+                confirmBtn: _t('submit'),
+                onConfirm: passwordCB
+            });
+        } else {
+            createPopup({ content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', JSON.stringify(json.data.error))], showConfirm: false });
+        }
+        return;
+    } else {
+        response2url(json);
+    }
+    switchLang(currentLang);
+    if (firstTime) {
+        iid = json.data.video.id;
+        fetchComment(0);
+        categoryID = json.data.video.category_id;
+        uid = json.data.user.uid;
+        abpinst.playerUnit.addEventListener('sendcomment', sendComment);
+        abpinst.title = json.data.video.title;
+        document.querySelector('.BiliPlus-Scale-Menu').style.animationName = 'scale-menu-show';
+        setTimeout(function () { document.querySelector('.BiliPlus-Scale-Menu').style.animationName = ''; }, 2e3)
+        if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
+            abpinst.video.addEventListener('ended', function () {
+                readStorage('auto_switch', function (item) {
+                    item = Object.assign({ auto_switch: true }, item);
+                    if (item.auto_switch)
+                        location.href = 'id_' + json.data.videos.next.encodevid + '.html'
+                })
+            })
+        }
+
+        if (uid == '') {
+            abpinst.txtText.disabled = true;
+            abpinst.txtText.placeholder = _t('noVisitorComment');
+            abpinst.txtText.style.textAlign = 'center';
+        }
+        let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
+        if (audioLangs.length > 1) {
+            let childs = [];
+            for (let lang in audioLangs) {
+                childs.push(_('div', { 'data-lang': lang }, [_('text', knownLangs[lang] || lang)]));
+            }
+            let langChange = _('div', { className: 'dm static' }, [
+                _('div', {}, [_('text', _t('audioLang'))]),
+                _('div', {
+                    className: 'dmMenu', event: {
+                        click: function (e) {
+                            let lang = e.target.getAttribute('data-lang');
+                            if (lang == currentLang)
+                                return;
+                            while (audioLangs[lang].src[currentSrc] == undefined) {
+                                if (typeDropMap[currentSrc] == undefined) {
+                                    abpinst.createPopup('切换错误，没有清晰度', 3e3)
+                                    return false;
+                                }
+                                currentSrc = typeDropMap[currentSrc];
+                            }
+                            switchLang(lang);
+                            currentLang = lang;
+                            localStorage.YHP_PreferedLang = lang;
+                            changeSrc('', currentSrc, true);
+                        }
+                    }
+                }, childs)
+            ]);
+            contextMenu.insertBefore(langChange, contextMenu.firstChild);
+        }
+
+        if (domain != 'v.youku.com') {
+            contextMenu.insertBefore(_('div', {
+                id: 'main_link', event: {
+                    click: function () {
+                        abpinst.video.pause();
+                        window.open('http://v.youku.com/v_show/id_' + vid + '.html');
+                    }
+                }
+            }, [_('text', _t('toYouku'))]), contextMenu.firstChild);
+        } else {
+            document.querySelector('#fn_download').addEventListener('click', generate_downlink);
+        }
+
+        if (json.data.preview)
+            abpinst.playerUnit.dispatchEvent(new CustomEvent('previewData', {
+                detail: {
+                    code: 0, data: {
+                        img_x_len: 10,
+                        img_y_len: 10,
+                        img_x_size: 128,
+                        img_y_size: 72,
+                        image: json.data.preview.thumb,
+                        step: json.data.preview.timespan / 1e3
+                    }
+                }
+            }))
+    }
+    firstTime = false;
+    changeSrc('', currentSrc, true);
 }
 let sizeList = [24, 22, 28];
 let modeList = {
@@ -572,16 +596,35 @@ function fillWithM3u8(select) {
             //部分cdn识别处理
             for (let i in arr) {
                 delete srcUrl[select].segments[i].redirectedURL;
-                srcUrl[select].segments[i].url = arr[i].replace(/http:\/\/.+?\//, function (s) { return s + 'youku/' });
+                if (!srcUrl[select].segments[i].backup_url)
+                    srcUrl[select].segments[i].backup_url = [];
+                srcUrl[select].segments[i].backup_url.push(arr[i].replace(/http:\/\/([\d\.]+?)\//, function (s) { return s + 'youku/' }));
             }
             //重新创建播放器
             srcUrl[select].fetchM3U8 = false;
-            changeSrc('', select, true);
+            reloadBackup();
         })
     })
 }
+function reloadBackup() {
+    let currentSegmentIndex = flvplayer._transmuxer._controller._currentSegmentIndex,
+        currentSegment = flvplayer._mediaDataSource.segments[currentSegmentIndex];
+    if (currentSegment.backup_url && currentSegment.backup_url.length) {
+        currentSegment.url = currentSegment.backup_url.shift();
+        console.log('load backup url for segment', currentSegmentIndex);
+        if (abpinst.video.buffered.length == 0) {
+            flvplayer._transmuxer._controller._pendingSeekTime = (abpinst.video.currentTime * 1e3) | 0;
+        }
+        flvplayer._transmuxer._controller._internalAbort();
+        flvplayer._transmuxer._controller._enableStatisticsReporter();
+        flvplayer._transmuxer._controller._loadSegment(currentSegmentIndex);
+        return true;
+    }
+    return false;
+}
 let load_fail = function (type, info, detail) {
     if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid' && detail.code == 403) {
+        if (reloadBackup()) return;
         console.warn('http cdn地址无效，尝试m3u8');
         fillWithM3u8(currentSrc);
         return;
@@ -624,6 +667,7 @@ let flvparam = function (select) {
     if (srcUrl[select].fetchM3U8) {
         //rtmp视频流，使用m3u8地址播放
         fillWithM3u8(select);
+        changeSrc('',select,true);
         return;
     }
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
@@ -900,74 +944,98 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                 cursor: 'pointer',
             }
         }));
-        fetch('http://ups.youku.com/ups/get.json?ccode=0502&client_ip=127.0.0.1&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid, {
-            method: 'GET',
-            credentials: 'include',
-            cache: 'no-cache'
-        }).then(function (r) {
-            r.json().then(function (json) {
-                if (!json.data.video) {
-                    createPopup({ content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', JSON.stringify(json.data.error))], showConfirm: false });
-                    return;
+        let fetchInfoSuccess = false;
+        document.head.appendChild(_('script', {
+            src: '//ups.youku.com/ups/get.json?callback=YHP_fetchInfo&ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid,
+            event: {
+                error: function (e) {
+                    this.remove();
+                    createPopup({
+                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', e.message)],
+                        showConfirm: false
+                    });
+                },
+                load: function () {
+                    this.remove();
+                    setTimeout(fetchInfoChecker, 500);
                 }
-                let img = div.appendChild(_('div', {
-                    style: {
-                        backgroundImage: 'url(' + json.data.video.logo + ')',
-                        backgroundPosition: 'center center',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: '100% auto',
-                        filter: 'blur(5px)',
-                        width: '100%',
-                        height: '100%',
-                        position: 'absolute'
-                    }
-                }))
-                let info = div.appendChild(_('a', {
-                    target: '_blank', href: 'http://v.youku.com/v_show/id_' + vid + '.html', style: {
-                        display: 'flex',
-                        flexDirection: 'column',
-                        lineHeight: '30px',
-                        height: '60px',
-                        width: '100%',
-                        position: 'relative',
-                        top: 'calc(50% - 40px)',
-                        color: '#EEE',
-                        textAlign: 'center',
-                        whiteSpace: 'nowrap',
-                        background: 'linear-gradient(to bottom,transparent,rgba(0,0,0,.7) 10px,rgba(0,0,0,.7) 70px,transparent)',
-                        padding: '10px 0',
-                        textDecoration: 'none'
-                    }, event: { click: function (e) { e.stopPropagation() } }
-                }));
-
-                let title = info.appendChild(_('div', {
-                    style: {
-                        flex: 1,
-                        height: '30px',
-                        textOverflow: 'ellipsis',
-                        fontSize: '20px',
-                        overflow: 'hidden'
-                    }
-                }, [_('text', json.data.video.title)]));
-
-                let uploader = info.appendChild(_('div', {
-                    style: {
-                        flex: 1,
-                        height: '30px',
-                        textOverflow: 'ellipsis',
-                        color: '#AAA',
-                        overflow: 'hidden'
-                    }
-                }, [_('text', _t('uploader') + json.data.video.username)]));
-
-                div.addEventListener('click', function () {
-                    isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });
-                    div.remove();
-                    chkInit();
-                });
-                isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending' });
-            })
+            }
+        }))
+        document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchInfo(json){window.dispatchEvent(new CustomEvent("YHP_fetchInfo",{detail:json}))}')]))
+        window.addEventListener('YHP_fetchInfo', function (e) {
+            fetchInfoThen(e.detail);
         })
+        function fetchInfoChecker() {
+            if (!fetchInfoSuccess) {
+                createPopup({
+                    content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))])],
+                    showConfirm: false
+                });
+            }
+        }
+        function fetchInfoThen(json) {
+            fetchInfoSuccess = true;
+            if (!json.data.video) {
+                createPopup({ content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', JSON.stringify(json.data.error))], showConfirm: false });
+                return;
+            }
+            let img = div.appendChild(_('div', {
+                style: {
+                    backgroundImage: 'url(' + json.data.video.logo + ')',
+                    backgroundPosition: 'center center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% auto',
+                    filter: 'blur(5px)',
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute'
+                }
+            }))
+            let info = div.appendChild(_('a', {
+                target: '_blank', href: 'http://v.youku.com/v_show/id_' + vid + '.html', style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    lineHeight: '30px',
+                    height: '60px',
+                    width: '100%',
+                    position: 'relative',
+                    top: 'calc(50% - 40px)',
+                    color: '#EEE',
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                    background: 'linear-gradient(to bottom,transparent,rgba(0,0,0,.7) 10px,rgba(0,0,0,.7) 70px,transparent)',
+                    padding: '10px 0',
+                    textDecoration: 'none'
+                }, event: { click: function (e) { e.stopPropagation() } }
+            }));
+
+            let title = info.appendChild(_('div', {
+                style: {
+                    flex: 1,
+                    height: '30px',
+                    textOverflow: 'ellipsis',
+                    fontSize: '20px',
+                    overflow: 'hidden'
+                }
+            }, [_('text', json.data.video.title)]));
+
+            let uploader = info.appendChild(_('div', {
+                style: {
+                    flex: 1,
+                    height: '30px',
+                    textOverflow: 'ellipsis',
+                    color: '#AAA',
+                    overflow: 'hidden'
+                }
+            }, [_('text', _t('uploader') + json.data.video.username)]));
+
+            div.addEventListener('click', function () {
+                isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });
+                div.remove();
+                chkInit();
+            });
+            isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending' });
+        }
     }
 })();
 window.crc_engine = () => { return ''; };
