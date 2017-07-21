@@ -20,6 +20,7 @@
 - 含有多个音频语言的视频可以在右键菜单中切换，同类剧集间切换时临时记忆所选语言
 - 多个语言的视频中，选择的语言为临时记忆，在剧集内切换时保留，打开其他没有同种语言的视频会丢弃已记忆语言
 - 在视频播放器下方功能区中，下载按钮现在正如其名，含有下载功能
+- 播放器各项设置现已整合进侧栏，通过右下按钮开启
 
 ### 其他浏览器？
 - Safari扩展没有跨域特权，无法获取视频地址及正常播放
@@ -50,6 +51,7 @@ Author: esterTion
 - Comment switch, player settings, block preferences, volume state will be automatic memorized
 - Video with multiple language can be selected in context menu, and will be memorized temporarily when switching between episodes
 - In the functional area below the player, the download(下载) button will now act as its name, leads to download links
+- All player setttings are now in sidebar, which can be shown by button in bottom-right corner
 
 ### Other browser?
 - Safari extension doesn't have cross-origin privilege, and that will prevent extension loading video source
