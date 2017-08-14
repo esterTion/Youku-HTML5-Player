@@ -63,6 +63,7 @@ if( isChrome && location.protocol=='https:' ){
         }
       }
       r.json = () => port('json')
+      r.text = () => port('text')
       r.headers = convertHeader(r.headers)
       r.body = {
         getReader () {

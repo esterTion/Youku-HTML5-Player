@@ -41,6 +41,8 @@ chrome.runtime.onConnect.addListener(port => {
         })
       } else if (msg.method === 'json') {
         chain = chain.then(() => response.json())
+      } else if (msg.method === 'text') {
+        chain = chain.then(() => response.text())
       } else if (msg.method === 'body.getReader') {
         chain = chain.then(() => {
           reader = response.body.getReader()

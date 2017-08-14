@@ -1511,7 +1511,7 @@ ABP.Strings={
 					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.fps);
 					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.videoDataRate)+' kbps';
 					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.audioDataRate)+' kbps';
-					flvjsStats[i++].textContent=to2digitFloat(currentSize/currentDuration*8)+' kbps'
+					flvjsStats[i++].textContent=to2digitFloat(currentSize/currentDuration*8)+' kbps' + ('　Seg '+(statisticsInfo.currentSegmentIndex+1)+'/'+statisticsInfo.totalSegmentCount);
 					
 					if(mediaInfo.bitrateMap){
 						
