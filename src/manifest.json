@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "__MSG_extDesc__",
   "content_scripts": [
     {
@@ -16,12 +16,7 @@
         "md5.js",
         "hookFetch.js",
         "flv.min.js",
-        "jquery-2.1.4.min.js",
-        "google-style-loading.min.js",
-        "CommentCoreLibrary.min.js",
-        "biliplus_shield.min.js",
-        "ABPlayer.min.js",
-        "youku_html5.js"
+        "youku_html5_hack.js"
       ],
       "css": [
         "ABPlayer.css"
@@ -66,7 +61,8 @@
   ],
   "background": {
     "scripts": [
-      "hookFetch_background.js"
+      "hookFetch_background.js",
+      "script_executer.js"
     ],
     "persistent": true
   },

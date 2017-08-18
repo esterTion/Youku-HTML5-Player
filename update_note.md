@@ -1,5 +1,11 @@
 # 更新日志
 
+## 1.2.8
+Aug 18, 2017
+- *[flvjs](https://github.com/esterTion/flv.js/releases/tag/v2.0.4)修复分段mp4时间跳跃不精确的问题
+- *解决ff57无法工作
+- *播放器统计添加分段边界显示
+
 ## 1.2.7
 Aug 15, 2017
 - *修复chrome https下获取备用地址
