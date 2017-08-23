@@ -20,6 +20,11 @@ sessionStorage.removeItem('P_l_h5')
 - 部分视频cdn跨域配置不正确会导致无法播放，遇到console报错`Access-Control-Allow-Origin`相关请联系优酷，并带上cdn ip地址报错
 
 ---
+08/23
+优酷已经停用对mac用户的html5播放器启用
+![](http://wx2.sinaimg.cn/large/763783e4ly1fithf3k3m4j20h9092js7.jpg)
+
+---
 优酷目前启用html5的逻辑：
 - Mac，且
 - chrome34+或safari，且
