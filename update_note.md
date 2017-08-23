@@ -1,5 +1,9 @@
 # 更新日志
 
+## 1.2.8.1
+Aug 23, 2017
+- *(chrome)修复错误manifest
+
 ## 1.2.8
 Aug 18, 2017
 - *[flvjs](https://github.com/esterTion/flv.js/releases/tag/v2.0.4)修复分段mp4时间跳跃不精确的问题
