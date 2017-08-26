@@ -13,17 +13,16 @@
     }
     readStorage('official_html5', function (item) {
         item = Object.assign({ official_html5: false }, item);
-        if (item.official_html5 && !sessionStorage.P_l_h5) {
-            sessionStorage.P_l_h5 = 1;
-            console.log('开启官方html5');
-        } else if (!item.official_html5 && sessionStorage.P_l_h5) {
-            sessionStorage.removeItem('P_l_h5')
-            console.log('关闭官方html5');
+        if (item.official_html5) {
+            console.log('使用官方html5');
+            if (location.href.match(/debug=html5/) == null) {
+                history.replaceState({}, '', '?debug=html5');
+            }
+        } else if (!item.official_html5) {
+            console.log('禁用官方html5');
+            if (location.href.match(/debug=flv/) == null) {
+                history.replaceState({}, '', '?debug=flv');
+            }
         }
     })
-    setTimeout(function () {
-        let script = document.createElement('script');
-        script.appendChild(document.createTextNode("Object.defineProperty(navigator,'userAgent',{value:navigator.userAgent.replace(/mac/ig, '')})"));
-        document.head.appendChild(script);
-    }, 0);
 })()

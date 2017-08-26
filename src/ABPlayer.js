@@ -34,6 +34,9 @@ ABP.Strings={
 	statsRealtimeBitrate:_t('statsRealtimeBitrate'),
 	overallBitrate:_t('overallBitrate'),
 	statsDownloadSpeed:_t('statsDownloadSpeed'),
+	statsSourceHost:_t('statsSourceHost'),
+	statsRedirection:_t('statsRedirection'),
+	statsRedirectionNone:_t('statsRedirectionNone'),
 	
 	sendSmall:_t('sendSmall'),
 	sendMid:_t('sendMid'),
@@ -45,7 +48,6 @@ ABP.Strings={
 	send:_t('send'),
 	sendStyle:_t('sendStyle'),
 	sendColor:_t('sendColor'),
-
 	
 	commentSpeed:_t('commentSpeed'),
 	commentScale:_t('commentScale'),
@@ -485,6 +487,8 @@ ABP.Strings={
 				_('div',{title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.overallBitrate)]),_('span',{id:'overall-bitrate'})]),
 				_('div',{className:'flvjs',title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRealtimeBitrate)]),_('span',{className:'stats-column',id:'realtime-bitrate-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
+				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsSourceHost)]),_('span')]),
+				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRedirection)]),_('span')]),
 				_('br'),
 
 				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
@@ -1489,7 +1493,7 @@ ABP.Strings={
 			
 			if(enabledStats.flvjs){
 				if(flvplayer._mediaInfo){
-					flvjsStyle.innerHTML='';
+					flvjsStyle.textContent='';
 					var i=0,mediaInfo=flvplayer._mediaInfo,statisticsInfo=flvplayer.statisticsInfo,currentTime=video.currentTime,segs=flvplayer._mediaDataSource.segments,timeOffset=0,off=0,bitrate,timeIndex;
 					for(timeIndex=0;timeIndex < segs.length;timeIndex++){
 						if(currentTime<=(timeOffset+segs[timeIndex].duration)/1e3){
@@ -1523,15 +1527,15 @@ ABP.Strings={
 						}
 					}
 					
-					var segIndex=statisticsInfo.currentSegmentIndex,currentSize=segs[segIndex].filesize,currentDuration=segs[segIndex].duration;
+					var segIndex=statisticsInfo.currentSegmentIndex,currentSeg=segs[segIndex]||{},currentSize=currentSeg.filesize|0,currentDuration=currentSeg.duration|0;
 					/*['mimeType','audioCodec','videoCodec'].forEach(function(name){
 						flvjsStats[i++].innerHTML=mediaInfo[name];
 					})*/
-					document_querySelector('#mimeType>:last-child').textContent=mediaInfo.mimeType;
-					flvjsStats[i++].innerHTML=to2digitFloat(mediaInfo.fps);
-					flvjsStats[i++].innerHTML=to2digitFloat(mediaInfo.videoDataRate)+' kbps';
-					flvjsStats[i++].innerHTML=to2digitFloat(mediaInfo.audioDataRate)+' kbps';
-					flvjsStats[i++].innerHTML=to2digitFloat(currentSize/currentDuration*8)+' kbps' + ('　Seg '+(segIndex+1)+'/'+statisticsInfo.totalSegmentCount);
+					document_querySelector('#mimeType').lastChild.textContent=mediaInfo.mimeType;
+					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.fps);
+					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.videoDataRate)+' kbps';
+					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.audioDataRate)+' kbps';
+					flvjsStats[i++].textContent=to2digitFloat(currentSize/currentDuration*8)+' kbps' + ('　Seg '+(segIndex+1)+'/'+statisticsInfo.totalSegmentCount);
 					
 					if(mediaInfo.bitrateMap){
 						
@@ -1540,7 +1544,7 @@ ABP.Strings={
 						if(bitrate!=undefined){
 							if(odd && lastCurrent!=(video.currentTime|0)){
 								lastCurrent=video.currentTime|0;
-								flvjsStats[i++].innerHTML=to2digitFloat(bitrate)+' kbps';
+								flvjsStats[i++].textContent=to2digitFloat(bitrate)+' kbps';
 								realtimeBitrateArr.push(bitrate);
 								realtimeBitrateArr.shift();
 								if(playerStatsOn)
@@ -1549,22 +1553,40 @@ ABP.Strings={
 								i++;
 							}
 						}else{
-							flvjsStats[i++].innerHTML='N/A';
+							flvjsStats[i++].textContent='N/A';
 						}
 					}else{
-						flvjsStats[i++].innerHTML='N/A'
+						flvjsStats[i++].textContent='N/A'
 					}
 					if(odd){
 						downloadSpeedArr.push(statisticsInfo.speed);
 						downloadSpeedArr.shift();
 						if(playerStatsOn)
 							renderColumn(downloadSpeedColumn,downloadSpeedArr);
-						flvjsStats[i++].innerHTML=to2digitFloat(statisticsInfo.speed)+' KB/s'
+						flvjsStats[i++].textContent=to2digitFloat(statisticsInfo.speed)+' KB/s'
 						flvplayer._statisticsInfo.speed=0;
+					}else{
+						i++;
+					}
+					var srcHostMatch = (currentSeg.url||'').match(/(http[s]?:)?\/\/([a-zA-Z0-9\.\-]+)/),srcHost,srcProtocol;
+					if(srcHostMatch==null){
+						srcProtocol=location.protocol;
+						srcHost=location.hostname;
+					}else{
+						srcProtocol = srcHostMatch[1] || location.protocol;
+						srcHost = srcHostMatch[2];
+					}
+					flvjsStats[i].title=currentSeg.url;
+					flvjsStats[i++].textContent=srcProtocol+'//'+srcHost;
+					if(!statisticsInfo.hasRedirect){
+						flvjsStats[i++].textContent=ABP.Strings.statsRedirectionNone;
+					}else{
+						flvjsStats[i].title=currentSeg.redirectedURL;
+						flvjsStats[i++].textContent=(currentSeg.redirectedURL||'').match(/(http[s]?:)?\/\/([a-zA-Z0-9\.\-]+)/)[0];
 					}
 				}else{
-					flvjsStyle.innerHTML='.flvjs{display:none}';
-					document_querySelector('#mimeType>:last-child').textContent='video/mp4';
+					flvjsStyle.textContent='.flvjs{display:none}';
+					document_querySelector('#mimeType').lastChild.textContent='video/mp4';
 					var segSeperatorChild = document_querySelector('#buffer-clips>span:nth-of-type(2)').children;
 					while(segSeperatorChild.length > 1){
 						segSeperatorChild[1].remove();
