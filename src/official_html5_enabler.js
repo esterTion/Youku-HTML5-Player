@@ -15,8 +15,8 @@
         item = Object.assign({ official_html5: false }, item);
         if (item.official_html5) {
             console.log('使用官方html5');
-            if (location.href.match(/debug=html5/) == null) {
-                history.replaceState({}, '', '?debug=html5');
+            if (location.href.match(/debug=h5/) == null) {
+                history.replaceState({}, '', '?debug=h5');
             }
         } else if (!item.official_html5) {
             console.log('禁用官方html5');
