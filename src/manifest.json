@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "version": "1.2.8.3",
+  "version": "__AutoReplaced_Extension_Version__",
   "description": "__MSG_extDesc__",
   "content_scripts": [
     {
