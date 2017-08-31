@@ -365,46 +365,64 @@
     "uploader": {
         "message": "上传者："
     },
-    "outputUrl":{
-        "message":"输出视频地址"
+    "outputUrl": {
+        "message": "输出视频地址"
     },
-    "noVisitorComment":{
-        "message":"游客无法发送弹幕"
+    "noVisitorComment": {
+        "message": "游客无法发送弹幕"
     },
-    "postCommentFail":{
-        "message":"弹幕发送失败"
+    "postCommentFail": {
+        "message": "弹幕发送失败"
     },
-    "replaceEmbed":{
-        "message":"替换外链播放器"
+    "replaceEmbed": {
+        "message": "替换外链播放器"
     },
-    "autoSwitch":{
-        "message":"自动切换剧集"
+    "autoSwitch": {
+        "message": "自动切换剧集"
     },
-    "mayBlocked":{
-        "message":"您可能开启了广告屏蔽并屏蔽了必要内容，请尝试临时禁用并刷新\n正常出现播放器后可以重新启用\n\n如果这不是您第一次看见这个提示，请确认网络状态"
+    "mayBlocked": {
+        "message": "您可能开启了广告屏蔽并屏蔽了必要内容，请尝试临时禁用并刷新\n正常出现播放器后可以重新启用\n\n如果这不是您第一次看见这个提示，请确认网络状态"
     },
-    "officialHtml5":{
-        "message":"启用官方html5播放器（不稳定）"
+    "officialHtml5": {
+        "message": "启用官方html5播放器（不稳定）"
     },
-    "settings":{
-        "message":"设置"
+    "settings": {
+        "message": "设置"
     },
-    "settComment":{
-		"message":"弹幕偏好设置"
-	},
-	"recordPlaySpeed":{
-		"message":"将当前速度设为默认"
-	},
-	"settPlayer":{
-		"message":"播放器偏好设置"
-	},
-	"autoPlay":{
-		"message":"自动开始播放"
-	},
-	"defaultFull":{
-		"message":"自动进入全屏模式"
-	},
-    "settExtension":{
-        "message":"扩展偏好设置"
+    "settComment": {
+        "message": "弹幕偏好设置"
+    },
+    "recordPlaySpeed": {
+        "message": "将当前速度设为默认"
+    },
+    "settPlayer": {
+        "message": "播放器偏好设置"
+    },
+    "autoPlay": {
+        "message": "自动开始播放"
+    },
+    "defaultFull": {
+        "message": "自动进入全屏模式"
+    },
+    "settExtension": {
+        "message": "扩展偏好设置"
+    },
+    "statsSourceHost": {
+        "message": "视频源域名："
+    },
+    "statsRedirection": {
+        "message": "重定向："
+    },
+    "statsRedirectionNone": {
+        "message": "否"
+    },
+    "extUpdated": {
+        "message": "优酷HTML5播放器最近有更新啦！"
+    },
+    "extUpdated_ver": {
+        "message": "现在我们的版本是"
+    },
+    "extUpdated_detail": {
+        "message": "一些更新细节：\n1、播放器相关设置可以在播放器右下角打开\n2、播放速度可以通过快捷键ctrl + ↑／↓快速调整（每次0.05）"
     }
 }

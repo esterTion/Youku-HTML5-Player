@@ -2067,17 +2067,21 @@ ABP.Strings={
 						continue;
 					itemMenu[i].childNodes[0][addEventListener]('click',function(){
 						try{
-							var copy=document.createElement('input');
-							copy.style.width=0;
-							copy.style.height=0;
-							document.body.appendChild(copy);
-							copy.value=this.getAttribute('data-content');
-							copy.select();
+							/*
+							chrome需要已有input中才能复制，新生成input无效
+							*/
+							var oldVal=abpinst.txtText.value, prevDisabled = abpinst.txtText.disabled;
+							prevDisabled && (abpinst.txtText.disabled=false);
+							abpinst.txtText.value=this.dataset.content;
+							abpinst.txtText.select();
 							var success=document.execCommand('copy');
-							document.body.removeChild(copy);
+							abpinst.txtText.blur();
+							abpinst.txtText.value=oldVal;
+							prevDisabled && (abpinst.txtText.disabled=true);
 							if(!success)
 								throw '';
 						}catch(e){
+							console.error(e)
 							ABPInst.createPopup(ABP.Strings.copyFail,3e3)
 						}
 					});
@@ -2655,16 +2659,28 @@ ABP.Strings={
 							ABPInst.barTimeHitArea.tooltip(formatTime(video.currentTime));
 							break;
 						case 38:
-							var newVolume = ABPInst.video.volume + .1;
-							if (newVolume > 1) newVolume = 1;
-							ABPInst.video.volume = newVolume.toFixed(3);
-							updateVolume(ABPInst.video.volume);
+							if(e.ctrlKey){
+								var newSpeed = ABPInst.video.playbackRate + .05;
+								if (newSpeed > 2) newSpeed = 2;
+								ABPInst.video.playbackRate = newSpeed;
+							}else{
+								var newVolume = ABPInst.video.volume + .1;
+								if (newVolume > 1) newVolume = 1;
+								ABPInst.video.volume = newVolume.toFixed(3);
+								updateVolume(ABPInst.video.volume);
+							}
 							break;
 						case 40:
-							var newVolume = ABPInst.video.volume - .1;
-							if (newVolume < 0) newVolume = 0;
-							ABPInst.video.volume = newVolume.toFixed(3);
-							updateVolume(ABPInst.video.volume);
+							if(e.ctrlKey){
+								var newSpeed = ABPInst.video.playbackRate - .05;
+								if (newSpeed < .5) newSpeed = .5;
+								ABPInst.video.playbackRate = newSpeed;
+							}else{
+								var newVolume = ABPInst.video.volume - .1;
+								if (newVolume < 0) newVolume = 0;
+								ABPInst.video.volume = newVolume.toFixed(3);
+								updateVolume(ABPInst.video.volume);
+							}
 							break;
 					}
 				}

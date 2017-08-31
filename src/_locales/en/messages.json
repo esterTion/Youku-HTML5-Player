@@ -365,46 +365,64 @@
     "uploader": {
         "message": "Uploader："
     },
-    "outputUrl":{
-        "message":"Output all parts"
+    "outputUrl": {
+        "message": "Output all parts"
     },
-    "noVisitorComment":{
-        "message":"Visitor can't post comments"
+    "noVisitorComment": {
+        "message": "Visitor can't post comments"
     },
-    "postCommentFail":{
-        "message":"Post comment failed"
+    "postCommentFail": {
+        "message": "Post comment failed"
     },
-    "replaceEmbed":{
-        "message":"Replace embed players"
+    "replaceEmbed": {
+        "message": "Replace embed players"
     },
-    "autoSwitch":{
-        "message":"Auto jump to next episode"
+    "autoSwitch": {
+        "message": "Auto jump to next episode"
     },
-    "mayBlocked":{
-        "message":"You may have enabled an ad blocker, and it had blocked some important content. Please try again after disable the blocker. \nAfter player normally loaded, you can enable blocker again. \n\nIf you had seen this note in the past, please check your network status. "
+    "mayBlocked": {
+        "message": "You may have enabled an ad blocker, and it had blocked some important content. Please try again after disable the blocker. \nAfter player normally loaded, you can enable blocker again. \n\nIf you had seen this note in the past, please check your network status. "
     },
-    "officialHtml5":{
-        "message":"Enable official html5 player (unstable)"
+    "officialHtml5": {
+        "message": "Enable official html5 player (unstable)"
     },
-    "settings":{
-        "message":"Settings"
+    "settings": {
+        "message": "Settings"
     },
-    "settComment":{
-		"message":"Comment preferences"
-	},
-	"recordPlaySpeed":{
-		"message":"Set current speed as default"
-	},
-	"settPlayer":{
-		"message":"Player preferences"
-	},
-	"autoPlay":{
-		"message":"Start playback automatically"
-	},
-	"defaultFull":{
-		"message":"Enter fullscreen mode automatically"
-	},
-    "settExtension":{
-        "message":"Extension preferences"
+    "settComment": {
+        "message": "Comment preferences"
+    },
+    "recordPlaySpeed": {
+        "message": "Set current speed as default"
+    },
+    "settPlayer": {
+        "message": "Player preferences"
+    },
+    "autoPlay": {
+        "message": "Start playback automatically"
+    },
+    "defaultFull": {
+        "message": "Enter fullscreen mode automatically"
+    },
+    "settExtension": {
+        "message": "Extension preferences"
+    },
+    "statsSourceHost": {
+        "message": "Source host："
+    },
+    "statsRedirection": {
+        "message": "Redirection："
+    },
+    "statsRedirectionNone": {
+        "message": "None"
+    },
+    "extUpdated": {
+        "message": "Youku HTML5 Player has been updated!"
+    },
+    "extUpdated_ver": {
+        "message": "We are currently at version "
+    },
+    "extUpdated_detail": {
+        "message": "Here are some update notes:\n1、Player settings can be opened at bottom-right corner of player\n2、Playback speed can be quickly change by pressing ctrl + ↑／↓ (0.05 each time)"
     }
 }

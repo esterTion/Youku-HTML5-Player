@@ -1,3 +1,4 @@
+/// <reference path="chrome.d.ts" url="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/chrome/index.d.ts" />
 function createPopup(param) {
     if (!param.content)
         return;
@@ -88,6 +89,25 @@ let tempPwd = '';
 let highestType;
 
 function response2url(json) {
+    if (fetchedCount) {
+        //写入备份模式
+        json.data.stream.forEach(function (stream) {
+            if (stream.channel_type) return;
+            let lang = stream.audio_lang,
+                type = stream.stream_type,
+                current = audioLangs[lang].src[type];
+            current.playlist_url = stream.m3u8_url;
+            for (let part = 0; part < stream.segs.length; part++) {
+                current.segments[part].backup_url.push(stream.segs[part].cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
+                    return s + 'youku/'
+                }));
+                if (stream.segs[part].cdn_backup) {
+                    current.segments[part].backup_url.concat(stream.segs[part].cdn_backup);
+                }
+            }
+        })
+        return;
+    }
     let data = {};
     let savedLang = localStorage.YHP_PreferedLang || '';
     for (let val of json.data.stream) {
@@ -143,7 +163,8 @@ function response2url(json) {
                             duration: part.total_milliseconds_video | 0,
                             url: part.cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
                                 return s + 'youku/'
-                            })
+                            }),
+                            backup_url: []
                         };
                         if (part.cdn_backup && part.cdn_backup.length) {
                             seg.backup_url = part.cdn_backup;
@@ -367,6 +388,8 @@ function fetchSrcChecker() {
     }
 }
 
+let fetchedCount = 0;
+
 function fetchSrcThen(json) {
     fetchSrcSuccess = true;
     if (json.data.error) {
@@ -405,9 +428,14 @@ function fetchSrcThen(json) {
                 showConfirm: false
             });
         }
+        fetchedCount = 0;
         return;
     } else {
         response2url(json);
+    }
+    if (fetchedCount) {
+        reloadBackup();
+        return;
     }
     switchLang(currentLang);
     if (firstTime) {
@@ -494,8 +522,25 @@ function fetchSrcThen(json) {
                     }
                 }
             }))
+        readStorage('updateNotifyVer', function (item) {
+            if (item.updateNotifyVer != '1.2.9') {
+                saveStorage({ 'updateNotifyVer': '1.2.9' });
+                chrome.runtime.sendMessage('version', function (version) {
+                    createPopup({
+                        content: [
+                            _('p', { style: { fontSize: '16px' } }, [_('text', _t('extUpdated'))]),
+                            _('div', { style: { whiteSpace: 'pre-wrap' } }, [
+                                _('text', _t('extUpdated_ver') + version + "\n\n" + _t('extUpdated_detail'))
+                            ])
+                        ],
+                        showConfirm: false
+                    });
+                })
+            }
+        })
     }
     firstTime = false;
+    fetchedCount++;
     changeSrc('', currentSrc, true);
 }
 
@@ -652,6 +697,15 @@ let createPlayer = function (e) {
 }
 
 function fillWithM3u8(select) {
+    if (!srcUrl[select].playlist_url) {
+        if (fetchedCount >= 10) {
+            return false;
+        }
+        console.warn('无可用地址，重新获取')
+        fetchSrc(tempPwd);
+        return true;
+    }
+    console.warn('http cdn地址无效，尝试m3u8');
     fetch(srcUrl[select].playlist_url, {
         method: 'GET',
         credentials: 'include',
@@ -676,8 +730,6 @@ function fillWithM3u8(select) {
             //部分cdn识别处理
             for (let i in arr) {
                 delete srcUrl[select].segments[i].redirectedURL;
-                if (!srcUrl[select].segments[i].backup_url)
-                    srcUrl[select].segments[i].backup_url = [];
                 srcUrl[select].segments[i].backup_url.push(matched[arr[i]].replace(/http:\/\/([\d\.]+?)\//, function (s) {
                     return s + 'youku/'
                 }).replace(/&(ts_start|ts_end|ts_seg_no|ts_keyframe)=[\d\.]+/g, ''));
@@ -686,13 +738,15 @@ function fillWithM3u8(select) {
             srcUrl[select].fetchM3U8 = false;
             reloadBackup();
         })
-    })
+    });
+    delete srcUrl[select].playlist_url;
+    return true;
 }
 
 function reloadBackup() {
     let currentSegmentIndex = flvplayer._transmuxer._controller._currentSegmentIndex,
         currentSegment = flvplayer._mediaDataSource.segments[currentSegmentIndex];
-    if (currentSegment.backup_url && currentSegment.backup_url.length) {
+    if (currentSegment.backup_url.length) {
         currentSegment.url = currentSegment.backup_url.shift();
         console.log('load backup url for segment', currentSegmentIndex);
         if (abpinst.video.buffered.length == 0 && abpinst.lastTime == undefined) {
@@ -708,10 +762,10 @@ function reloadBackup() {
 
 let load_fail = function (type, info, detail) {
     if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid' && detail.code == 403) {
-        if (reloadBackup()) return;
-        console.warn('http cdn地址无效，尝试m3u8');
-        fillWithM3u8(currentSrc);
-        return;
+        if (reloadBackup())
+            return;
+        if (fillWithM3u8(currentSrc))
+            return;
     }
     let div = _('div', {
         style: {

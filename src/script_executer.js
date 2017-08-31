@@ -1,9 +1,12 @@
 chrome.runtime.onMessage.addListener(function (message, sender, resolve) {
-    if (message != 'inject') return;
-    let tabId = sender.tab.id,
-        frameId = sender.frameId;
-    injector(tabId, frameId, resolve);
-    return true;
+    if (message == 'version') {
+        resolve(chrome.app.getDetails().version);
+    } else if (message == 'inject') {
+        let tabId = sender.tab.id,
+            frameId = sender.frameId;
+        injector(tabId, frameId, resolve);
+        return true;
+    }
 })
 
 function injector(tabId, frameId, resolve) {
