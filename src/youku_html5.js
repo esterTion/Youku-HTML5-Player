@@ -1,4 +1,5 @@
 /// <reference path="chrome.d.ts" url="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/chrome/index.d.ts" />
+/*global _ _t dots getCookie readStorage changeSrc saveStorage chrome shield CryptoJS ABP flvjs flvplayer isChrome resizeSensor*/
 function createPopup(param) {
     if (!param.content)
         return;
@@ -20,7 +21,7 @@ function createPopup(param) {
             click: function () {
                 div.style.height = 0;
                 setTimeout(function () {
-                    div.remove()
+                    div.remove();
                 }, 500);
             }
         }
@@ -32,17 +33,17 @@ function createPopup(param) {
     div.style.height = div.firstChild.offsetHeight + 'px';
 }
 
-let domain = location.href.match(/:\/\/([^\/]+)/)[1];
+let domain = location.href.match(/:\/\/([^/]+)/)[1];
 let vid = '';
 let objID = '';
 let categoryID = 0;
 let uid = '';
 let iid = 0;
 if (domain == 'v.youku.com') {
-    vid = location.href.match(/\/id_([a-zA-Z0-9\=]+)/);
+    vid = location.href.match(/\/id_([a-zA-Z0-9=]+)/);
     objID = 'object#movie_player';
 } else if (domain == 'player.youku.com') {
-    vid = location.href.match(/embed\/([a-zA-Z0-9\=]+)/);
+    vid = location.href.match(/embed\/([a-zA-Z0-9=]+)/);
     objID = 'object#youku-player';
 }
 
@@ -56,7 +57,7 @@ let typeDropMap = {
     'mp4hd3': 'mp4hd2',
     'mp4hd2': 'mp4hd',
     'mp4hd': 'flvhd'
-}
+};
 let knownLangs = {
     "default": "默认",
     "guoyu": "国语",
@@ -77,16 +78,17 @@ let knownLangs = {
     "th": "泰语",
     "man": "暖男",
     "baby": "萌童"
-}
+};
 let srcUrl = {};
 let audioLangs = {};
-Object.defineProperty(audioLangs, 'length', { enumerable: false, writable: true })
+Object.defineProperty(audioLangs, 'length', { enumerable: false, writable: true });
 let availableSrc = [];
 window.currentSrc = '';
 window.currentLang = '';
 let firstTime = true;
 let tempPwd = '';
 let highestType;
+let abpinst;
 
 function response2url(json) {
     if (fetchedCount) {
@@ -99,13 +101,13 @@ function response2url(json) {
             current.playlist_url = stream.m3u8_url;
             for (let part = 0; part < stream.segs.length; part++) {
                 current.segments[part].backup_url.push(stream.segs[part].cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
-                    return s + 'youku/'
+                    return s + 'youku/';
                 }));
                 if (stream.segs[part].cdn_backup) {
                     current.segments[part].backup_url.concat(stream.segs[part].cdn_backup);
                 }
             }
-        })
+        });
         return;
     }
     let data = {};
@@ -121,7 +123,7 @@ function response2url(json) {
     let videoids = {};
     if (json.data.dvd && json.data.dvd.audiolang) {
         for (let item of json.data.dvd.audiolang) {
-            videoids[item.langcode] = item.vid
+            videoids[item.langcode] = item.vid;
         }
     }
 
@@ -130,7 +132,7 @@ function response2url(json) {
         audioLangs[lang] = {
             src: {},
             available: []
-        }
+        };
         audioLangs.length++;
         if (currentLang == '')
             currentLang = lang;
@@ -162,14 +164,14 @@ function response2url(json) {
                             filesize: part.size | 0,
                             duration: part.total_milliseconds_video | 0,
                             url: part.cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
-                                return s + 'youku/'
+                                return s + 'youku/';
                             }),
                             backup_url: []
                         };
                         if (part.cdn_backup && part.cdn_backup.length) {
                             seg.backup_url = part.cdn_backup;
                         }
-                        audioLangs[lang].src[type].segments.push(seg)
+                        audioLangs[lang].src[type].segments.push(seg);
                     }
                     time += part.total_milliseconds_video | 0;
                 }
@@ -219,7 +221,7 @@ function passwordCB() {
         fetchSrc('&password=' + password);
         document.querySelector('#YHP_Notice .close').click();
     }
-};
+}
 
 function passwordKeyDown(e) {
     if (e.keyCode == 13) {
@@ -254,7 +256,7 @@ function generate_downlink() {
                 target: '_blank'
             }, [_('div', { className: 'YHP_down_btn' }, [_('text', '[' + order + '] ' + time)])]));
             order++;
-        })
+        });
         if (items.length > 0) {
             childs.push(_('div', {}, [
                 _('div', { className: 'YHP_down_banner' }, [_('text', '[' + knownTypes[type] + '] '), _('span', {
@@ -304,38 +306,36 @@ function urlsOutput(type) {
             event: {
                 click: function (e) {
                     if (e.target == this || e.target.className == 'closeBox') {
-                        div.firstChild.style.animationName = 'pop-iframe-out'
+                        div.firstChild.style.animationName = 'pop-iframe-out';
                         setTimeout(function () {
                             div.remove();
                         }, 5e2);
                     }
                 }
             }
-        }, [
-                _('iframe', {
-                    src: urls,
-                    style: {
-                        background: '#e4e7ee',
-                        position: 'absolute',
-                        top: '10%',
-                        left: '10%',
-                        width: '80%',
-                        height: '80%'
-                    }
-                }),
-                _('div', {
-                    className: 'closeBox',
-                    style: { position: 'absolute', top: '5%', right: '8%', fontSize: '40px', color: '#FFF' }
-                }, [_('text', '×')])
-            ])
+        }, [_('iframe', {
+            src: urls,
+            style: {
+                background: '#e4e7ee',
+                position: 'absolute',
+                top: '10%',
+                left: '10%',
+                width: '80%',
+                height: '80%'
+            }
+        }),
+        _('div', {
+            className: 'closeBox',
+            style: { position: 'absolute', top: '5%', right: '8%', fontSize: '40px', color: '#FFF' }
+        }, [_('text', '×')])])
     ]);
-    document.body.appendChild(div)
+    document.body.appendChild(div);
 }
 
 function switchLang(lang) {
     Array.from(abpinst.playerUnit.querySelectorAll('.BiliPlus-Scale-Menu .Video-Defination>div')).forEach(function (i) {
         i.remove();
-    })
+    });
 
     srcUrl = audioLangs[lang].src;
     availableSrc = audioLangs[lang].available;
@@ -371,13 +371,13 @@ function fetchSrc(extraQuery) {
                 setTimeout(fetchSrcChecker, 500);
             }
         }
-    }))
+    }));
 }
 
-document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchSrc(json){window.dispatchEvent(new CustomEvent("YHP_fetchSrc",{detail:json}))}')]))
+document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchSrc(json){window.dispatchEvent(new CustomEvent("YHP_fetchSrc",{detail:json}))}')]));
 window.addEventListener('YHP_fetchSrc', function (e) {
     fetchSrcThen(e.detail);
-})
+});
 
 function fetchSrcChecker() {
     if (!fetchSrcSuccess) {
@@ -448,15 +448,27 @@ function fetchSrcThen(json) {
         document.querySelector('.BiliPlus-Scale-Menu').style.animationName = 'scale-menu-show';
         setTimeout(function () {
             document.querySelector('.BiliPlus-Scale-Menu').style.animationName = '';
-        }, 2e3)
-        if (domain == 'v.youku.com' && json.data.videos && json.data.videos.next) {
+        }, 2e3);
+        if (domain == 'v.youku.com' && json.data.videos && json.data.videos.list) {
+            let next, list = json.data.videos.list;
+            list.sort(function (a, b) {
+                return (a.seq | 0) - (b.seq | 0);
+            });
+            for (let i = 0, breakNextTime = false; i < list.length; i++) {
+                if (breakNextTime) {
+                    next = list[i].encodevid;
+                    break;
+                }
+                if (list[i].encodevid === vid)
+                    breakNextTime = true;
+            }
             abpinst.video.addEventListener('ended', function () {
                 readStorage('auto_switch', function (item) {
                     item = Object.assign({ auto_switch: true }, item);
                     if (item.auto_switch)
-                        location.href = 'id_' + json.data.videos.next.encodevid + '.html'
-                })
-            })
+                        location.href = 'id_' + next + '.html';
+                });
+            });
         }
 
         if (uid == '') {
@@ -464,7 +476,7 @@ function fetchSrcThen(json) {
             abpinst.txtText.placeholder = _t('noVisitorComment');
             abpinst.txtText.style.textAlign = 'center';
         }
-        let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body')
+        let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body');
         if (audioLangs.length > 1) {
             let childs = [];
             for (let lang in audioLangs) {
@@ -480,7 +492,7 @@ function fetchSrcThen(json) {
                                 return;
                             while (audioLangs[lang].src[currentSrc] == undefined) {
                                 if (typeDropMap[currentSrc] == undefined) {
-                                    abpinst.createPopup('切换错误，没有清晰度', 3e3)
+                                    abpinst.createPopup('切换错误，没有清晰度', 3e3);
                                     return false;
                                 }
                                 currentSrc = typeDropMap[currentSrc];
@@ -521,7 +533,7 @@ function fetchSrcThen(json) {
                         step: json.data.preview.timespan / 1e3
                     }
                 }
-            }))
+            }));
         readStorage('updateNotifyVer', function (item) {
             if (item.updateNotifyVer != '1.2.9') {
                 saveStorage({ 'updateNotifyVer': '1.2.9' });
@@ -535,9 +547,9 @@ function fetchSrcThen(json) {
                         ],
                         showConfirm: false
                     });
-                })
+                });
             }
-        })
+        });
     }
     firstTime = false;
     fetchedCount++;
@@ -558,8 +570,8 @@ function ykCmtParser(json) {
             pos: 3,
             color: 0xffffff,
             size: 1
-        }
-        if (!!i.propertis) {
+        };
+        if (i.propertis) {
             properties = typeof (i.propertis) == 'string' ? JSON.parse(i.propertis) : i.propertis;
         }
         obj.stime = i.playat;
@@ -586,11 +598,11 @@ function fetchComment(m) {
         credentials: 'include',
         cache: 'no-cache'
     }).then(r => {
-        r.json().then(ykCmtParser)
+        r.json().then(ykCmtParser);
     }).catch(() => {
         if (abpinst.cmManager.display)
             abpinst.createPopup(_t('fetchCommentErr'), 1e3);
-    })
+    });
 }
 
 function chkCmtTime() {
@@ -613,8 +625,8 @@ function sendComment(e) {
     form.ver = 1;
     form.aid = 0;
     form.content = e.detail.message;
-    form.time = Date.now() / 1e3 | 0
-    form.lid = 0
+    form.time = Date.now() / 1e3 | 0;
+    form.lid = 0;
     form.ct = 1001;
     form.uid = uid;
     let mode;
@@ -648,10 +660,10 @@ function sendComment(e) {
             if (json.code != 1) {
                 abpinst.createPopup(_t('postCommentFail') + '<br>' + JSON.stringify(json), 3e3);
             }
-        })
+        });
     }).catch(function (e) {
         abpinst.createPopup(_t('postCommentFail') + '<br>' + e.message, 3e3);
-    })
+    });
 }
 
 window.changeSrc = function (e, t, force) {
@@ -679,7 +691,7 @@ window.changeSrc = function (e, t, force) {
         }
         flvparam(t);
     }
-}
+};
 window.overallBitrate = 0;
 let self = window;
 let createPlayer = function (e) {
@@ -694,14 +706,14 @@ let createPlayer = function (e) {
     self.flvplayer.on('error', load_fail);
     self.flvplayer.attachMediaElement(document.querySelector('video'));
     self.flvplayer.load();
-}
+};
 
 function fillWithM3u8(select) {
     if (!srcUrl[select].playlist_url) {
         if (fetchedCount >= 10) {
             return false;
         }
-        console.warn('无可用地址，重新获取')
+        console.warn('无可用地址，重新获取');
         fetchSrc(tempPwd);
         return true;
     }
@@ -714,9 +726,9 @@ function fillWithM3u8(select) {
         r.text().then(function (playlist) {
             //匹配m3u8的地址
             let arr = [], matched = {};
-            playlist.replace(/(http[^\?]+)[^\n\r]+/g, function (url, uri) {
+            playlist.replace(/(http[^?]+)[^\n\r]+/g, function (url, uri) {
                 if (arr.indexOf(uri) == -1) {
-                    arr.push(uri)
+                    arr.push(uri);
                     matched[uri] = url;
                 }
                 return '';
@@ -731,13 +743,13 @@ function fillWithM3u8(select) {
             for (let i in arr) {
                 delete srcUrl[select].segments[i].redirectedURL;
                 srcUrl[select].segments[i].backup_url.push(matched[arr[i]].replace(/http:\/\/([\d\.]+?)\//, function (s) {
-                    return s + 'youku/'
+                    return s + 'youku/';
                 }).replace(/&(ts_start|ts_end|ts_seg_no|ts_keyframe)=[\d\.]+/g, ''));
             }
             //重新创建播放器
             srcUrl[select].fetchM3U8 = false;
             reloadBackup();
-        })
+        });
     });
     delete srcUrl[select].playlist_url;
     return true;
@@ -776,23 +788,19 @@ let load_fail = function (type, info, detail) {
             position: 'absolute',
             color: '#FFF'
         }
-    }, [
-            _('div', {
-                style: {
-                    position: 'relative',
-                    top: '50%'
-                }
-            }, [
-                    _('div', {
-                        style: {
-                            position: 'relative',
-                            fontSize: '16px',
-                            lineHeight: '16px',
-                            top: '-8px'
-                        }
-                    }, [_('text', _t('loadErr'))])
-                ])
-        ]);
+    }, [_('div', {
+        style: {
+            position: 'relative',
+            top: '50%'
+        }
+    }, [_('div', {
+        style: {
+            position: 'relative',
+            fontSize: '16px',
+            lineHeight: '16px',
+            top: '-8px'
+        }
+    }, [_('text', _t('loadErr'))])])]);
     document.querySelector('.ABP-Video').insertBefore(div, document.querySelector('.ABP-Video>:first-child'));
     document.getElementById('info-box').remove();
     createPopup({
@@ -803,7 +811,7 @@ let load_fail = function (type, info, detail) {
         }, null, '  '))])],
         showConfirm: false
     });
-}
+};
 let flvparam = function (select) {
     currentSrc = select;
     if (srcUrl[select].fetchM3U8) {
@@ -815,17 +823,17 @@ let flvparam = function (select) {
     createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
     if (srcUrl[select].partial) {
         setTimeout(function () {
-            abpinst.createPopup(_t('partialAvailable'), 3e3)
+            abpinst.createPopup(_t('partialAvailable'), 3e3);
         }, 4e3);
     }
     if (srcUrl[select].segments) {
         let totalSize = 0;
         srcUrl[select].segments.forEach(function (i) {
-            totalSize += i.filesize
-        })
-        overallBitrate = totalSize / srcUrl.duration * 8
+            totalSize += i.filesize;
+        });
+        overallBitrate = totalSize / srcUrl.duration * 8;
     } else {
-        overallBitrate = srcUrl[select].filesize / srcUrl.duration * 8
+        overallBitrate = srcUrl[select].filesize / srcUrl.duration * 8;
     }
 };
 let ABPConfig;
@@ -838,10 +846,10 @@ function chkInit() {
     readStorage('PlayerSettings', function (item) {
         ABPConfig = item.PlayerSettings || {};
         init();
-    })
+    });
 }
 
-let tempEvent, tempEventType
+let tempEvent, tempEventType;
 
 function eventPasser() {
     switch (tempEventType) {
@@ -861,7 +869,7 @@ function init() {
 
     window.cid = vid;
     let container = document.querySelector(objID).parentNode;
-    container.style.overflow = 'hidden'
+    container.style.overflow = 'hidden';
     let flashplayer = container.firstChild;
     flashplayer.remove();
     let video = container.appendChild(_('video'));
@@ -941,7 +949,7 @@ function init() {
                         }
                         abpinst.playerUnit.style.display = 'none';
                         container.appendChild(flashplayer);
-                        document.body.className = document.body.className.replace('danmuon', 'danmuoff')
+                        document.body.className = document.body.className.replace('danmuon', 'danmuoff');
                         this.parentNode.remove();
                     }
                 }
@@ -965,7 +973,7 @@ function init() {
                 abpinst.playerUnit.className = 'ABP-Unit';
                 window.dispatchEvent(new Event('resize'));
             }
-        })
+        });
     }
 }
 
@@ -1021,7 +1029,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }
 .expandBox .expandCont a.expandlink .txt{
     padding-top:300px;
-}`)]))
+}`)]));
     if (domain == 'v.youku.com')
         document.head.appendChild(_('style', {}, [_('text', `.ABP-Mini {
     position: fixed !important;
@@ -1033,7 +1041,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }
 @media screen and (max-width:1359px){.ABP-Mini{
     margin: 0 0 0 760px;
-}}`)]))
+}}`)]));
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
     flvjs.LoggingControl.enableDebug = false;
@@ -1055,7 +1063,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                         } else {
                             location.reload();
                         }
-                    }
+                    };
                 window.addEventListener('load', showCnaPop);
                 setInterval(showCnaPop, 1e3);
             } else {
@@ -1118,11 +1126,11 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                     setTimeout(fetchInfoChecker, 500);
                 }
             }
-        }))
-        document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchInfo(json){window.dispatchEvent(new CustomEvent("YHP_fetchInfo",{detail:json}))}')]))
+        }));
+        document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchInfo(json){window.dispatchEvent(new CustomEvent("YHP_fetchInfo",{detail:json}))}')]));
         window.addEventListener('YHP_fetchInfo', function (e) {
             fetchInfoThen(e.detail);
-        })
+        });
 
         function fetchInfoChecker() {
             if (!fetchInfoSuccess) {
@@ -1153,7 +1161,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                     height: '100%',
                     position: 'absolute'
                 }
-            }))
+            }));
             let info = div.appendChild(_('a', {
                 target: '_blank', href: 'http://v.youku.com/v_show/id_' + vid + '.html', style: {
                     display: 'flex',
@@ -1171,7 +1179,7 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
                     textDecoration: 'none'
                 }, event: {
                     click: function (e) {
-                        e.stopPropagation()
+                        e.stopPropagation();
                     }
                 }
             }));
