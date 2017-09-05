@@ -456,19 +456,27 @@ function fetchSrcThen(json) {
             });
             for (let i = 0, breakNextTime = false; i < list.length; i++) {
                 if (breakNextTime) {
-                    next = list[i].encodevid;
+                    next = list[i];
                     break;
                 }
                 if (list[i].encodevid === vid)
                     breakNextTime = true;
             }
-            abpinst.video.addEventListener('ended', function () {
-                readStorage('auto_switch', function (item) {
-                    item = Object.assign({ auto_switch: true }, item);
-                    if (item.auto_switch)
-                        location.href = 'id_' + next + '.html';
+            if (next !== undefined) {
+                abpinst.playerUnit.classList.add('has-next');
+                abpinst.btnNext.tooltip(ABP.Strings.next + next.title);
+                abpinst.playerUnit.addEventListener('callNext', function () {
+                    location.href = 'id_' + next.encodevid + '.html';
                 });
-            });
+                abpinst.video.addEventListener('ended', function () {
+                    readStorage('auto_switch', function (item) {
+                        item = Object.assign({ auto_switch: true }, item);
+                        if (item.auto_switch)
+                            location.href = 'id_' + next.encodevid + '.html';
+                    });
+                });
+            }
+
         }
 
         if (uid == '') {
@@ -535,8 +543,8 @@ function fetchSrcThen(json) {
                 }
             }));
         readStorage('updateNotifyVer', function (item) {
-            if (item.updateNotifyVer != '1.2.9') {
-                saveStorage({ 'updateNotifyVer': '1.2.9' });
+            if (item.updateNotifyVer != '1.3.0') {
+                saveStorage({ 'updateNotifyVer': '1.3.0' });
                 chrome.runtime.sendMessage('version', function (version) {
                     createPopup({
                         content: [
@@ -966,11 +974,11 @@ function init() {
             let box = playarea.getBoundingClientRect();
             if ((box.bottom < 0) && !isMini) {
                 isMini = true;
-                abpinst.playerUnit.className = 'ABP-Unit ABP-Mini';
+                abpinst.playerUnit.classList.add('ABP-Mini');
                 window.dispatchEvent(new Event('resize'));
             } else if ((box.bottom > 0) && isMini) {
                 isMini = false;
-                abpinst.playerUnit.className = 'ABP-Unit';
+                abpinst.playerUnit.classList.remove('ABP-Mini');
                 window.dispatchEvent(new Event('resize'));
             }
         });
@@ -1038,6 +1046,9 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
     margin: 0 0 0 980px;
     background: transparent;
     bottom: 60px;
+}
+.ABP-Mini[theme="YouTube"] {
+    height: 202px !important;
 }
 @media screen and (max-width:1359px){.ABP-Mini{
     margin: 0 0 0 760px;

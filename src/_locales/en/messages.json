@@ -423,6 +423,12 @@
         "message": "We are currently at version "
     },
     "extUpdated_detail": {
-        "message": "Here are some update notes:\n1、Player settings can be opened at bottom-right corner of player\n2、Playback speed can be quickly change by pressing ctrl + ↑／↓ (0.05 each time)"
+        "message": "Here are some update notes:\nYouTube theme just added! You can change theme in the player settings"
+    },
+    "playerTheme": {
+        "message": "Player theme"
+    },
+    "next": {
+        "message": "Next video: "
     }
 }

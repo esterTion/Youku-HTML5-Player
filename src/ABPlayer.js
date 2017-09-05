@@ -84,6 +84,7 @@ ABP.Strings={
 	fetchURL:_t('fetchURL'),
 	buffering:_t('buffering'),
 	play:_t('play'),
+	next:_t('next'),
 	pause:_t('pause'),
 	mute:_t('mute'),
 	unmute:_t('unmute'),
@@ -131,7 +132,8 @@ ABP.Strings={
 	recordPlaySpeed:_t('recordPlaySpeed'),
 	settPlayer:_t('settPlayer'),
 	autoPlay:_t('autoPlay'),
-	defaultFull:_t('defaultFull')
+	defaultFull:_t('defaultFull'),
+	playerTheme:_t('playerTheme')
 };
 
 (function() {
@@ -139,7 +141,7 @@ ABP.Strings={
 	if (!ABP) return;
 	var $$ = jQuery,
 	addEventListener='addEventListener',
-	versionString='HTML5 Player ver.170512 based on ABPlayer-bilibili-ver',
+	versionString='HTML5 Player ver.170905 based on ABPlayer-bilibili-ver',
 	mousePrevPos=[0,0],
 	mouseMoved=function(e){
 		var oldPos=mousePrevPos;
@@ -608,6 +610,9 @@ ABP.Strings={
 				"className": "button ABP-Play icon-play"
 			}),
 			_("div", {
+				"className": "button ABP-Next icon-next"
+			}),
+			_("div", {
 				"className": "progress-bar"
 			}, [
 				_("div", {
@@ -823,6 +828,10 @@ ABP.Strings={
 			_('p',{className:'label big'},[_('text',ABP.Strings.settPlayer)]),
 			_('p',{className:'label prop'},[_('text',ABP.Strings.autoPlay),_("div",{id:'setting-autoPlay',className:"prop-checkbox"})]),
 			_('p',{className:'label prop'},[_('text',ABP.Strings.defaultFull),_("div",{id:'setting-defaultFull',className:"prop-checkbox"})]),
+			_('p',{className:'label prop'},[_('text',ABP.Strings.playerTheme +'：'),_("select",{id:'setting-playerTheme',event:{mouseup:function(e){e.stopPropagation();}}},[
+				_('option',{value:'bilibili'},[_('text','BiliBili')]),
+				_('option',{value:'YouTube'},[_('text','YouTube')])
+			])]),
 
 			_('p',{className:'label big'},[_('text',_t('settExtension'))]),
 			_('iframe',{src:chrome.extension.getURL("options.html"),style:{width:'100%',height:'80px',border:'none'}})
@@ -843,6 +852,7 @@ ABP.Strings={
 				_('div',{className:'about'},[_('text',versionString)])
 			])
 		]));
+		container.getElementsByClassName('ABP-Next')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="22" version="1.1" viewBox="0 0 12 12" width="22"><path d="M 0,12 8.5,6 0,0 V 24 z M 10,0 v 0 h 2 V 12 h -2 z"/></svg>';
 		var bind = ABP.bind(container);
 		if (playlist.length > 0) {
 			var currentVideo = playlist[0];
@@ -889,6 +899,7 @@ ABP.Strings={
 		var ABPInst = {
 			playerUnit: playerUnit,
 			btnPlay: null,
+			btnNext: null,
 			barTime: null,
 			barLoad: null,
 			barTimeHitArea: null,
@@ -1215,6 +1226,16 @@ ABP.Strings={
 		ABPInst.btnPlay = _p[0];
 		ABPInst.btnPlay.tooltip(ABP.Strings.play);
 		hoverTooltip(ABPInst.btnPlay);
+		/** Bind the Next Button **/
+		var _n = playerUnit.getElementsByClassName("ABP-Next");
+		if (_n.length <= 0) return;
+		ABPInst.btnNext = _n[0];
+		ABPInst.btnNext.tooltip(ABP.Strings.next);
+		hoverTooltip(ABPInst.btnNext);
+		ABPInst.btnNext.addEventListener('click',function(e){
+			e.stopPropagation();
+			playerUnit.dispatchEvent(new Event('callNext'));
+		});
 		/** Bind the Loading Progress Bar **/
 		var pbar = playerUnit.getElementsByClassName("progress-bar");
 		if (pbar.length <= 0) return;
@@ -1647,6 +1668,13 @@ ABP.Strings={
 				addClass(document.getElementById('setting-recordPlaySpeed'),'on');
 				ABPInst.lastSpeed=ABP.playerConfig.playSpeed;
 			}
+			var theme = ABP.playerConfig.theme||'bilibili'
+			playerUnit.setAttribute('theme', theme);
+			(document_querySelector('#setting-playerTheme [value='+theme+']') ||{}).selected=true;
+			document.getElementById('setting-playerTheme').addEventListener('change',function(){
+				playerUnit.setAttribute('theme',this.value);
+				saveConfigurations();
+			})
 		}
 		$$('.ABP-Comment-List-Title *').click(function() {
 			var item = $$(this).attr('item'),
@@ -1859,7 +1887,8 @@ ABP.Strings={
 					autoPlay: ABPInst.autoPlay,
 					defaultFull: ABPInst.defaultFull,
 					playSpeed: ABPInst.video.playbackRate,
-					recordPlaySpeed: ABPInst.recordPlaySpeed
+					recordPlaySpeed: ABPInst.recordPlaySpeed,
+					theme: document.getElementById('setting-playerTheme').value
 				}});
 			}
 			ABPInst.btnAutoOpacity[addEventListener]("click", function(e) {
@@ -2452,6 +2481,18 @@ ABP.Strings={
 			ABPInst.barVolumeHitArea[addEventListener]("mousedown", function(e) {
 				draggingVolume = true;
 			});
+			var hideVolumeTimeout=null,
+			showVolume = function(){
+				hideVolumeTimeout && clearTimeout(hideVolumeTimeout)
+				addClass(playerUnit,'volume-show');
+			},
+			hideVolume = function(){
+				hideVolumeTimeout = setTimeout(function(){removeClass(playerUnit,'volume-show');},2e3);
+			}
+			ABPInst.barVolumeHitArea[addEventListener]('mouseenter',showVolume);
+			ABPInst.btnVolume[addEventListener]('mouseenter',showVolume);
+			ABPInst.barVolumeHitArea[addEventListener]('mouseleave',hideVolume);
+			ABPInst.btnVolume[addEventListener]('mouseleave',hideVolume);
 			ABPInst.barVolume.style.width = (ABPInst.video.volume * 100) + "%";
 			var updateVolume = function(volume) {
 				ABPInst.barVolume.style.width = (volume * 100) + "%";

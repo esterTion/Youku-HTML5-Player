@@ -6,7 +6,7 @@
 	font-style:normal
 }
 [class^="icon-"],[class*=" icon-"]{
-	font-family:'bilibili-helper';
+	font-family:'bilibili-helper' !important;
 	font-style:normal;
 	font-weight:normal;
 	font-variant:normal;
@@ -62,14 +62,20 @@
 .icon-loop:before{
 	content:"\e601"
 }
+.icon-next{
+	display:none;
+}
+.ABP-Unit, .ABP-Unit *{
+	font-family:-apple-system,Arial,'PingFang SC','STHeiti Light','Hiragino Kaku Gothic ProN','Microsoft YaHei';
+}
 .ABP-Unit{
 	position:relative;
-	font-family:-apple-system,Arial,'PingFang SC','STHeiti Light','Hiragino Kaku Gothic ProN','Microsoft YaHei';
 	position:relative;
 	color:#444;
 	background:#fff;
 	font-size:16px;
-	outline:0
+	outline:0;
+	overflow:hidden
 }
 .ABP-Unit.ABP-FullScreen{
 	top:0;
@@ -1980,4 +1986,251 @@ body.ABP-FullScreen{
 }
 #blockVisitor{
 	display:none
+}
+
+.ABP-Unit[theme="YouTube"] .ABP-Video {
+	bottom:0
+}
+.ABP-Unit[theme="YouTube"] .ABP-Video.ABP-HideCursor ~ .ABP-Bottom .ABP-Bottom-Wrapper {
+    transform: translateY(44px);
+    opacity: 0;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Player .ABP-Bottom:hover .ABP-Bottom-Wrapper {
+	transform: translateY(0);
+	opacity: 1;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control {
+	bottom: 0;
+    height: 50px;
+    padding: 20px 10px 0;
+    background: linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0));
+    border: none;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button {
+	top: unset;
+    bottom: 5px;
+    font-size: 25px;
+    line-height: 40px;
+    color: rgba(255,255,255,.8);
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar{
+	background: transparent;
+    border: none;
+    top: 0;
+    left: 5px;
+    right: 5px;
+	width: unset;
+	height:20px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar .bar{
+	background:rgba(255,255,255,.2)
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar .bar .load{
+	background:rgba(255,255,255,.4)
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar .dark:before{
+	width:0;
+	height:0;
+	top:3px;
+	right:0;
+	transition:.5s;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar:hover .dark:before{
+	top: -3px;
+    right: -6px;
+    width: 12px;
+    height: 12px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar .dark:after{
+	width:0;
+	height:0;
+	right:0;
+	top:3px;
+	transition:.5s;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .progress-bar:hover .dark:after{
+	right: -3px;
+	width: 6px;
+	top:0;
+    height: 6px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Play{
+	left: 10px;
+	font-size:40px;
+	bottom:6px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Volume{
+	left:58px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .volume-bar{
+	left: 80px;
+    top: unset;
+    height: 36px;
+    margin-top: 14px;
+    width: 0;
+    transition: .2s width;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .time-label{
+    left: 80px;
+    line-height: 40px;
+    bottom: 6px;
+    height: 40px;
+    color: #FFF;
+    font-size: 16px;
+	width: 126px;
+	transition:left .2s
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .time-jump{
+	right: unset;
+    left: 90px;
+    line-height: 40px;
+    bottom: 12px;
+    height: 24px;
+    font-size: 16px;
+    width: 104px;
+    transition: left .2s;
+}
+.ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Control .time-label{
+	left:145px;
+}
+.ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Control .time-jump{
+	left:155px;
+}
+.ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Control .volume-bar{
+	width:80px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button-group{
+	top:unset
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button-group.ABP-FullScreenGroup{
+	right: 10px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Web-FullScreen{
+	background: transparent;
+    opacity: 1;
+    bottom: 5px;
+    outline: none;
+    height: 40px;
+    right: 30px;
+    font-size: 22px;
+    display: block;
+    pointer-events: auto;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Setting{
+	right:70px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button-group.ABP-PlaySpeedGroup{
+	right:100px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button-group.ABP-CommentGroup{
+	right:130px;
+}
+.ABP-Unit.ABP-Mini[theme="YouTube"] .ABP-Control .button.ABP-Web-FullScreen,
+.ABP-Unit.ABP-FullScreen[theme="YouTube"] .ABP-Control .button.ABP-Web-FullScreen{
+	display:none;
+}
+.ABP-Unit.ABP-FullScreen[theme="YouTube"] .ABP-Control .button.ABP-Setting{
+	right:40px
+}
+.ABP-Unit.ABP-FullScreen[theme="YouTube"] .ABP-Control .button-group.ABP-PlaySpeedGroup{
+	right:70px;
+}
+.ABP-Unit.ABP-FullScreen[theme="YouTube"] .ABP-Control .button-group.ABP-CommentGroup{
+	right:100px;
+}
+.ABP-Unit.ABP-Mini[theme="YouTube"] .ABP-Control .button-group.ABP-PlaySpeedGroup{
+	right:40px;
+}
+.ABP-Unit.ABP-Mini[theme="YouTube"] .ABP-Control .button-group.ABP-CommentGroup{
+	right:70px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button.on{
+	color:#FFF
+}
+.ABP-Unit[theme="YouTube"] .ABP-Control .button:active{
+	background: transparent;
+	outline:none;
+	color:rgb(0, 161, 216);
+}
+.ABP-Unit[theme="YouTube"] .BiliPlus-Scale-Menu{
+	bottom:70px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Settings{
+	bottom:68px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text {
+	z-index: 1;
+    left: 205px;
+    right: 170px;
+    bottom: 10px;
+    height: 30px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.4);
+	border: none;
+	transition:left .2s
+}
+.ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Text{
+	left:260px
+}
+.ABP-Unit.ABP-FullScreen[theme="YouTube"] .ABP-Text {
+	right: 140px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text .button{
+	line-height:30px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text .ABP-Comment-FontOption,
+.ABP-Unit[theme="YouTube"] .ABP-Text .ABP-Comment-ColorOption{
+	bottom:32px;
+	left:0
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text .ABP-Comment-Color-Display{
+	display:none
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text input.ABP-Comment-Input{
+	height: calc(100% - 4px);
+    opacity: .7;
+    line-height: 30px;
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text input.ABP-Comment-Input:focus,
+.ABP-Unit[theme="YouTube"] .ABP-Text input.ABP-Comment-Input:hover:not(:disabled){
+	opacity:1
+}
+.ABP-Unit[theme="YouTube"] .ABP-Text .ABP-Comment-Send{
+	height: 100%;
+    border: none;
+    border-radius: 0 5px 5px 0;
+	line-height: 30px;
+	opacity: .8
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Bottom .ABP-Next{
+	left:55px;
+	display:inline;
+	fill:rgba(255,255,255,.8);
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Bottom .ABP-Next:active{
+	fill:rgb(0, 161, 216);
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Control .button.ABP-Volume{
+	left:88px
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Control .volume-bar{
+	left: 110px;
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Control .time-label{
+    left: 110px;
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Control .time-jump{
+    left: 120px;
+}
+.ABP-Unit.has-next.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Control .time-label{
+	left:175px;
+}
+.ABP-Unit.has-next.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Control .time-jump{
+	left:185px;
+}
+.ABP-Unit.has-next[theme="YouTube"] .ABP-Text {
+	left: 235px;
+}
+.ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Text{
+	left:290px
 }

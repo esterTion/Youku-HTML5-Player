@@ -423,6 +423,12 @@
         "message": "现在我们的版本是"
     },
     "extUpdated_detail": {
-        "message": "一些更新细节：\n1、播放器相关设置可以在播放器右下角打开\n2、播放速度可以通过快捷键ctrl + ↑／↓快速调整（每次0.05）"
+        "message": "一些更新细节：\n播放器新增了YouTube主题，可在设置中切换主题"
+    },
+    "playerTheme":{
+        "message":"播放器主题"
+    },
+    "next": {
+        "message": "下一个视频："
     }
 }
