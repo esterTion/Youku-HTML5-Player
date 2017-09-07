@@ -5,13 +5,13 @@
 
 ![](icon.png)
 
-[更新日志](update_note.md)
-- *uBlock扩展会导致本扩展无法正常工作，请禁用后在优酷站点刷新一次，再次启用即会正常*
-> [@xinggsf]测试得出：放行tip.soku.com即可，如果还不行，放行g.alicdn.com和log.mmstat.com的东西即可
+[更新日志](update_note.md)  
+> `权限说明`剪贴板权限为复制弹幕功能所需，并且扩展只获取写入的权限，无权读取已复制内容
 
 ## 安装
 - [Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/)([xpi直接安装](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
 - [Chrome](https://chrome.google.com/webstore/detail/youku-html5-player/fpnknfakcmgkbhccgpgnbaddggjligol)([crx分流](https://estertion.github.io/Youku-HTML5-Player/signed.crx))（[xiaoC](http://www.jijidown.com)友情交易滋糍）(chrome 50.0+)
+> Chrome商店加图标导致进入了待审核状态，暂时可以用crx拖入扩展设置页安装
 
 ## 部分功能说明
 - 清晰度切换位于播放器左下角，采用智能记忆模式
@@ -30,15 +30,14 @@
 - [flv.js](https://github.com/esterTion/flv.js/releases)
 - ABPlayer-bilibili-ver（有改动）
 
-![](https://estertion.win/wp-content/uploads/2017/06/227b73c94a8766549bb100e67443cd145fdad09a.png)
+![](http://wx2.sinaimg.cn/large/763783e4ly1fjbcqqy7owj20zk0m8421.jpg)
 ![](https://estertion.win/wp-content/uploads/2017/06/d0af1f732f6fffbd47543d6ee070198df57f8349.png)
 
 # English Version
 ## Youku HTML5 Player extension
 Author: esterTion
 
-- *uBlock Origin extension may conflict with playback, please disable it and refresh Youku page once, then you can enable it again*
-> [@xinggsf] tested that you can bypass urls matching `tip.soku.com`, `g.alicdn.com` and `log.mmstat.com`
+> `Permission note` Pasteboard permission is for copying comment, extension only request write permission and cannot read your copied content
 
 ## Install
 
