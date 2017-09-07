@@ -5,7 +5,8 @@ if( isChrome && location.protocol=='https:' ){
   console.log('chrome+https环境，替换fetch');
 
 (function () {
-  let self = this
+  let self = this;
+  let originalFetch = self.fetch;
   const convertHeader = function convertHeader(headers) {
     let out = new Headers()
     for (let key of Object.keys(headers)) {
@@ -50,6 +51,9 @@ if( isChrome && location.protocol=='https:' ){
     }
   }
   const bgFetch = function bgFetch(...args) {
+    if(args[0].startsWith('/') || args[0].startsWith('https://')){
+      return originalFetch.apply(this, arguments);
+    }
     const port = wrapPort(chrome.runtime.connect({name: "fetch"}))
     if(args[1].headers != undefined)
       args[1].headers = Headers2Object(args[1].headers);

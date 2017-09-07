@@ -351,47 +351,25 @@ function switchLang(lang) {
         abpinst.removePopup(), abpinst.createPopup(_t('currentLang') + (knownLangs[lang] || lang), 3e3);
 }
 
-let fetchSrcSuccess;
-
 function fetchSrc(extraQuery) {
-    fetchSrcSuccess = false;
-    tempPwd = extraQuery;
-    document.head.appendChild(_('script', {
-        src: '//ups.youku.com/ups/get.json?callback=YHP_fetchSrc&ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''),
-        event: {
-            error: function (e) {
-                this.remove();
-                createPopup({
-                    content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', e.message)],
-                    showConfirm: false
-                });
-            },
-            load: function () {
-                this.remove();
-                setTimeout(fetchSrcChecker, 500);
-            }
-        }
-    }));
-}
-
-document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchSrc(json){window.dispatchEvent(new CustomEvent("YHP_fetchSrc",{detail:json}))}')]));
-window.addEventListener('YHP_fetchSrc', function (e) {
-    fetchSrcThen(e.detail);
-});
-
-function fetchSrcChecker() {
-    if (!fetchSrcSuccess) {
+    fetch(location.protocol + '//ups.youku.com/ups/get.json?ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-cache',
+        referrer: location.href
+    }).then(function (r) {
+        r.json().then(fetchSrcThen);
+    }).catch(function (e) {
         createPopup({
-            content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))])],
+            content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', e.message)],
             showConfirm: false
         });
-    }
+    });
 }
 
 let fetchedCount = 0;
 
 function fetchSrcThen(json) {
-    fetchSrcSuccess = true;
     if (json.data.error) {
         /*
         处理错误
@@ -1114,24 +1092,20 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
         let container = document.querySelector(objID);
         if (container == null) return;
         if (getCookie('cna') == '') {
-            let cnaScr = _('script', {
-                src: 'https://log.mmstat.com/eg.js', event: {
-                    load: function () {
-                        let tempListener = function (e) {
-                            document.removeEventListener('cna', tempListener);
-                            document.cookie = 'cna=' + e.detail + '; domain=youku.com; max-age=604800; path=/';
-                            console.log('cna set to ' + e.detail);
-                            location.reload();
-                        };
-                        document.addEventListener('cna', tempListener);
-                        document.head.appendChild(_('script', {}, [_(
-                            'text',
-                            'document.dispatchEvent(new CustomEvent("cna",{detail:window.goldlog.Etag}))'
-                        )]));
-                    }
-                }
+            fetch('https://log.mmstat.com/eg.js', {
+                method: 'GET',
+                credentials: 'include',
+                cache: 'no-cache',
+                referrer: location.href
+            }).then(function (r) {
+                r.text().then(function (r) {
+                    let cna = r.match(/goldlog.Etag="([^"]+)"/);
+                    cna !== null && (
+                        document.cookie = 'cna=' + cna + '; domain=youku.com; max-age=604800; path=/',
+                        location.reload()
+                    );
+                });
             });
-            document.head.appendChild(cnaScr);
             return;
         }
         container = container.parentNode;
@@ -1144,38 +1118,21 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
             }
         }));
         let fetchInfoSuccess = false;
-        document.head.appendChild(_('script', {
-            src: '//ups.youku.com/ups/get.json?callback=YHP_fetchInfo&ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid,
-            event: {
-                error: function (e) {
-                    this.remove();
-                    createPopup({
-                        content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', e.message)],
-                        showConfirm: false
-                    });
-                },
-                load: function () {
-                    this.remove();
-                    setTimeout(fetchInfoChecker, 500);
-                }
-            }
-        }));
-        document.head.appendChild(_('script', {}, [_('text', 'function YHP_fetchInfo(json){window.dispatchEvent(new CustomEvent("YHP_fetchInfo",{detail:json}))}')]));
-        window.addEventListener('YHP_fetchInfo', function (e) {
-            fetchInfoThen(e.detail);
+        fetch(location.protocol + '//ups.youku.com/ups/get.json?ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid, {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-cache',
+            referrer: location.href
+        }).then(function (r) {
+            r.json().then(fetchInfoThen);
+        }).catch(function (e) {
+            createPopup({
+                content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', e.message)],
+                showConfirm: false
+            });
         });
 
-        function fetchInfoChecker() {
-            if (!fetchInfoSuccess) {
-                createPopup({
-                    content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))])],
-                    showConfirm: false
-                });
-            }
-        }
-
         function fetchInfoThen(json) {
-            fetchInfoSuccess = true;
             if (!json.data.video) {
                 createPopup({
                     content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', JSON.stringify(json.data.error))],
