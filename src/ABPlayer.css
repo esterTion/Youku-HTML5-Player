@@ -1999,17 +1999,21 @@ body.ABP-FullScreen{
 	transform: translateY(0);
 	opacity: 1;
 }
+.ABP-Unit[theme="YouTube"] .ABP-Bottom-Wrapper{
+	height:80px;
+    background: linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0));
+}
 .ABP-Unit[theme="YouTube"] .ABP-Control {
 	bottom: 0;
     height: 50px;
     padding: 20px 10px 0;
-    background: linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0));
-    border: none;
+	border: none;
+	background:transparent
 }
 .ABP-Unit[theme="YouTube"] .ABP-Control .button {
 	top: unset;
     bottom: 5px;
-    font-size: 25px;
+    font-size: 22px;
     line-height: 40px;
     color: rgba(255,255,255,.8);
 }
@@ -2055,8 +2059,8 @@ body.ABP-FullScreen{
     height: 6px;
 }
 .ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Play{
-	left: 10px;
-	font-size:40px;
+	left: 12px;
+	font-size:36px;
 	bottom:6px;
 }
 .ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Volume{
@@ -2076,7 +2080,7 @@ body.ABP-FullScreen{
     bottom: 6px;
     height: 40px;
     color: #FFF;
-    font-size: 16px;
+    font-size: 15px;
 	width: 126px;
 	transition:left .2s
 }
@@ -2108,7 +2112,7 @@ body.ABP-FullScreen{
 .ABP-Unit[theme="YouTube"] .ABP-Control .button.ABP-Web-FullScreen{
 	background: transparent;
     opacity: 1;
-    bottom: 5px;
+    bottom: 3px;
     outline: none;
     height: 40px;
     right: 30px;

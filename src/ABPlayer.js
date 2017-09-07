@@ -852,7 +852,7 @@ ABP.Strings={
 				_('div',{className:'about'},[_('text',versionString)])
 			])
 		]));
-		container.getElementsByClassName('ABP-Next')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="22" version="1.1" viewBox="0 0 12 12" width="22"><path d="M 0,12 8.5,6 0,0 V 24 z M 10,0 v 0 h 2 V 12 h -2 z"/></svg>';
+		container.getElementsByClassName('ABP-Next')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="19" version="1.1" viewBox="0 0 12 12" width="19"><path d="M 0,12 8.5,6 0,0 V 24 z M 10,0 v 0 h 2 V 12 h -2 z"/></svg>';
 		var bind = ABP.bind(container);
 		if (playlist.length > 0) {
 			var currentVideo = playlist[0];
@@ -1668,12 +1668,13 @@ ABP.Strings={
 				addClass(document.getElementById('setting-recordPlaySpeed'),'on');
 				ABPInst.lastSpeed=ABP.playerConfig.playSpeed;
 			}
-			var theme = ABP.playerConfig.theme||'bilibili'
+			var theme = ABP.playerConfig.theme||'YouTube'
 			playerUnit.setAttribute('theme', theme);
 			(document_querySelector('#setting-playerTheme [value='+theme+']') ||{}).selected=true;
 			document.getElementById('setting-playerTheme').addEventListener('change',function(){
 				playerUnit.setAttribute('theme',this.value);
 				saveConfigurations();
+				playerUnit.dispatchEvent(new Event('themeChange'));
 			})
 		}
 		$$('.ABP-Comment-List-Title *').click(function() {

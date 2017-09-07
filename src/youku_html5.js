@@ -937,6 +937,10 @@ function init() {
 
     abpinst.video.addEventListener('seeking', chkSeekCmtTime);
     abpinst.video.addEventListener('timeupdate', chkCmtTime);
+    abpinst.playerUnit.addEventListener('themeChange', function () {
+        document.body.setAttribute('YHP_theme', this.getAttribute('theme'));
+    });
+    document.body.setAttribute('YHP_theme', abpinst.playerUnit.getAttribute('theme'));
     let disabled = false;
     let playerHeight = function () {
         !disabled && (document.body.className = document.body.className.replace('danmuoff', 'danmuon'));
@@ -959,13 +963,12 @@ function init() {
                         container.appendChild(flashplayer);
                         document.body.className = document.body.className.replace('danmuon', 'danmuoff');
                         this.parentNode.remove();
+                        document.body.removeAttribute('YHP_theme');
                     }
                 }
-            }, [
-                    _('a', { className: 'label', href: 'javascript:void(0);' }, [
-                        _('text', _t('restoreFlash'))
-                    ])
-                ])
+            }, [_('a', { className: 'label', href: 'javascript:void(0);' }, [
+                _('text', _t('restoreFlash'))
+            ])])
         ]));
 
         let playarea = document.getElementById('playBox') || document.getElementById('module_basic_playarea'),
@@ -1029,11 +1032,30 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 #YHP_Notice input[type=button]:active {
 	background: #CCC;
 }
-.playBox_thx, .danmuon .playBox_thx .playArea .player, .danmuon .expandBox .expandCont, .danmuon .moveright .listArea, .danmuon .moveleft .listArea{
+body.w1080.danmuon[yhp_theme] .playArea .player, body.w1080[yhp_theme] .listArea{
+    height:460px;
+}
+body.w1300.danmuon[yhp_theme] .playArea .player, body.w1300[yhp_theme] .listArea{
+    height:584px;
+}
+body[yhp_theme] .playBox_thx, body.danmuon[yhp_theme] .playBox_thx .playArea .player,body.danmuon[yhp_theme] .expandBox .expandCont,body.danmuon[yhp_theme] .moveright .listArea, body.danmuon[yhp_theme] .moveleft .listArea{
     height:658px;
 }
-.w1300 .playBox_thx, .w1300.danmuon .playBox_thx .playArea .player, .w1300.danmuon .expandBox .expandCont, .w1300.danmuon .moveright .listArea, .w1300.danmuon .moveleft .listArea{
+body.w1300[yhp_theme] .playBox_thx, body.w1300.danmuon[yhp_theme] .playBox_thx .playArea .player, body.w1300.danmuon[yhp_theme] .expandBox .expandCont, body.w1300.danmuon[yhp_theme] .moveright .listArea, body.w1300.danmuon[yhp_theme] .moveleft .listArea{
     height:781px;
+}
+
+body.w1080.danmuon[yhp_theme="YouTube"] .playArea .player, body.w1080[yhp_theme="YouTube"] .listArea{
+    height:416px;
+}
+body.w1300.danmuon[yhp_theme="YouTube"] .playArea .player, body.w1300[yhp_theme="YouTube"] .listArea{
+    height:540px;
+}
+body[yhp_theme="YouTube"] .playBox_thx, body.danmuon[yhp_theme="YouTube"] .playBox_thx .playArea .player,body.danmuon[yhp_theme="YouTube"] .expandBox .expandCont,body.danmuon[yhp_theme="YouTube"] .moveright .listArea, body.danmuon[yhp_theme="YouTube"] .moveleft .listArea{
+    height:614px;
+}
+body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouTube"] .playBox_thx .playArea .player, body.w1300.danmuon[yhp_theme="YouTube"] .expandBox .expandCont, body.w1300.danmuon[yhp_theme="YouTube"] .moveright .listArea, body.w1300.danmuon[yhp_theme="YouTube"] .moveleft .listArea{
+    height:737px;
 }
 .expandBox .expandCont a.expandlink .txt{
     padding-top:300px;
