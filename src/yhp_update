@@ -52,8 +52,12 @@ cmd /c web-ext sign --api-key=$amo_key --api-secret=$amo_secret -s tmp -a .
 mv -f youku_html5_player-*.xpi signed.xpi
 
 #build firefox listed
-echo "Submitting listed version to AMO"
+echo "Submitting development listed version to AMO"
 sed -e "s/1\\.0\\.0\\.0/${version}/" ff/store/manifest.json >tmp/manifest.json
+cmd /c web-ext sign --api-key=$amo_key --api-secret=$amo_secret -s tmp -a tmp
+
+echo "Submitting development listed version to AMO"
+sed -e "s/1\\.0\\.0\\.0pre/${version}/" ff/store/manifest.json >tmp/manifest.json
 cmd /c web-ext sign --api-key=$amo_key --api-secret=$amo_secret -s tmp -a tmp
 
 rm -rf build_share.zip build_chrome.zip build_firefox.zip tmp
