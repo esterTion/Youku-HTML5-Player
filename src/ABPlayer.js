@@ -854,28 +854,6 @@ ABP.Strings={
 		]));
 		container.getElementsByClassName('ABP-Next')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="19" version="1.1" viewBox="0 0 12 12" width="19"><path d="M 0,12 8.5,6 0,0 V 24 z M 10,0 v 0 h 2 V 12 h -2 z"/></svg>';
 		var bind = ABP.bind(container);
-		if (playlist.length > 0) {
-			var currentVideo = playlist[0];
-			bind.gotoNext = function() {
-				var index = playlist.indexOf(currentVideo) + 1;
-				if (index < playlist.length) {
-					currentVideo = playlist[index];
-					currentVideo.style.display = "";
-					var container = bind.video.parentNode;
-					container.removeChild(bind.video);
-					container.appendChild(currentVideo);
-					bind.video.style.display = "none";
-					bind.video = currentVideo;
-					bind.swapVideo(currentVideo);
-					currentVideo[addEventListener]("ended", function() {
-						bind.gotoNext();
-					});
-				}
-			}
-			currentVideo[addEventListener]("ended", function() {
-				bind.gotoNext();
-			});
-		}
 		return bind;
 	}
 	var getBuffer=function(video){
@@ -1109,8 +1087,7 @@ ABP.Strings={
 			video[addEventListener]("ended", function() {
 				ABPInst.btnPlay.className = "button ABP-Play icon-play";
 				ABPInst.videoDiv.className='ABP-Video';
-				if(window.parent!=window && parent.h5NextPart)
-					parent.h5NextPart();
+				playerUnit.dispatchEvent(new Event('callNext'));
 			});
 			video[addEventListener]("progress", bufferListener);
 			video.isBound = true;

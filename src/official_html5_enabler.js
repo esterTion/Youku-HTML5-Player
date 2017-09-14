@@ -27,6 +27,7 @@
                 replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'debug=flv';
                 history.replaceState({}, '', replace);
             }
+            //伪造flash环境防止官方html5启用
             if (!navigator.plugins["Shockwave Flash"]) {
                 let script = document.createElement('script');
                 script.textContent = 'navigator.plugins["Shockwave Flash"]=true';
@@ -34,4 +35,4 @@
             }
         }
     });
-})()
+})();

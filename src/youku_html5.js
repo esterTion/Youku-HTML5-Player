@@ -851,7 +851,7 @@ function eventPasser() {
 }
 
 function init() {
-    isChrome && chrome.runtime.sendMessage({ icon: true, state: 'playing' });
+    chrome.runtime.sendMessage({ icon: true, state: 'playing' });
 
     window.cid = vid;
     let container = document.querySelector(objID).parentNode;
@@ -1195,11 +1195,11 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
             }, [_('text', _t('uploader') + json.data.video.username)]));
 
             div.addEventListener('click', function () {
-                isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });
+                chrome.runtime.sendMessage({ icon: true, state: 'pending-dec' });
                 div.remove();
                 chkInit();
             });
-            isChrome && chrome.runtime.sendMessage({ icon: true, state: 'pending' });
+            chrome.runtime.sendMessage({ icon: true, state: 'pending' });
         }
     }
 })();

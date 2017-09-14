@@ -1,0 +1,434 @@
+{
+    "statsPlayer": {
+        "message": "播放機尺寸："
+    },
+    "statsVideo": {
+        "message": "視頻解析度："
+    },
+    "statsBuffer": {
+        "message": "可用緩衝："
+    },
+    "statsBufferClip": {
+        "message": "緩衝片段："
+    },
+    "statsMozParse": {
+        "message": "已解析幀："
+    },
+    "statsMozDecode": {
+        "message": "已解碼幀："
+    },
+    "statsMozPaint": {
+        "message": "已繪製幀："
+    },
+    "statsWebkitDecode": {
+        "message": "已解碼幀："
+    },
+    "statsPresent": {
+        "message": "已顯示幀："
+    },
+    "statsDrop": {
+        "message": "已丟棄幀："
+    },
+    "statsMimetype": {
+        "message": "檔案格式："
+    },
+    "statsVideoBitrate": {
+        "message": "本段視頻碼率："
+    },
+    "statsAudioBitrate": {
+        "message": "本段音訊碼率："
+    },
+    "statsCurrentBitrate": {
+        "message": "本段碼率："
+    },
+    "statsRealtimeBitrate": {
+        "message": "即時碼率："
+    },
+    "overallBitrate": {
+        "message": "總體碼率："
+    },
+    "statsDownloadSpeed": {
+        "message": "下載速度："
+    },
+    "sendSmall": {
+        "message": "小字型大小"
+    },
+    "sendMid": {
+        "message": "中字型大小"
+    },
+    "sendSize": {
+        "message": "彈幕字型大小"
+    },
+    "sendMode": {
+        "message": "彈幕模式"
+    },
+    "sendTop": {
+        "message": "頂端漸隱"
+    },
+    "sendScroll": {
+        "message": "滾動字幕"
+    },
+    "sendBottom": {
+        "message": "底端漸隱"
+    },
+    "send": {
+        "message": "發送"
+    },
+    "sendStyle": {
+        "message": "彈幕樣式"
+    },
+    "sendColor": {
+        "message": "彈幕顏色"
+    },
+    "commentSpeed": {
+        "message": "彈幕速度"
+    },
+    "commentScale": {
+        "message": "彈幕比例"
+    },
+    "commentOpacity": {
+        "message": "彈幕不透明度"
+    },
+    "commentBlock": {
+        "message": "彈幕遮罩設定"
+    },
+    "playSpeed": {
+        "message": "播放速度"
+    },
+    "playSpeedReset": {
+        "message": "還原正常速度"
+    },
+    "displayScaleD": {
+        "message": "默認"
+    },
+    "displayScaleF": {
+        "message": "全屏"
+    },
+    "shieldTypeText": {
+        "message": "文字"
+    },
+    "shieldTypeUser": {
+        "message": "用戶"
+    },
+    "shieldTypeColor": {
+        "message": "顏色"
+    },
+    "shieldTypeSetting": {
+        "message": "設置"
+    },
+    "shieldAdd": {
+        "message": "添加遮罩……"
+    },
+    "shieldUseRegex": {
+        "message": "啟用正則"
+    },
+    "shieldBlockTop": {
+        "message": "遮罩頂端彈幕"
+    },
+    "shieldBlockBottom": {
+        "message": "遮罩底端彈幕"
+    },
+    "shieldBlockVisitor": {
+        "message": "遮罩遊客彈幕"
+    },
+    "shieldRepeat": {
+        "message": "去除刷屏彈幕"
+    },
+    "viewers": {
+        "message": " 觀眾"
+    },
+    "comments": {
+        "message": " 彈幕"
+    },
+    "commentTime": {
+        "message": "時間"
+    },
+    "commentContent": {
+        "message": "評論"
+    },
+    "commentDate": {
+        "message": "發送日期"
+    },
+    "showStats": {
+        "message": "顯示統計資訊"
+    },
+    "loadingMeta": {
+        "message": "正在載入視頻資訊"
+    },
+    "switching": {
+        "message": "正在切換"
+    },
+    "fetchURL": {
+        "message": "正在獲取視頻位址"
+    },
+    "buffering": {
+        "message": "正在緩衝"
+    },
+    "play": {
+        "message": "播放"
+    },
+    "pause": {
+        "message": "暫停"
+    },
+    "mute": {
+        "message": "靜音"
+    },
+    "unmute": {
+        "message": "取消靜音"
+    },
+    "muteNotSupported": {
+        "message": "不支持靜音"
+    },
+    "fullScreen": {
+        "message": "流覽器全屏"
+    },
+    "exitFullScreen": {
+        "message": "退出全屏"
+    },
+    "webFull": {
+        "message": "網頁全屏"
+    },
+    "exitWebFull": {
+        "message": "退出網頁全屏"
+    },
+    "wideScreen": {
+        "message": "寬屏模式"
+    },
+    "exitWideScreen": {
+        "message": "退出寬屏"
+    },
+    "sendTooltip": {
+        "message": "毀滅地噴射白光!da!"
+    },
+    "showComment": {
+        "message": "顯示彈幕"
+    },
+    "hideComment": {
+        "message": "隱藏彈幕"
+    },
+    "loopOn": {
+        "message": "洗腦迴圈 on"
+    },
+    "loopOff": {
+        "message": "洗腦迴圈 off"
+    },
+    "usingCanvas": {
+        "message": "正在使用Canvas"
+    },
+    "usingCSS": {
+        "message": "正在使用CSS"
+    },
+    "useCSS": {
+        "message": "使用CSS繪製彈幕"
+    },
+    "autoOpacityOn": {
+        "message": "關閉自動不透明度"
+    },
+    "autoOpacityOff": {
+        "message": "開啟自動不透明度"
+    },
+    "copyComment": {
+        "message": "複製彈幕"
+    },
+    "findComment": {
+        "message": "定位彈幕"
+    },
+    "blockContent": {
+        "message": "遮罩內容“"
+    },
+    "blockUser": {
+        "message": "遮罩發送者"
+    },
+    "blockColor": {
+        "message": "遮罩顏色"
+    },
+    "blockColorWhite": {
+        "message": "不能遮罩白色"
+    },
+    "copyFail": {
+        "message": "複製失敗，流覽器不支持"
+    },
+    "blockUserEmpty": {
+        "message": "沒有遮罩用戶"
+    },
+    "blockColorEmpty": {
+        "message": "沒有遮罩顏色"
+    },
+    "repeatPcs": {
+        "message": "條"
+    },
+    "repeatUnlimited": {
+        "message": "不限制"
+    },
+    "dragControlLowInc": {
+        "message": "低速快進"
+    },
+    "dragControlLowDec": {
+        "message": "低速快退"
+    },
+    "dragControlMedInc": {
+        "message": "中速快進"
+    },
+    "dragControlMedDec": {
+        "message": "中速快退"
+    },
+    "dragControlHighInc": {
+        "message": "高速快進"
+    },
+    "dragControlHighDec": {
+        "message": "高速快退"
+    },
+    "dragControlCancel": {
+        "message": "取消跳轉"
+    },
+    "extName": {
+        "message": "優酷HTML5播放機"
+    },
+    "extDesc": {
+        "message": "告別flash與廣告\n\n開源倉庫：https://github.com/esterTion/Youku-HTML5-Player\n本擴展使用元件：\nflvjs：(github)esterTion/flv.js\nABPlayer-billibili-ver(有修改)"
+    },
+    "iconPending": {
+        "message": "個視頻等待播放"
+    },
+    "iconPlaying": {
+        "message": "個視頻正在播放"
+    },
+    "iconIdle": {
+        "message": "沒有可替換的播放機"
+    },
+    "close": {
+        "message": "關閉"
+    },
+    "flvhd": {
+        "message": "標清"
+    },
+    "mp4hd": {
+        "message": "高清"
+    },
+    "mp4hd2": {
+        "message": "超清"
+    },
+    "mp4hd3": {
+        "message": "原畫"
+    },
+    "emptyPW": {
+        "message": "空密碼"
+    },
+    "currentLang": {
+        "message": "當前音訊語言："
+    },
+    "needPW": {
+        "message": "視頻需要密碼訪問，請輸入密碼："
+    },
+    "enterPW": {
+        "message": "輸入視頻密碼"
+    },
+    "rememberPW": {
+        "message": "記住密碼"
+    },
+    "submit": {
+        "message": "提交"
+    },
+    "wrongPW": {
+        "message": "視頻訪問密碼錯誤，請重新輸入密碼："
+    },
+    "fetchSourceErr": {
+        "message": "獲取視頻位址出錯，詳細錯誤："
+    },
+    "audioLang": {
+        "message": "音訊語言"
+    },
+    "toYouku": {
+        "message": "前往主站播放"
+    },
+    "fetchCommentErr": {
+        "message": "彈幕獲取失敗"
+    },
+    "loadErr": {
+        "message": "載入視頻失敗，無法播放該視頻"
+    },
+    "playErr": {
+        "message": "播放錯誤"
+    },
+    "switchErr": {
+        "message": "切換失敗，該語言/清晰度暫時不能播放"
+    },
+    "partialAvailable": {
+        "message": "本視頻僅可播放部分片段，請確認付費狀態"
+    },
+    "restoreFlash": {
+        "message": "還原flash播放機"
+    },
+    "fetchInfoErr": {
+        "message": "獲取視頻資訊出錯，詳細錯誤："
+    },
+    "uploader": {
+        "message": "上傳者："
+    },
+    "outputUrl": {
+        "message": "輸出視頻位址"
+    },
+    "noVisitorComment": {
+        "message": "遊客無法發送彈幕"
+    },
+    "postCommentFail": {
+        "message": "彈幕發送失敗"
+    },
+    "replaceEmbed": {
+        "message": "替換外鏈播放機"
+    },
+    "autoSwitch": {
+        "message": "自動切換劇集"
+    },
+    "mayBlocked": {
+        "message": "您可能開啟了廣告遮罩並遮罩了必要內容，請嘗試臨時禁用並刷新\n正常出現播放機後可以重新啟用\n\n如果這不是您第一次看見這個提示，請確認網路狀態"
+    },
+    "officialHtml5": {
+        "message": "啟用官方html5播放機（不穩定）"
+    },
+    "settings": {
+        "message": "設置"
+    },
+    "settComment": {
+        "message": "彈幕偏好設置"
+    },
+    "recordPlaySpeed": {
+        "message": "將當前速度設為預設"
+    },
+    "settPlayer": {
+        "message": "播放機偏好設置"
+    },
+    "autoPlay": {
+        "message": "自動開始播放"
+    },
+    "defaultFull": {
+        "message": "自動進入全屏模式"
+    },
+    "settExtension": {
+        "message": "擴展偏好設置"
+    },
+    "statsSourceHost": {
+        "message": "視頻源功能變數名稱："
+    },
+    "statsRedirection": {
+        "message": "重定向："
+    },
+    "statsRedirectionNone": {
+        "message": "否"
+    },
+    "extUpdated": {
+        "message": "優酷HTML5播放機最近有更新啦！"
+    },
+    "extUpdated_ver": {
+        "message": "現在我們的版本是"
+    },
+    "extUpdated_detail": {
+        "message": "一些更新細節：\n播放機新增了YouTube主題，可在設置中切換主題"
+    },
+    "playerTheme": {
+        "message": "播放機主題"
+    },
+    "next": {
+        "message": "下一個視頻："
+    }
+}
