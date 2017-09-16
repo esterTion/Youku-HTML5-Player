@@ -1,7 +1,7 @@
 function embed_checker(i) {
     if (i.YHP_replacing)
         return;
-    let ykvid = (i.src + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\//);
+    let ykvid = (i.src + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)/);
     if (ykvid != null) {
         replacer(i, ykvid);
         return;
@@ -23,7 +23,7 @@ function object_checker(i) {
             src = i
     });
     if (src == null) return;
-    let ykvid = (src.value + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)\//);
+    let ykvid = (src.value + '').match(/player\.youku\.com.+sid\/([a-zA-Z0-9\=]+)/);
     if (ykvid != null) {
         replacer(i, ykvid);
     }
