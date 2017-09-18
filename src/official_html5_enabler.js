@@ -15,16 +15,16 @@
         item = Object.assign({ official_html5: false }, item);
         if (item.official_html5) {
             console.log('使用官方html5');
-            if (location.href.match(/debug=h5/) == null) {
-                let replace = location.href.replace(/debug=[\w]+/, '');
-                replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'debug=h5';
+            if (location.href.match(/rand=[\w]+/) == null || location.href.match(/rand=[\w]+/)[0].slice(5) > 50) {
+                let replace = location.href.replace(/rand=[\w]+/, '');
+                replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'rand=50';
                 history.replaceState({}, '', replace);
             }
         } else if (!item.official_html5) {
             console.log('禁用官方html5');
-            if (location.href.match(/debug=flv/) == null) {
-                let replace = location.href.replace(/debug=[\w]+/, '');
-                replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'debug=flv';
+            if (location.href.match(/rand=[\w]+/) == null || location.href.match(/rand=[\w]+/)[0].slice(5) <= 50) {
+                let replace = location.href.replace(/rand=[\w]+/, '');
+                replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'rand=100';
                 history.replaceState({}, '', replace);
             }
             //伪造flash环境防止官方html5启用
