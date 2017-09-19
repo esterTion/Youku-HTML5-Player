@@ -15,23 +15,17 @@
         item = Object.assign({ official_html5: false }, item);
         if (item.official_html5) {
             console.log('使用官方html5');
-            if (location.href.match(/debug=h5/) == null) {
-                let replace = location.href.replace(/debug=[\w]+/, '');
-                replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'debug=h5';
-                history.replaceState({}, '', replace);
+            //清除flash
+            if (navigator.plugins["Shockwave Flash"]) {
+                document.head.appendChild(document.createElement('script')).textContent='delete navigator.plugins["Shockwave Flash"]';
             }
         } else if (!item.official_html5) {
             console.log('禁用官方html5');
-            if (location.href.match(/debug=flv/) == null) {
-                let replace = location.href.replace(/debug=[\w]+/, '');
-                replace += ((replace.indexOf('?') !== -1) ? '&' : '?') + 'debug=flv';
-                history.replaceState({}, '', replace);
-            }
+            //伪造https环境
+            document.addEventListener('DOMContentLoaded', function () { document.head.appendChild(document.createElement('script')).textContent = 'PageConfig.transfer="https"'; });
             //伪造flash环境防止官方html5启用
             if (!navigator.plugins["Shockwave Flash"]) {
-                let script = document.createElement('script');
-                script.textContent = 'navigator.plugins["Shockwave Flash"]=true';
-                document.head.appendChild(script);
+                document.head.appendChild(document.createElement('script')).textContent = 'navigator.plugins["Shockwave Flash"]=true';
             }
         }
     });
