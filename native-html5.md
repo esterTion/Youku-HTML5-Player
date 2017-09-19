@@ -20,10 +20,11 @@ sessionStorage.removeItem('P_l_h5')
 - 部分视频cdn跨域配置不正确会导致无法播放，遇到console报错`Access-Control-Allow-Origin`相关请联系优酷，并带上cdn ip地址报错 
 
 ---
-09/12  
+09/19  
 优酷目前启用html5的逻辑：  
 - http浏览，且  
-- 不是IE  
+- 浏览器支持video标签，且  
+- url中的`rand`参数 或 首次打开时设置的`vgray`随机数cookie(取值0-99) 不大于50
 - 没有flash的浏览器，强制启用html5  
 
-![](http://wx4.sinaimg.cn/large/763783e4ly1fjh6qi5usqj20s00a03zx.jpg)
+![](http://wx2.sinaimg.cn/large/763783e4ly1fjos79tgnuj20lr0dzzlv.jpg)
