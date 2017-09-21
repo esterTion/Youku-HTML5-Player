@@ -462,7 +462,62 @@ function fetchSrcThen(json) {
             abpinst.txtText.placeholder = _t('noVisitorComment');
             abpinst.txtText.style.textAlign = 'center';
         }
-        let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body');
+        let contextMenu = abpinst.playerUnit.querySelector('.Context-Menu-Body'),
+            dvd = json.data.dvd;
+        if (dvd) {
+            let head = false, tail = false;
+            dvd.head && (head = dvd.head / 1e3);
+            dvd.tail && (tail = dvd.tail / 1e3);
+            if (head || tail) {
+                let seekedHead = false, seekedTail = false;
+                abpinst.video.addEventListener('timeupdate', function () {
+                    if (this.paused) return;
+                    let seek = false, video = this;
+                    if (!seekedHead && head !== false && this.currentTime < head) {
+                        seek = head;
+                        seekedHead = true;
+                    } else if (!seekedTail && tail !== false && this.currentTime > tail) {
+                        seek = this.duration;
+                        seekedTail = true;
+                    }
+                    if (seek !== false) {
+                        readStorage('skip_head', function (item) {
+                            item = Object.assign({ skip_head: true }, item);
+                            console.log(item.skip_head, seek);
+                            if (item.skip_head) {
+                                video.currentTime = seek;
+                            }
+                        });
+                    }
+                });
+            }
+
+            if (dvd.point) {
+                let childs = [];
+                dvd.point.forEach(function (i) {
+                    if (i.ctype == 'story') {
+                        let start = i.start / 1e3 | 0, min = start / 60 | 0, sec = start % 60;
+                        min < 10 && (min = '0' + min);
+                        sec < 10 && (sec = '0' + sec);
+                        childs.push(_('div', { 'data-time': i.start }, [_('text', min + ':' + sec + '　' + i.title)]));
+                    }
+                });
+                if (childs.length) {
+                    let points = _('div', { className: 'dm static' }, [
+                        _('div', {}, [_('text', _t('storylinePoints'))]),
+                        _('div', {
+                            className: 'dmMenu', event: {
+                                click: function (e) {
+                                    let time = e.target.dataset.time / 1e3;
+                                    abpinst.video.currentTime = time;
+                                }
+                            }
+                        }, childs)
+                    ]);
+                    contextMenu.insertBefore(points, contextMenu.firstChild);
+                }
+            }
+        }
         if (audioLangs.length > 1) {
             let childs = [];
             for (let lang in audioLangs) {
@@ -1061,22 +1116,14 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
             chkInit();
         else {
             if (getCookie('cna') == '') {
-                let cnaPopShowed = false,
-                    showCnaPop = function () {
-                        if (getCookie('cna') == '') {
-                            if (!cnaPopShowed) {
-                                cnaPopShowed = true;
-                                createPopup({
-                                    content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('div', { style: { whiteSpace: 'pre-wrap' } }, [_('text', _t('mayBlocked'))])],
-                                    showConfirm: false
-                                });
-                            }
-                        } else {
-                            location.reload();
-                        }
-                    };
-                window.addEventListener('load', showCnaPop);
-                setInterval(showCnaPop, 1e3);
+                chrome.runtime.sendMessage('cna', function (r) {
+                    let cna = r.match(/goldlog\.Etag="([^"]+)"/);
+                    cna !== null && (
+                        document.cookie = 'cna=' + cna[1] + '; domain=youku.com; max-age=604800; path=/',
+                        location.reload()
+                    );
+                });
+                return;
             } else {
                 //player node not loaded, add an observer
                 let observer = new MutationObserver(function () {
@@ -1092,19 +1139,12 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
         let container = document.querySelector(objID);
         if (container == null) return;
         if (getCookie('cna') == '') {
-            fetch('https://log.mmstat.com/eg.js', {
-                method: 'GET',
-                credentials: 'include',
-                cache: 'no-cache',
-                referrer: location.href
-            }).then(function (r) {
-                r.text().then(function (r) {
-                    let cna = r.match(/goldlog.Etag="([^"]+)"/);
-                    cna !== null && (
-                        document.cookie = 'cna=' + cna + '; domain=youku.com; max-age=604800; path=/',
-                        location.reload()
-                    );
-                });
+            chrome.runtime.sendMessage('cna', function (r) {
+                let cna = r.match(/goldlog\.Etag="([^"]+)"/);
+                cna !== null && (
+                    document.cookie = 'cna=' + cna[1] + '; domain=youku.com; max-age=604800; path=/',
+                    location.reload()
+                );
             });
             return;
         }
