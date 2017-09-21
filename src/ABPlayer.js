@@ -834,7 +834,7 @@ ABP.Strings={
 			])]),
 
 			_('p',{className:'label big'},[_('text',_t('settExtension'))]),
-			_('iframe',{src:chrome.extension.getURL("options.html"),style:{width:'100%',height:'80px',border:'none'}})
+			_('iframe',{src:chrome.extension.getURL("options.html"),style:{width:'100%',height:'100px',border:'none'}})
 			//end
 			])
 		])]));
