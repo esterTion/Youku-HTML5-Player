@@ -2173,6 +2173,9 @@ body.ABP-FullScreen{
 	border: none;
 	transition:left .2s
 }
+.ABP-Unit.hide-comment[theme="YouTube"] .ABP-Text {
+	display:none
+}
 .ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Text{
 	left:260px
 }

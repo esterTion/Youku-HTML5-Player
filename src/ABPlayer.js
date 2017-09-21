@@ -1087,7 +1087,6 @@ ABP.Strings={
 			video[addEventListener]("ended", function() {
 				ABPInst.btnPlay.className = "button ABP-Play icon-play";
 				ABPInst.videoDiv.className='ABP-Video';
-				playerUnit.dispatchEvent(new Event('callNext'));
 			});
 			video[addEventListener]("progress", bufferListener);
 			video.isBound = true;
@@ -1963,12 +1962,14 @@ ABP.Strings={
 					ABPInst.cmManager.startTimer();
 					this.className = "button ABP-CommentShow icon-comment on";
 					this.tooltip(ABP.Strings.hideComment);
+					removeClass(ABPInst.playerUnit, 'hide-comment');
 				} else {
 					ABPInst.cmManager.display = false;
 					ABPInst.cmManager.clear();
 					ABPInst.cmManager.stopTimer();
 					this.className = "button ABP-CommentShow icon-comment";
 					this.tooltip(ABP.Strings.showComment);
+					addClass(ABPInst.playerUnit, 'hide-comment');
 				}
 				saveConfigurations();
 			});
