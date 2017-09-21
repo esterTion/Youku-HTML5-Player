@@ -1,11 +1,4 @@
-优酷官方已经灰度上线html5播放器，在主站浏览时，console中输入  
-```Javascript
-sessionStorage.setItem('P_l_h5',true)
-```
-即可启用官方html5（浏览器关闭前持续有效）。此时本扩展将检测不到flash播放器节点从而自动禁用，如需关闭官方html5，可重新启动浏览器或在控制台中输入  
-```Javascript
-sessionStorage.removeItem('P_l_h5')
-```
+优酷官方已经正式上线html5播放器，在主站正常浏览时，应会默认使用html5播放器  
 
 （细节：播放器核心为hls.js，猜测没有经过深度自定义）
 

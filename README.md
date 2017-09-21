@@ -1,7 +1,7 @@
 # Youku HTML5播放器扩展
 作者：esterTion
 
-[关于官方内测html5播放器](native-html5.md)
+[关于官方html5播放器](native-html5.md)
 
 ![](icon.png)
 
