@@ -5,7 +5,7 @@
         official_html5 = document.getElementById('official_html5');
 
     replace_embed.appendChild(_('text', _t('replaceEmbed')));
-    replace_embed.appendChild(_('text', _t('skipHead')));
+    skip_head.appendChild(_('text', _t('skipHead')));
     auto_switch.appendChild(_('text', _t('autoSwitch')));
     official_html5.appendChild(_('text', _t('officialHtml5')));
 
