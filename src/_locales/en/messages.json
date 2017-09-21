@@ -423,12 +423,18 @@
         "message": "We are currently at version "
     },
     "extUpdated_detail": {
-        "message": "Here are some update notes:\nYouTube theme just added! You can change theme in the player settings"
+        "message": "Here are some update notes:\n1、There will be timeline highlights in context menu when available\n2、Added an option to skip the opening and ending part of the video, and is on by default"
     },
     "playerTheme": {
         "message": "Player theme"
     },
     "next": {
         "message": "Next video: "
+    },
+    "storylinePoints": {
+        "message": "Timeline Highlights"
+    },
+    "skipHead": {
+        "message": "Skip the opening and ending part"
     }
 }

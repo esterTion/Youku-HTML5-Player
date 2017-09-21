@@ -423,12 +423,18 @@
         "message": "现在我们的版本是"
     },
     "extUpdated_detail": {
-        "message": "一些更新细节：\n播放器新增了YouTube主题，可在设置中切换主题"
+        "message": "一些更新细节：\n1、在可用时，右键菜单中会显示视频亮点选单\n2、添加了跳过片头片尾的选项，默认启用"
     },
     "playerTheme":{
         "message":"播放器主题"
     },
     "next": {
         "message": "下一个视频："
+    },
+    "storylinePoints": {
+        "message": "视频亮点"
+    },
+    "skipHead": {
+        "message": "跳过片头片尾"
     }
 }

@@ -423,12 +423,18 @@
         "message": "現在我們的版本是"
     },
     "extUpdated_detail": {
-        "message": "一些更新細節：\n播放機新增了YouTube主題，可在設置中切換主題"
+        "message": "一些更新細節：\n1、在可用時，右鍵功能表中會顯示視頻亮點選單\n2、添加了跳過片頭片尾的選項，預設啟用"
     },
     "playerTheme": {
         "message": "播放機主題"
     },
     "next": {
         "message": "下一個視頻："
+    },
+    "storylinePoints": {
+        "message": "視頻亮點"
+    },
+    "skipHead": {
+        "message": "跳過片頭片尾"
     }
 }
