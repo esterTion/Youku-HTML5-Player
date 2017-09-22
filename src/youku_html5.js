@@ -1083,11 +1083,17 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 #YHP_Notice input[type=button]:active {
 	background: #CCC;
 }
-body.w1080.danmuon[yhp_theme] .playArea .player, body.w1080[yhp_theme] .listArea{
+body.w1080.danmuon[yhp_theme] .playArea .player{
     height:460px;
 }
-body.w1300.danmuon[yhp_theme] .playArea .player, body.w1300[yhp_theme] .listArea{
+body.w1080[yhp_theme] .listBox .listArea{
+    height:512px;
+}
+body.w1300.danmuon[yhp_theme] .playArea .player{
     height:584px;
+}
+body.w1300[yhp_theme] .listBox .listArea{
+    height:636px;
 }
 body[yhp_theme] .playBox_thx, body.danmuon[yhp_theme] .playBox_thx .playArea .player,body.danmuon[yhp_theme] .expandBox .expandCont,body.danmuon[yhp_theme] .moveright .listArea, body.danmuon[yhp_theme] .moveleft .listArea{
     height:658px;
@@ -1096,11 +1102,17 @@ body.w1300[yhp_theme] .playBox_thx, body.w1300.danmuon[yhp_theme] .playBox_thx .
     height:781px;
 }
 
-body.w1080.danmuon[yhp_theme="YouTube"] .playArea .player, body.w1080[yhp_theme="YouTube"] .listArea{
+body.w1080.danmuon[yhp_theme="YouTube"] .playArea .player{
     height:416px;
 }
-body.w1300.danmuon[yhp_theme="YouTube"] .playArea .player, body.w1300[yhp_theme="YouTube"] .listArea{
+body.w1080[yhp_theme="YouTube"] .listBox .listArea{
+    height:468px;
+}
+body.w1300.danmuon[yhp_theme="YouTube"] .playArea .player{
     height:540px;
+}
+body.w1300[yhp_theme="YouTube"] .listBox .listArea{
+    height:592px;
 }
 body[yhp_theme="YouTube"] .playBox_thx, body.danmuon[yhp_theme="YouTube"] .playBox_thx .playArea .player,body.danmuon[yhp_theme="YouTube"] .expandBox .expandCont,body.danmuon[yhp_theme="YouTube"] .moveright .listArea, body.danmuon[yhp_theme="YouTube"] .moveleft .listArea{
     height:614px;
