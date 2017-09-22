@@ -1045,7 +1045,7 @@ function init() {
     vid = vid[1];
     let noticeWidth = Math.min(500, innerWidth - 40);
     document.head.appendChild(_('style', {}, [_('text', `#YHP_Notice{
-position:fixed;left:0;right:0;top:0;height:0;z-index:20000;transition:.5s;cursor:default
+position:fixed;left:0;right:0;top:0;height:0;z-index:100001;transition:.5s;cursor:default
 }
 .YHP_down_banner{
 margin:2px;padding:2px;color:#FFFFFF;font-size:13px;font-weight:bold;background-color:green
