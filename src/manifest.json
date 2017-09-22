@@ -40,16 +40,6 @@
     },
     {
       "matches": [
-        "*://v.youku.com/v_show/*"
-      ],
-      "all_frames": true,
-      "js": [
-        "official_html5_enabler.js"
-      ],
-      "run_at": "document_start"
-    },
-    {
-      "matches": [
         "*://v-wb.youku.com/*"
       ],
       "all_frames": true,

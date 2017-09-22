@@ -41,7 +41,7 @@ let uid = '';
 let iid = 0;
 if (domain == 'v.youku.com') {
     vid = location.href.match(/\/id_([a-zA-Z0-9=]+)/);
-    objID = 'object#movie_player';
+    objID = 'object#movie_player, div#ykPlayer';
 } else if (domain == 'player.youku.com') {
     vid = location.href.match(/embed\/([a-zA-Z0-9=]+)/);
     objID = 'object#youku-player';
@@ -877,15 +877,17 @@ let flvparam = function (select) {
         overallBitrate = srcUrl[select].filesize / srcUrl.duration * 8;
     }
 };
-let ABPConfig;
+let ABPConfig, official_html5;
 if (localStorage.YHP_PlayerSettings != undefined) {
     saveStorage({ PlayerSettings: JSON.parse(localStorage.YHP_PlayerSettings) });
     delete localStorage.YHP_PlayerSettings;
 }
 
 function chkInit() {
-    readStorage('PlayerSettings', function (item) {
-        ABPConfig = item.PlayerSettings || {};
+    readStorage(['PlayerSettings', 'official_html5'], function (item) {
+        Object.assign({ official_html5: false, PlayerSettings: {} }, item);
+        ABPConfig = item.PlayerSettings;
+        official_html5 = item.official_html5;
         init();
     });
 }
@@ -909,10 +911,49 @@ function init() {
     chrome.runtime.sendMessage({ icon: true, state: 'playing' });
 
     window.cid = vid;
-    let container = document.querySelector(objID).parentNode;
+    let player = document.querySelector(objID), container;
+    if (player.id === 'ykPlayer') {
+        //h5播放器
+        if (official_html5) {
+            //启用官方，停止替换
+            document.cookie = 'vgray=1; domain=youku.com; max-age=604800; path=/';
+            return;
+        }
+        container = player.parentNode.parentNode.parentNode;
+        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.remove()')]));
+        container = container.appendChild(_('div', { className: 'player', id: 'player' }))
+    } else {
+        //flash播放器
+        container = player.parentNode;
+        player.remove();
+        if (domain == 'v.youku.com') {
+            //添加还原按钮
+            document.querySelector('#module-interact').appendChild(_('div', { className: 'fn-phone-see' }, [
+                _('div', {
+                    className: 'fn', event: {
+                        click: function () {
+                            if (disabled)
+                                return;
+                            disabled = true;
+                            if (self.flvplayer && self.flvplayer.destroy) {
+                                self.flvplayer.destroy();
+                                self.flvplayer = {};
+                            }
+                            abpinst.playerUnit.style.display = 'none';
+                            container.appendChild(player);
+                            document.body.className = document.body.className.replace('danmuon', 'danmuoff');
+                            this.parentNode.remove();
+                            document.body.removeAttribute('YHP_theme');
+                        }
+                    }
+                }, [_('a', { className: 'label', href: 'javascript:void(0);' }, [
+                    _('text', _t('restoreFlash'))
+                ])])
+            ]));
+        }
+    }
+
     container.style.overflow = 'hidden';
-    let flashplayer = container.firstChild;
-    flashplayer.remove();
     let video = container.appendChild(_('video'));
     window.flvplayer = {
         unload: function () {
@@ -981,29 +1022,6 @@ function init() {
     setInterval(playerHeight, 1e3);
     playerHeight();
     if (domain == 'v.youku.com') {
-        let restore = document.querySelector('#module-interact').appendChild(_('div', { className: 'fn-phone-see' }, [
-            _('div', {
-                className: 'fn', event: {
-                    click: function () {
-                        if (disabled)
-                            return;
-                        disabled = true;
-                        if (self.flvplayer && self.flvplayer.destroy) {
-                            self.flvplayer.destroy();
-                            self.flvplayer = {};
-                        }
-                        abpinst.playerUnit.style.display = 'none';
-                        container.appendChild(flashplayer);
-                        document.body.className = document.body.className.replace('danmuon', 'danmuoff');
-                        this.parentNode.remove();
-                        document.body.removeAttribute('YHP_theme');
-                    }
-                }
-            }, [_('a', { className: 'label', href: 'javascript:void(0);' }, [
-                _('text', _t('restoreFlash'))
-            ])])
-        ]));
-
         let playarea = document.getElementById('playBox') || document.getElementById('module_basic_playarea'),
             isMini = false;
         window.addEventListener('scroll', function () {
@@ -1111,33 +1129,21 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
     flvjs.LoggingControl.enableDebug = false;
+    if (getCookie('cna') == '') {
+        chrome.runtime.sendMessage('cna', function (r) {
+            let cna = r.match(/goldlog\.Etag="([^"]+)"/);
+            cna !== null && (
+                document.cookie = 'cna=' + cna[1] + '; domain=youku.com; max-age=604800; path=/',
+                location.reload()
+            );
+        });
+        return;
+    }
+    //播放器已加载脚本才可能运行
     if (domain == 'v.youku.com') {
-        if (document.querySelector(objID) != null)
-            chkInit();
-        else {
-            if (getCookie('cna') == '') {
-                chrome.runtime.sendMessage('cna', function (r) {
-                    let cna = r.match(/goldlog\.Etag="([^"]+)"/);
-                    cna !== null && (
-                        document.cookie = 'cna=' + cna[1] + '; domain=youku.com; max-age=604800; path=/',
-                        location.reload()
-                    );
-                });
-                return;
-            } else {
-                //player node not loaded, add an observer
-                let observer = new MutationObserver(function () {
-                    if (document.querySelector(objID) != null) {
-                        observer.disconnect();
-                        chkInit();
-                    }
-                });
-                observer.observe(document.body, { childList: true, subtree: true });
-            }
-        }
+        chkInit();
     } else if (domain == 'player.youku.com') {
         let container = document.querySelector(objID);
-        if (container == null) return;
         if (getCookie('cna') == '') {
             chrome.runtime.sendMessage('cna', function (r) {
                 let cna = r.match(/goldlog\.Etag="([^"]+)"/);
