@@ -881,9 +881,9 @@ let flvparam = function (select) {
         srcUrl[select].segments.forEach(function (i) {
             totalSize += i.filesize;
         });
-        overallBitrate = totalSize / srcUrl.duration * 8;
+        window.overallBitrate = totalSize / srcUrl.duration * 8;
     } else {
-        overallBitrate = srcUrl[select].filesize / srcUrl.duration * 8;
+        window.overallBitrate = srcUrl[select].filesize / srcUrl.duration * 8;
     }
 };
 let ABPConfig, official_html5;
