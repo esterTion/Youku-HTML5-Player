@@ -47,6 +47,9 @@
     "overallBitrate": {
         "message": "总体码率："
     },
+    "reload": {
+        "message": "重新加载"
+    },
     "statsDownloadSpeed": {
         "message": "下载速度："
     },

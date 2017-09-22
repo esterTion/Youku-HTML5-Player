@@ -47,6 +47,9 @@
     "overallBitrate": {
         "message": "Overall bitrate："
     },
+    "reload": {
+        "message": "Reload"
+    },
     "statsDownloadSpeed": {
         "message": "Download speed："
     },
