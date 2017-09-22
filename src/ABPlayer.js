@@ -33,7 +33,7 @@ ABP.Strings={
 	statsCurrentBitrate:_t('statsCurrentBitrate'),
 	statsRealtimeBitrate:_t('statsRealtimeBitrate'),
 	overallBitrate:_t('overallBitrate'),
-	reload:_('reload'),
+	reload:_t('reload'),
 	statsDownloadSpeed:_t('statsDownloadSpeed'),
 	statsSourceHost:_t('statsSourceHost'),
 	statsRedirection:_t('statsRedirection'),
