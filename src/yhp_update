@@ -11,7 +11,7 @@ version=$1
 
 export NODE_PATH=$APPDATA/npm/node_modules
 path=/cygdrive/D/PHP/Zaddons/youku
-files_share="_locales ABPlayer.css ABPlayer.min.js biliplus_shield.min.js CommentCoreLibrary.min.js dom_gen.js flv.min.js google-style-loading.min.js icon.png icon_gray.png jquery-2.1.4.min.js md5.js official_html5_enabler.js options.html options.js resizeSensor.js script_executer.js v_slash_jumper.js youku_embed_replacer.js youku_html5.js youku_html5_hack.js playerCounter_background.js"
+files_share="_locales ABPlayer.css ABPlayer.min.js biliplus_shield.min.js CommentCoreLibrary.min.js dom_gen.js flv.min.js google-style-loading.min.js icon.png icon_gray.png jquery-2.1.4.min.js md5.js options.html options.js resizeSensor.js script_executer.js v_slash_jumper.js youku_embed_replacer.js youku_html5.js youku_html5_hack.js playerCounter_background.js"
 files_chrome="hookFetch.js hookFetch_background.js"
 files_firefox=""
 sz="/cygdrive/C/Program Files/7-Zip/7z"
