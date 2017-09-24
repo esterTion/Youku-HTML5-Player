@@ -1447,6 +1447,8 @@ ABP.Strings={
 		if(window.flvplayer==undefined){
 			enabledStats.flvjs=false;
 		}
+
+		var flvplayerStuckTime = 0;
 		
 		setInterval(function(){
 			odd^=1;
@@ -1564,6 +1566,23 @@ ABP.Strings={
 						if(playerStatsOn)
 							renderColumn(downloadSpeedColumn,downloadSpeedArr);
 						flvjsStats[i++].textContent=to2digitFloat(statisticsInfo.speed)+' KB/s'
+						//低网速监测
+						var io = flvplayer._transmuxer._controller._ioctl;
+						if (io.status === 2 && !io._paused){
+							if (statisticsInfo.speed < 50){
+								flvplayerStuckTime++;
+								if (flvplayerStuckTime > 10) {
+									//超过10s低于50k，重新载入
+									flvplayer.reloadSegment && (flvplayer.reloadSegment(), console.log('Slow download speed more than 10 sec, reloading'));
+									flvplayerStuckTime = 0;
+								}
+							} else {
+								flvplayerStuckTime = 0;
+							}
+						}else{
+							// 连接/暂停/完成
+							flvplayerStuckTime = 0;
+						}
 						flvplayer._statisticsInfo.speed=0;
 					}else{
 						i++;
