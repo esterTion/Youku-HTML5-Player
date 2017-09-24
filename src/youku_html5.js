@@ -483,7 +483,6 @@ function fetchSrcThen(json) {
                     if (seek !== false) {
                         readStorage('skip_head', function (item) {
                             item = Object.assign({ skip_head: true }, item);
-                            console.log(item.skip_head, seek);
                             if (item.skip_head) {
                                 video.currentTime = seek;
                             }
@@ -930,7 +929,7 @@ function init() {
         }
         container = player.parentNode.parentNode.parentNode;
         document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.remove()')]));
-        container = container.appendChild(_('div', { className: 'player', id: 'player' }))
+        container = container.appendChild(_('div', { className: 'player', id: 'player' }));
     } else {
         //flash播放器
         container = player.parentNode;
