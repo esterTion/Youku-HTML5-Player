@@ -1642,6 +1642,8 @@ ABP.Strings={
 			if (ABP.playerConfig.autoPlay) {ABPInst.autoPlay=true; addClass(document.getElementById('setting-autoPlay'),'on');}
 			if (ABP.playerConfig.defaultWide) {ABPInst.defaultWide=true; addClass(document.getElementById('setting-defaultWide'),'on');}
 			if (ABP.playerConfig.defaultFull) {ABPInst.defaultFull=true; addClass(document.getElementById('setting-defaultFull'),'on');}
+			if (ABP.playerConfig.commentVisible===false) {addClass(ABPInst.playerUnit, 'hide-comment');removeClass(ABPInst.btnDm,'on');ABPInst.cmManager.display = false;ABPInst.cmManager.stopTimer();ABPInst.btnDm.tooltip(ABP.Strings.showComment);}
+			if (ABP.playerConfig.autoOpacity) {addClass(ABPInst.btnAutoOpacity,'on');ABPInst.cmManager.autoOpacity(true);ABPInst.btnAutoOpacity.tooltip(ABP.Strings.autoOpacityOn);}
 			if (ABP.playerConfig.recordPlaySpeed) {
 				ABPInst.recordPlaySpeed=true;
 				addClass(document.getElementById('setting-recordPlaySpeed'),'on');
@@ -1878,7 +1880,6 @@ ABP.Strings={
 				this.tooltip(autoOpacity ? ABP.Strings.autoOpacityOn : ABP.Strings.autoOpacityOff);
 				saveConfigurations();
 			});
-			if (ABP.playerConfig.autoOpacity) ABPInst.btnAutoOpacity.click();
 			ABPInst.btnProp[addEventListener]("click", function(e) {
 				this.classList.toggle("on");
 				var useCSS=this.classList.contains("on");
@@ -1976,7 +1977,6 @@ ABP.Strings={
 				}
 				saveConfigurations();
 			});
-			if (!ABP.playerConfig.commentVisible) ABPInst.btnDm.click();
 			ABPInst.btnLoop[addEventListener]("click", function() {
 				if (ABPInst.video.loop == false) {
 					ABPInst.video.loop = true;
