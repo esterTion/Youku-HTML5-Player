@@ -53,6 +53,12 @@ let knownTypes = {
     'mp4hd2': _t('mp4hd2'),
     'mp4hd3': _t('mp4hd3')
 };
+/**
+ * 优酷新清晰度：
+ * mp4sd => flvhd mp4版
+ * mp4hd2v2 => mp4hd2 mp4版
+ * mp4hd3v2 => mp4hd3 mp4版
+ */
 let typeDropMap = {
     'mp4hd3': 'mp4hd2',
     'mp4hd2': 'mp4hd',
@@ -98,6 +104,8 @@ function response2url(json) {
             let lang = stream.audio_lang,
                 type = stream.stream_type,
                 current = audioLangs[lang].src[type];
+            //忽略不记录清晰度
+             if (current === undefined) return;
             current.playlist_url = stream.m3u8_url;
             for (let part = 0; part < stream.segs.length; part++) {
                 current.segments[part].backup_url.push(stream.segs[part].cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
