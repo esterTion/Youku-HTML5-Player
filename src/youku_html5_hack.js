@@ -17,3 +17,19 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
 })();
+//强制中断html5初始化
+readStorage(['official_html5'], function (item) {
+    item = Object.assign({ official_html5: false }, item);
+    if (!item.official_html5) {
+        document.head.appendChild(_('script', {}, [_('text', '(' + function () {
+            var extend = $.extend;
+            $.extend = function () {
+                var arg = arguments;
+                if (arg[1] && arg[1].vid && arg[1].ccode && arg[1].autoplay) {
+                    throw "Violent break";
+                }
+                return extend.apply(this, arg);
+            };
+        }.toString() + ')()')]));
+    }
+});

@@ -901,7 +901,7 @@ if (localStorage.YHP_PlayerSettings != undefined) {
 
 function chkInit() {
     readStorage(['PlayerSettings', 'official_html5'], function (item) {
-        Object.assign({ official_html5: false, PlayerSettings: {} }, item);
+        item = Object.assign({ official_html5: false, PlayerSettings: {} }, item);
         ABPConfig = item.PlayerSettings;
         official_html5 = item.official_html5;
         init();
@@ -936,7 +936,7 @@ function init() {
             return;
         }
         container = player.parentNode.parentNode.parentNode;
-        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.remove()')]));
+        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.remove()')])).remove();
         container = container.appendChild(_('div', { className: 'player', id: 'player' }));
     } else {
         //flash播放器
