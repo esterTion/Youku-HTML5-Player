@@ -48,10 +48,13 @@ if (domain == 'v.youku.com') {
 }
 
 let knownTypes = {
+    'mp4sd': _t('flvhd'),
     'flvhd': _t('flvhd'),
     'mp4hd': _t('mp4hd'),
     'mp4hd2': _t('mp4hd2'),
-    'mp4hd3': _t('mp4hd3')
+    'mp4hd2v2': _t('mp4hd2'),
+    'mp4hd3': _t('mp4hd3'),
+    'mp4hd3v2': _t('mp4hd3')
 };
 /**
  * 优酷新清晰度：
@@ -61,7 +64,9 @@ let knownTypes = {
  */
 let typeDropMap = {
     'mp4hd3': 'mp4hd2',
+    'mp4hd3v2': 'mp4hd2v2',
     'mp4hd2': 'mp4hd',
+    'mp4hd2v2': 'mp4hd',
     'mp4hd': 'flvhd'
 };
 let knownLangs = {
@@ -105,7 +110,7 @@ function response2url(json) {
                 type = stream.stream_type,
                 current = audioLangs[lang].src[type];
             //忽略不记录清晰度
-             if (current === undefined) return;
+            if (current === undefined) return;
             current.playlist_url = stream.m3u8_url;
             for (let part = 0; part < stream.segs.length; part++) {
                 current.segments[part].backup_url.push(stream.segs[part].cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
@@ -147,6 +152,14 @@ function response2url(json) {
         if (savedLang == lang)
             currentLang = lang;
         let videoid = videoids[lang] || vid;
+
+        if (data[lang].mp4hd3v2)
+            delete data[lang].mp4hd3;
+        if (data[lang].mp4hd2v2)
+            delete data[lang].mp4hd2;
+        if (data[lang].mp4hd3v2)
+            delete data[lang].flvhd;
+
         for (let type in knownTypes) {
             if (data[lang][type]) {
                 let time = 0;
