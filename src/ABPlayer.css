@@ -261,6 +261,9 @@
 	padding:0;
 	border:1px solid #ececec
 }
+.ABP-Text form{
+	margin:0
+}
 .ABP-Unit.ABP-Mini .ABP-Text{
 	display:none
 }

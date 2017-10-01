@@ -54,4 +54,4 @@ readStorage('replace_embed', function (item) {
         let observer = new MutationObserver(finder);
         observer.observe(document.body, { childList: true, subtree: true });
     }
-})
+});

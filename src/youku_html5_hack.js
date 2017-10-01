@@ -31,5 +31,18 @@ readStorage(['official_html5'], function (item) {
                 return extend.apply(this, arg);
             };
         }.toString() + ')()')]));
+        document.head.appendChild(_('script', {}, [_('text', '(' + function () {
+            Object.defineProperty(window, 'YoukuPlayer', {
+                get: function () {
+                    return function (div) {
+                        //外链创建播放器请求，创造伪object
+                        div.appendChild(document.createElement('object')).id = 'youku-player';
+                        console.log('get', arguments); throw 'Violent break';
+                    };
+                },
+                set: function () { },
+                configurable: false
+            });
+        }.toString() + ')();')]));
     }
 });
