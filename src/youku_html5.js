@@ -611,6 +611,23 @@ function fetchSrcThen(json) {
                 });
             }
         });
+        //记录播放历史
+        fetch('https://playlog.youku.com/playlog/open/push_web.json?' + [
+            'nlid=' + encodeURIComponent(getCookie('cna')),
+            'v=' + iid,
+            'hwclass=1&devicename=H5&mt=1&autoplay=1&cg=100',
+            'shid=' + (json.data.show ? json.data.show.id : 0),
+            'tp=1&stg=1&hd=1',
+            'seconds=' + srcUrl.duration / 1e3 | 0,
+            'po=0',
+            'lastupdate=' + Date.now() / 1e3 | 0,
+            'lang=7'
+        ].join('&'), {
+                method: 'GET',
+                credentials: 'include',
+                cache: 'no-cache'
+            });
+        //nlid=GPM%2FEhZuIHkCATqawzk1EH%2FA&v=437244772&hwclass=1&devicename=H5&mt=1&autoplay=1&cg=100&shid=310600&tp=1&stg=1&hd=1&seconds=2947&po=0&lastupdate=1506870903&lang=7
     }
     firstTime = false;
     fetchedCount++;
