@@ -22,22 +22,22 @@ readStorage(['official_html5'], function (item) {
     item = Object.assign({ official_html5: false }, item);
     if (!item.official_html5) {
         document.head.appendChild(_('script', {}, [_('text', '(' + function () {
-            var extend = $.extend;
-            $.extend = function () {
-                var arg = arguments;
-                if (arg[1] && arg[1].vid && arg[1].ccode && arg[1].autoplay) {
-                    throw "Violent break";
-                }
-                return extend.apply(this, arg);
-            };
-        }.toString() + ')()')]));
-        document.head.appendChild(_('script', {}, [_('text', '(' + function () {
+            if (window.$) {
+                var extend = $.extend;
+                $.extend = function () {
+                    var arg = arguments;
+                    if (arg[1] && arg[1].vid && arg[1].ccode && arg[1].autoplay) {
+                        throw "Violent break $.extend";
+                    }
+                    return extend.apply(this, arg);
+                };
+            }
             Object.defineProperty(window, 'YoukuPlayer', {
                 get: function () {
                     return function (div) {
                         //外链创建播放器请求，创造伪object
                         div.appendChild(document.createElement('object')).id = 'youku-player';
-                        console.log('get', arguments); throw 'Violent break';
+                        throw "Violent break YoukuPlayer";
                     };
                 },
                 set: function () { },
