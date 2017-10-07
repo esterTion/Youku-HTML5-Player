@@ -70,7 +70,6 @@ let typeDropMap = {
     'mp4hd': 'flvhd'
 };
 let knownLangs = {
-    "default": "默认",
     "guoyu": "国语",
     "yue": "粤语",
     "chuan": "川话",
@@ -80,15 +79,31 @@ let knownLangs = {
     "ja": "日语",
     "kr": "韩语",
     "in": "印度",
-    "ru": "俄语",
     "fr": "法语",
     "de": "德语",
     "it": "意语",
     "es": "西语",
-    "po": "葡语",
     "th": "泰语",
-    "man": "暖男",
-    "baby": "萌童"
+    "baby": "萌童",
+    "man": "暖男"
+};
+let knownLangsId = {
+    "guoyu": 1,
+    "yue": 2,
+    "chuan": 3,
+    "tai": 4,
+    "min": 5,
+    "en": 6,
+    "ja": 7,
+    "kr": 8,
+    "in": 9,
+    "fr": 11,
+    "de": 12,
+    "it": 13,
+    "es": 14,
+    "th": 16,
+    "baby": 17,
+    "man": 18
 };
 let srcUrl = {};
 let audioLangs = {};
@@ -615,13 +630,13 @@ function fetchSrcThen(json) {
         fetch('https://playlog.youku.com/playlog/open/push_web.json?' + [
             'nlid=' + encodeURIComponent(getCookie('cna')),
             'v=' + iid,
-            'hwclass=1&devicename=H5&mt=1&autoplay=1&cg=100',
-            'shid=' + (json.data.show ? json.data.show.id : 0),
-            'tp=1&stg=1&hd=1',
-            'seconds=' + srcUrl.duration / 1e3 | 0,
+            'hwclass=1&devicename=H5&mt=1&autoplay=1',
+            'cg=' + categoryID,
+            json.data.show ? ('shid=' + json.data.show.id) : '',
+            'seconds=' + (srcUrl.duration / 1e3 | 0),
             'po=0',
-            'lastupdate=' + Date.now() / 1e3 | 0,
-            'lang=7'
+            'lastupdate=' + (Date.now() / 1e3 | 0),
+            'lang=' + (knownLangsId[currentLang] || 1)
         ].join('&'), {
                 method: 'GET',
                 credentials: 'include',
