@@ -134,7 +134,10 @@ ABP.Strings={
 	settPlayer:_t('settPlayer'),
 	autoPlay:_t('autoPlay'),
 	defaultFull:_t('defaultFull'),
-	playerTheme:_t('playerTheme')
+	playerTheme:_t('playerTheme'),
+
+	volumeChange:_t('volumeChange'),
+	rateChange:_t('rateChange')
 };
 
 (function() {
@@ -930,6 +933,7 @@ ABP.Strings={
 				w: 0,
 				h: 0
 			},
+			inited: false,
 			state: buildFromDefaults(state, {
 				fullscreen: false,
 				commentVisible: true,
@@ -1001,6 +1005,8 @@ ABP.Strings={
 				}
 			}
 			video[addEventListener]("timeupdate", bufferListener);
+			video[addEventListener]('timeupdate', function(e){ABPInst.inited=true;});
+			video[addEventListener]('canplay', function(e){ABPInst.inited=true;});
 			var lastCheckTime = 0,isFirst=true,isEnded=false,isLooping=false,loadingNew=false,
 			autoPlay=function(){
 				loadingNew=false;
@@ -1448,7 +1454,7 @@ ABP.Strings={
 			enabledStats.flvjs=false;
 		}
 
-		var flvplayerStuckTime = 0;
+		var flvplayerSpeedRec = [];
 		
 		setInterval(function(){
 			odd^=1;
@@ -1569,19 +1575,20 @@ ABP.Strings={
 						//低网速监测
 						var io = flvplayer._transmuxer._controller._ioctl;
 						if (io.status === 2 && !io._paused){
-							if (statisticsInfo.speed < 50){
-								flvplayerStuckTime++;
-								if (flvplayerStuckTime > 10) {
-									//超过10s低于50k，重新载入
-									flvplayer.reloadSegment && (flvplayer.reloadSegment(), console.log('Slow download speed more than 10 sec, reloading'));
-									flvplayerStuckTime = 0;
+							flvplayerSpeedRec.push(statisticsInfo.speed);
+							if(flvplayerSpeedRec.length > 10) {
+								flvplayerSpeedRec.shift();
+								var sum = 0;
+								flvplayerSpeedRec.forEach(function(i){sum+=i;});
+								if (sum < 500) {
+									//超过10s均速低于50k，重新载入
+									flvplayer.reloadSegment && (flvplayer.reloadSegment(), console.log('Low average download speed in recent 10 sec, reloading'));
+									flvplayerSpeedRec = [];
 								}
-							} else {
-								flvplayerStuckTime = 0;
 							}
 						}else{
 							// 连接/暂停/完成
-							flvplayerStuckTime = 0;
+							flvplayerSpeedRec = [];
 						}
 						flvplayer._statisticsInfo.speed=0;
 					}else{
@@ -1877,6 +1884,7 @@ ABP.Strings={
 				colorOn=!colorOn
 			});
 			var saveConfigurations = function() {
+				if (ABPInst.inited)
 				saveStorage({PlayerSettings:{
 					volume: ABPInst.video.volume,
 					opacity: ABPInst.cmManager.options.global.opacity,
@@ -2705,11 +2713,15 @@ ABP.Strings={
 								var newSpeed = ABPInst.video.playbackRate + .05;
 								if (newSpeed > 2) newSpeed = 2;
 								ABPInst.video.playbackRate = newSpeed;
+								ABPInst.removePopup();
+								ABPInst.createPopup(ABP.Strings.rateChange + ((newSpeed*1e2)|0) + '%',1e3);
 							}else{
 								var newVolume = ABPInst.video.volume + .1;
 								if (newVolume > 1) newVolume = 1;
 								ABPInst.video.volume = newVolume.toFixed(3);
 								updateVolume(ABPInst.video.volume);
+								ABPInst.removePopup();
+								ABPInst.createPopup(ABP.Strings.volumeChange + ((newVolume*1e2)|0) + '%',1e3);
 							}
 							break;
 						case 40:
@@ -2717,11 +2729,15 @@ ABP.Strings={
 								var newSpeed = ABPInst.video.playbackRate - .05;
 								if (newSpeed < .5) newSpeed = .5;
 								ABPInst.video.playbackRate = newSpeed;
+								ABPInst.removePopup();
+								ABPInst.createPopup(ABP.Strings.rateChange + ((newSpeed*1e2)|0) + '%',1e3);
 							}else{
 								var newVolume = ABPInst.video.volume - .1;
 								if (newVolume < 0) newVolume = 0;
 								ABPInst.video.volume = newVolume.toFixed(3);
 								updateVolume(ABPInst.video.volume);
+								ABPInst.removePopup();
+								ABPInst.createPopup(ABP.Strings.volumeChange + ((newVolume*1e2)|0) + '%',1e3);
 							}
 							break;
 					}

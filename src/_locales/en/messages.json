@@ -439,5 +439,11 @@
     },
     "skipHead": {
         "message": "Skip the opening and ending part"
+    },
+    "volumeChange": {
+        "message": "Volume changed to "
+    },
+    "rateChange": {
+        "message": "Speed changed to "
     }
 }

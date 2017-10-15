@@ -439,5 +439,11 @@
     },
     "skipHead": {
         "message": "跳过片头片尾"
+    },
+    "volumeChange": {
+        "message": "音量改变至 "
+    },
+    "rateChange": {
+        "message": "速度改变至 "
     }
 }
