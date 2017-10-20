@@ -260,6 +260,15 @@
 	padding:0;
 	border:1px solid #ececec
 }
+.ABP-Unit.hide-comment .ABP-Text {
+	display:none
+}
+.ABP-Unit.hide-comment .ABP-Control {
+	bottom:0
+}
+.ABP-Unit.hide-comment .ABP-Video {
+	bottom:22px
+}
 .ABP-Text form{
 	margin:0
 }
@@ -1857,6 +1866,9 @@ body.ABP-FullScreen{
 	overflow:hidden;
 	cursor:default
 }
+.hide-comment .ABP-Settings {
+	bottom:22px
+}
 .ABP-Settings.expand{
 	border:solid 1px #ccc;
 	width:300px
@@ -2242,4 +2254,7 @@ body.ABP-FullScreen{
 }
 .ABP-Unit.volume-show[theme="YouTube"]:not(.ABP-Mini) .ABP-Text{
 	left:290px
+}
+.ABP-Unit[theme="YouTube"] .ABP-Popup{
+	bottom:74px
 }
