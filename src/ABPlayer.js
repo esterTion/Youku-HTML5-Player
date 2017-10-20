@@ -2712,7 +2712,7 @@ ABP.Strings={
 							if(e.ctrlKey){
 								var newSpeed = ABPInst.video.playbackRate + .05;
 								if (newSpeed > 2) newSpeed = 2;
-								ABPInst.video.playbackRate = newSpeed;
+								ABPInst.video.playbackRate = newSpeed.toFixed(3);
 								ABPInst.removePopup();
 								ABPInst.createPopup(ABP.Strings.rateChange + ((newSpeed*1e2)|0) + '%',1e3);
 							}else{
@@ -2728,7 +2728,7 @@ ABP.Strings={
 							if(e.ctrlKey){
 								var newSpeed = ABPInst.video.playbackRate - .05;
 								if (newSpeed < .5) newSpeed = .5;
-								ABPInst.video.playbackRate = newSpeed;
+								ABPInst.video.playbackRate = newSpeed.toFixed(3);
 								ABPInst.removePopup();
 								ABPInst.createPopup(ABP.Strings.rateChange + ((newSpeed*1e2)|0) + '%',1e3);
 							}else{
