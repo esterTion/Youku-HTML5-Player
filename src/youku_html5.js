@@ -769,6 +769,7 @@ window.changeSrc = function (e, t, force) {
     abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination div.on').className = '';
     abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination div[name=' + t + ']').className = 'on';
     abpinst.video.pause();
+	abpinst.inited = false;
     if (srcUrl[t] != undefined) {
         div.childNodes[0].childNodes[0].textContent = ABP.Strings.switching;
         if (!dots.running)
