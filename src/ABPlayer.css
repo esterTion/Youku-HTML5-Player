@@ -260,14 +260,11 @@
 	padding:0;
 	border:1px solid #ececec
 }
-.ABP-Unit.hide-comment .ABP-Text {
+.ABP-Unit.ABP-FullScreen.hide-comment .ABP-Text {
 	display:none
 }
-.ABP-Unit.hide-comment .ABP-Control {
+.ABP-Unit.ABP-FullScreen.hide-comment .ABP-Control {
 	bottom:0
-}
-.ABP-Unit.hide-comment .ABP-Video {
-	bottom:22px
 }
 .ABP-Text form{
 	margin:0
@@ -1866,7 +1863,7 @@ body.ABP-FullScreen{
 	overflow:hidden;
 	cursor:default
 }
-.hide-comment .ABP-Settings {
+.ABP-FullScreen.hide-comment .ABP-Settings {
 	bottom:22px
 }
 .ABP-Settings.expand{
