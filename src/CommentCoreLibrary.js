@@ -70,7 +70,8 @@ var CommentSpaceAllocator = (function () {
         ];
         this.avoid = 1;
         this._width = width;
-        this._height = height;
+		this._height = height;
+		this.length = 0;
     }
     CommentSpaceAllocator.prototype.willCollide = function (existing, check) {
         return existing.stime + existing.ttl >= check.stime + check.ttl / 2;
@@ -123,6 +124,7 @@ var CommentSpaceAllocator = (function () {
         return this.assign(comment, cindex + 1);
     };
     CommentSpaceAllocator.prototype.add = function (comment) {
+		this.length++;
         if (comment.height > this._height) {
             comment.cindex = -2;
             comment.y = 0;
@@ -153,7 +155,8 @@ var CommentSpaceAllocator = (function () {
         var index = this._pools[comment.cindex].indexOf(comment);
         if (index < 0)
             return;
-        this._pools[comment.cindex].splice(index, 1);
+		this._pools[comment.cindex].splice(index, 1);
+		this.length--;
     };
     CommentSpaceAllocator.prototype.setBounds = function (width, height) {
         this._width = width;
@@ -770,7 +773,8 @@ var CommentManager = (function() {
 				className:"cmt",
 				useCSS:false,
 				autoOpacity:false,
-				autoOpacityVal:1
+				autoOpacityVal:1,
+				density: 0
 			},
 			scroll:{
 				opacity:1,
@@ -1232,6 +1236,7 @@ var CommentManager = (function() {
 			}
 			return;
 		}
+		if(this.options.global.density > 0 && data.mode == 1 && this.csa.scroll.length>=this.options.global.density) return false;
 		if(this.filter != null){
 			data = this.filter.doModify(data);
 			if(data == null || data === false) return;

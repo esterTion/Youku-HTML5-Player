@@ -1925,13 +1925,10 @@ body.ABP-FullScreen{
 	padding:2px 0;
 	text-align:center
 }
-.ABP-Unit .ABP-Settings .opacity-bar,.ABP-Unit .ABP-Settings .scale-bar,.ABP-Unit .ABP-Settings .speed-bar{
+.ABP-Unit .ABP-Settings .opacity-bar,.ABP-Unit .ABP-Settings .scale-bar,.ABP-Unit .ABP-Settings .density-bar,.ABP-Unit .ABP-Settings .speed-bar{
 	position:relative;
 	height:10px;
 	margin-bottom:8px
-}
-.ABP-Unit .ABP-Settings .scale-bar{
-	width:auto
 }
 .ABP-Unit .ABP-Settings .prop-checkbox{
 	position:absolute;
@@ -1963,7 +1960,7 @@ body.ABP-FullScreen{
 	width:12px;
 	height:12px
 }
-.ABP-Unit .ABP-Settings .opacity-bar .bar,.ABP-Unit .ABP-Settings .scale-bar .bar,.ABP-Unit .ABP-Settings .speed-bar .bar{
+.ABP-Unit .ABP-Settings .opacity-bar .bar,.ABP-Unit .ABP-Settings .scale-bar .bar,.ABP-Unit .ABP-Settings .density-bar .bar,.ABP-Unit .ABP-Settings .speed-bar .bar{
 	width:100%;
 	top:2px;
 	left:0

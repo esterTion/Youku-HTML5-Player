@@ -89,6 +89,9 @@
     "commentScale": {
         "message": "Comment scale"
     },
+    "commentDensity": {
+        "message": "Comment density"
+    },
     "commentOpacity": {
         "message": "Comment opacity"
     },

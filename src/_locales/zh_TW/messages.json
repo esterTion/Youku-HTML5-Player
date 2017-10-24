@@ -89,6 +89,9 @@
     "commentScale": {
         "message": "彈幕比例"
     },
+    "commentDensity": {
+        "message": "彈幕密度"
+    },
     "commentOpacity": {
         "message": "彈幕不透明度"
     },

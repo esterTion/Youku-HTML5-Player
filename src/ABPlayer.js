@@ -781,6 +781,18 @@ ABP.Strings={
 				]),
 			]), _("p", {
 				"className": "label"
+			}, [_("text", ABP.Strings.commentDensity)]), _("div", {
+				"className": "density-bar"
+			}, [
+				_("div", {
+					"className": "bar"
+				}, [
+					_("div", {
+						"className": "load"
+					})
+				]),
+			]), _("p", {
+				"className": "label"
 			}, [_("text", ABP.Strings.commentOpacity),_("div", {
 				"className": "prop-checkbox",
 				style:{
@@ -1216,7 +1228,7 @@ ABP.Strings={
 		ABPInst.btnNext = _n[0];
 		ABPInst.btnNext.tooltip(ABP.Strings.next);
 		hoverTooltip(ABPInst.btnNext);
-		ABPInst.btnNext.addEventListener('click',function(e){
+		ABPInst.btnNext[addEventListener]('click',function(e){
 			e.stopPropagation();
 			playerUnit.dispatchEvent(new Event('callNext'));
 		});
@@ -1255,6 +1267,8 @@ ABP.Strings={
 		var sbar = sbar[0].getElementsByClassName("bar");
 		ABPInst.barScaleHitArea = sbar[0];
 		ABPInst.barScale = sbar[0].getElementsByClassName("load")[0];
+		ABPInst.barDensityHitArea = playerUnit.querySelector('.density-bar .bar');
+		ABPInst.barDensity = ABPInst.barDensityHitArea.getElementsByClassName("load")[0];
 		/** Bind the Speed Bar **/
 		var spbar = playerUnit.getElementsByClassName("speed-bar");
 		if (spbar.length <= 0) return;
@@ -1355,19 +1369,19 @@ ABP.Strings={
 			settingsOn ? removeClass(settBtn, 'on') : addClass(settBtn, 'on');
 			settingsOn = !settingsOn;
 		};
-		ABPInst.btnSetting.addEventListener('click',settingClick);
-		playerUnit.getElementsByClassName('ABP-Settings-Close')[0].addEventListener('click',settingClick);
-		document.getElementById('setting-autoPlay').addEventListener('click',function(){
+		ABPInst.btnSetting[addEventListener]('click',settingClick);
+		playerUnit.getElementsByClassName('ABP-Settings-Close')[0][addEventListener]('click',settingClick);
+		document.getElementById('setting-autoPlay')[addEventListener]('click',function(){
 			ABPInst.autoPlay=!ABPInst.autoPlay;
 			ABPInst.autoPlay?addClass(this,'on'):removeClass(this,'on')
 			saveConfigurations();
 		});
-		document.getElementById('setting-defaultFull').addEventListener('click',function(){
+		document.getElementById('setting-defaultFull')[addEventListener]('click',function(){
 			ABPInst.defaultFull=!ABPInst.defaultFull;
 			ABPInst.defaultFull?addClass(this,'on'):removeClass(this,'on')
 			saveConfigurations();
 		});
-		document.getElementById('setting-recordPlaySpeed').addEventListener('click',function(){
+		document.getElementById('setting-recordPlaySpeed')[addEventListener]('click',function(){
 			ABPInst.recordPlaySpeed=!ABPInst.recordPlaySpeed;
 			ABPInst.recordPlaySpeed?addClass(this,'on'):removeClass(this,'on')
 			saveConfigurations();
@@ -1675,10 +1689,12 @@ ABP.Strings={
 				addClass(document.getElementById('setting-recordPlaySpeed'),'on');
 				ABPInst.lastSpeed=ABP.playerConfig.playSpeed;
 			}
+			var density = ABP.playerConfig.density||0;
+			ABPInst.cmManager.options.global.density = density;
 			var theme = ABP.playerConfig.theme||'YouTube'
 			playerUnit.setAttribute('theme', theme);
 			(document_querySelector('#setting-playerTheme [value='+theme+']') ||{}).selected=true;
-			document.getElementById('setting-playerTheme').addEventListener('change',function(){
+			document.getElementById('setting-playerTheme')[addEventListener]('change',function(){
 				playerUnit.setAttribute('theme',this.value);
 				saveConfigurations();
 				playerUnit.dispatchEvent(new Event('themeChange'));
@@ -1897,7 +1913,8 @@ ABP.Strings={
 					defaultFull: ABPInst.defaultFull,
 					playSpeed: ABPInst.video.playbackRate,
 					recordPlaySpeed: ABPInst.recordPlaySpeed,
-					theme: document.getElementById('setting-playerTheme').value
+					theme: document.getElementById('setting-playerTheme').value,
+					density: ABPInst.cmManager.options.global.density
 				}});
 			}
 			ABPInst.btnAutoOpacity[addEventListener]("click", function(e) {
@@ -2108,14 +2125,14 @@ ABP.Strings={
 							/*
 							chrome需要已有input中才能复制，新生成input无效
 							*/
-							var oldVal=abpinst.txtText.value, prevDisabled = abpinst.txtText.disabled;
-							prevDisabled && (abpinst.txtText.disabled=false);
-							abpinst.txtText.value=this.dataset.content;
-							abpinst.txtText.select();
+							var oldVal=ABPInst.txtText.value, prevDisabled = ABPInst.txtText.disabled;
+							prevDisabled && (ABPInst.txtText.disabled=false);
+							ABPInst.txtText.value=this.dataset.content;
+							ABPInst.txtText.select();
 							var success=document.execCommand('copy');
-							abpinst.txtText.blur();
-							abpinst.txtText.value=oldVal;
-							prevDisabled && (abpinst.txtText.disabled=true);
+							ABPInst.txtText.blur();
+							ABPInst.txtText.value=oldVal;
+							prevDisabled && (ABPInst.txtText.disabled=true);
 							if(!success)
 								throw '';
 						}catch(e){
@@ -2242,7 +2259,7 @@ ABP.Strings={
 					showContextMenu(x,y,dmList);
 				},300);
 			});
-			ABPInst.playerUnit.querySelector('.shield').addEventListener('touchstart touchmove touchend',function(e){e.stopPropagation()})
+			ABPInst.playerUnit.querySelector('.shield')[addEventListener]('touchstart touchmove touchend',function(e){e.stopPropagation()})
 			ABPInst.videoDiv.parentNode[addEventListener]('touchmove',function(e){
 				if(touchContextTimer!=null){
 					clearTimeout(touchContextTimer);
@@ -2545,7 +2562,6 @@ ABP.Strings={
 			var updateOpacity = function(opacity) {
 				ABPInst.barOpacity.style.width = (opacity * 100) + "%";
 				ABPInst.barOpacityHitArea.tooltip(parseInt(opacity * 100) + "%");
-				saveConfigurations();
 			}
 			document[addEventListener]("mouseup", function(e) {
 				if (draggingOpacity) {
@@ -2579,7 +2595,6 @@ ABP.Strings={
 				ABPInst.barScale.style.width = (scale - 0.2) / 1.8 * 100 + "%";
 				ABPInst.barScaleHitArea.tooltip(parseInt(scale * 100) + "%");
 				ABPInst.cmManager.setBounds();
-				saveConfigurations();
 			}
 			document[addEventListener]("mouseup", function(e) {
 				if (draggingScale) {
@@ -2604,6 +2619,60 @@ ABP.Strings={
 				}
 			});
 			hoverTooltip(ABPInst.barScaleHitArea, true, -6);
+			var draggingDensity = false;
+			ABPInst.barDensityHitArea[addEventListener]('mousedown', function() {
+				draggingDensity = true;
+			});
+			//0-0.8 -> 5-100 step 5, 0.8-0.95 -> 100-1000 step 100, 1 -> 0
+			var formatDensity = function(density){
+				if (density>=5&&density<100)
+					return ((density/5)|0)*5;
+				else if (density>=100 && density<=1000)
+					return ((density/100)|0)*100;
+				else
+					return 0
+			}
+			var updateDensity = function(density) {
+				density = formatDensity(density);
+				var width = 100;
+				if ( density >= 5 && density < 100 ) {
+					width = (density/5-1) / 19 * 80;
+				} else if ( density >= 100 && density <= 1000 ) {
+					width = (density/100-1) / 9 * 15 + 80;
+				}
+				ABPInst.barDensity.style.width = width + '%';
+				ABPInst.barDensityHitArea.tooltip(density||'无限制');
+			}
+			document[addEventListener]("mouseup", function(e) {
+				if (draggingDensity) {
+					var perc = (e.clientX - ABPInst.barScaleHitArea.getBoundingClientRect().left) / ABPInst.barScaleHitArea.offsetWidth, newDensity = 0;
+					if (perc >=0 && perc < .8){
+						newDensity = Math.round(perc/.8*19)*5+5;
+					} else if (perc >= .8 && perc <= .95) {
+						newDensity = Math.round((perc-.8)/.15*9)*100+100;
+					}
+					ABPInst.cmManager.options.global.density = newDensity;
+					updateDensity(newDensity);
+					saveConfigurations();
+				}
+				draggingDensity = false;
+			});
+			document[addEventListener]("mousemove", function(e) {
+				var perc = (e.clientX - ABPInst.barScaleHitArea.getBoundingClientRect().left) / ABPInst.barScaleHitArea.offsetWidth, newDensity = 0;
+				if (perc >=0 && perc < .8){
+					newDensity = Math.round(perc/.8*19)*5+5;
+				} else if (perc >= .8 && perc <= .95) {
+					newDensity = Math.round((perc-.8)/.15*9)*100+100;
+				}
+				if (draggingDensity) {
+					ABPInst.cmManager.options.global.density = newDensity;
+					updateDensity(newDensity);
+				} else {
+					ABPInst.barDensityHitArea.tooltip(newDensity||'无限制');
+				}
+			});
+			hoverTooltip(ABPInst.barDensityHitArea, true, -6);
+			updateDensity(ABPInst.cmManager.options.global.density);
 			/*Copy from scale bar*/
 			var draggingSpeed = false;
 			ABPInst.barSpeedHitArea[addEventListener]("mousedown", function(e) {
@@ -2684,8 +2753,8 @@ ABP.Strings={
 						e.preventDefault();
 					switch (e.keyCode) {
 						case 27:
-							if(abpinst.state.fullscreen)
-								abpinst.btnFull.click();
+							if(ABPInst.state.fullscreen)
+								ABPInst.btnFull.click();
 						break;
 						case 32:
 							ABPInst.btnPlay.click();
@@ -2823,9 +2892,9 @@ ABP.Strings={
 			}
 		}
 		shield.init(ABPInst);
-		document_querySelector('.shield-enrty').addEventListener('click',shield.show);
-		document_querySelector('.shield_top .close').addEventListener('click',shield.show);
-		document_querySelector('.shield_item .add').addEventListener('click',shield.add);
+		document_querySelector('.shield-enrty')[addEventListener]('click',shield.show);
+		document_querySelector('.shield_top .close')[addEventListener]('click',shield.show);
+		document_querySelector('.shield_item .add')[addEventListener]('click',shield.add);
 		return ABPInst;
 	}
 })();/*
