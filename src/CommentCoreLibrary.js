@@ -1236,7 +1236,7 @@ var CommentManager = (function() {
 			}
 			return;
 		}
-		if(this.options.global.density > 0 && data.mode == 1 && this.csa.scroll.length>=this.options.global.density) return false;
+		if(this.options.global.density > 0 && data.mode == 1 && data.border !== true && this.csa.scroll.length>=this.options.global.density) return false;
 		if(this.filter != null){
 			data = this.filter.doModify(data);
 			if(data == null || data === false) return;
