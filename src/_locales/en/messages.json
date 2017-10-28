@@ -288,10 +288,10 @@
         "message": "Cancelling"
     },
     "extName": {
-        "message": "Youku HTML5 Player"
+        "message": "Yet Another Player for Youku"
     },
     "extDesc": {
-        "message": "Farewell to flash and ads. \n\nOpen source：https://github.com/esterTion/Youku-HTML5-Player"
+        "message": "A handful player built for easy use in youku. \n\nOpen source：https://github.com/esterTion/Youku-HTML5-Player"
     },
     "iconPending": {
         "message": " video(s) pending playback"
@@ -390,7 +390,7 @@
         "message": "You may have enabled an ad blocker, and it had blocked some important content. Please try again after disable the blocker. \nAfter player normally loaded, you can enable blocker again. \n\nIf you had seen this note in the past, please check your network status. "
     },
     "officialHtml5": {
-        "message": "Enable official html5 player (unstable)"
+        "message": "Use official html5 player"
     },
     "settings": {
         "message": "Settings"

@@ -288,10 +288,10 @@
         "message": "取消跳转"
     },
     "extName": {
-        "message": "优酷HTML5播放器"
+        "message": "更好用的优酷播放器 - YAPfY"
     },
     "extDesc": {
-        "message": "告别flash与广告\n\n开源仓库：https://github.com/esterTion/Youku-HTML5-Player\n本扩展使用组件：\nflvjs：(github)esterTion/flv.js\nABPlayer-billibili-ver(有修改)"
+        "message": "一个适配优酷的简单易用的HTML5播放器\n\n开源仓库：https://github.com/esterTion/Youku-HTML5-Player\n本扩展使用组件：\nflvjs：(github)esterTion/flv.js\nABPlayer-billibili-ver(有修改)"
     },
     "iconPending": {
         "message": "个视频等待播放"
@@ -390,7 +390,7 @@
         "message": "您可能开启了广告屏蔽并屏蔽了必要内容，请尝试临时禁用并刷新\n正常出现播放器后可以重新启用\n\n如果这不是您第一次看见这个提示，请确认网络状态"
     },
     "officialHtml5": {
-        "message": "启用官方html5播放器（不稳定）"
+        "message": "使用官方html5播放器"
     },
     "settings": {
         "message": "设置"
