@@ -356,6 +356,9 @@
     "playErr": {
         "message": "Playback error"
     },
+    "playErrPop": {
+        "message": " failed to play, downgrading to "
+    },
     "switchErr": {
         "message": "Switching failed, this language / definition cannot be played"
     },

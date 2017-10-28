@@ -64,9 +64,7 @@ let knownTypes = {
  */
 let typeDropMap = {
     'mp4hd3': 'mp4hd2',
-    'mp4hd3v2': 'mp4hd2v2',
     'mp4hd2': 'mp4hd',
-    'mp4hd2v2': 'mp4hd',
     'mp4hd': 'flvhd'
 };
 let knownLangs = {
@@ -172,8 +170,13 @@ function response2url(json) {
             delete data[lang].mp4hd3;
         if (data[lang].mp4hd2v2)
             delete data[lang].mp4hd2;
-        if (data[lang].mp4hd3v2)
-            delete data[lang].flvhd;
+        if (data[lang].mp4sd)
+            delete data[lang].flvhd,
+                typeDropMap = {
+                    'mp4hd3v2': 'mp4hd2v2',
+                    'mp4hd2v2': 'mp4hd',
+                    'mp4hd': 'mp4sd'
+                };
 
         for (let type in knownTypes) {
             if (data[lang][type]) {
@@ -769,7 +772,7 @@ window.changeSrc = function (e, t, force) {
     abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination div.on').className = '';
     abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu .Video-Defination div[name=' + t + ']').className = 'on';
     abpinst.video.pause();
-	abpinst.inited = false;
+    abpinst.inited = false;
     if (srcUrl[t] != undefined) {
         div.childNodes[0].childNodes[0].textContent = ABP.Strings.switching;
         if (!dots.running)
@@ -882,38 +885,47 @@ let load_fail = function (type, info, detail) {
         if (fillWithM3u8(currentSrc))
             return;
     }
-    let div = _('div', {
-        style: {
-            width: '100%',
-            height: '100%',
-            textAlign: 'center',
-            background: 'rgba(0,0,0,0.8)',
-            position: 'absolute',
-            color: '#FFF'
-        }
-    }, [_('div', {
-        style: {
-            position: 'relative',
-            top: '50%'
-        }
-    }, [_('div', {
-        style: {
-            position: 'relative',
-            fontSize: '16px',
-            lineHeight: '16px',
-            top: '-8px'
-        }
-    }, [_('text', _t('loadErr'))])])]);
-    document.querySelector('.ABP-Video').insertBefore(div, document.querySelector('.ABP-Video>:first-child'));
-    document.getElementById('info-box').remove();
     createPopup({
         content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('playErr'))]), _('div', { style: { whiteSpace: 'pre-wrap' } }, [_('text', JSON.stringify({
+            url: location.href,
+            playing_quality: currentSrc,
             type,
             info,
             detail
         }, null, '  '))])],
         showConfirm: false
     });
+    let dropTo = typeDropMap[currentSrc];
+    if (srcUrl[dropTo] == undefined) {
+        //不存在降级清晰度
+        let div = _('div', {
+            style: {
+                width: '100%',
+                height: '100%',
+                textAlign: 'center',
+                background: 'rgba(0,0,0,0.8)',
+                position: 'absolute',
+                color: '#FFF'
+            }
+        }, [_('div', {
+            style: {
+                position: 'relative',
+                top: '50%'
+            }
+        }, [_('div', {
+            style: {
+                position: 'relative',
+                fontSize: '16px',
+                lineHeight: '16px',
+                top: '-8px'
+            }
+        }, [_('text', _t('loadErr'))])])]);
+        document.querySelector('.ABP-Video').insertBefore(div, document.querySelector('.ABP-Video>:first-child'));
+        document.getElementById('info-box').remove();
+    } else {
+        abpinst.createPopup(knownTypes[currentSrc] + _t('playErrPop') + knownTypes[dropTo], 3e3);
+        changeSrc('', dropTo, true);
+    }
 };
 let flvparam = function (select) {
     currentSrc = select;

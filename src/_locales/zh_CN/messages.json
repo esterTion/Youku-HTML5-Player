@@ -356,6 +356,9 @@
     "playErr": {
         "message": "播放错误"
     },
+    "playErrPop": {
+        "message": " 播放出错，降级至 "
+    },
     "switchErr": {
         "message": "切换失败，该语言/清晰度暂时不能播放"
     },
