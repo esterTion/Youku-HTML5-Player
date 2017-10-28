@@ -614,8 +614,8 @@ function fetchSrcThen(json) {
                 }
             }));
         readStorage('updateNotifyVer', function (item) {
-            if (item.updateNotifyVer != '1.3.1') {
-                saveStorage({ 'updateNotifyVer': '1.3.1' });
+            if (item.updateNotifyVer != '1.3.2') {
+                saveStorage({ 'updateNotifyVer': '1.3.2' });
                 chrome.runtime.sendMessage('version', function (version) {
                     createPopup({
                         content: [

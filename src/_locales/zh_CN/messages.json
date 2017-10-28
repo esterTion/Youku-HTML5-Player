@@ -426,13 +426,13 @@
         "message": "否"
     },
     "extUpdated": {
-        "message": "优酷HTML5播放器最近有更新啦！"
+        "message": "YAPfY 最近有更新啦！"
     },
     "extUpdated_ver": {
         "message": "现在我们的版本是"
     },
     "extUpdated_detail": {
-        "message": "一些更新细节：\n1、在可用时，右键菜单中会显示视频亮点选单\n2、添加了跳过片头片尾的选项，默认启用"
+        "message": "一些更新细节：\n1、项目已经更名为【Yet Another Player for Youku - 更好用的优酷播放器】\n2、播放出错时尝试播放较低清晰度"
     },
     "playerTheme":{
         "message":"播放器主题"

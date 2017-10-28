@@ -426,13 +426,13 @@
         "message": "None"
     },
     "extUpdated": {
-        "message": "Youku HTML5 Player has been updated!"
+        "message": "Yet Another Player for Youku has been updated!"
     },
     "extUpdated_ver": {
         "message": "We are currently at version "
     },
     "extUpdated_detail": {
-        "message": "Here are some update notes:\n1、There will be timeline highlights in context menu when available\n2、Added an option to skip the opening and ending part of the video, and is on by default"
+        "message": "Here are some update notes:\n1、Project has been renamed to 【Yet Another Player for Youku】\n2、Attempt to play the lower quality video when playback error occurs."
     },
     "playerTheme": {
         "message": "Player theme"

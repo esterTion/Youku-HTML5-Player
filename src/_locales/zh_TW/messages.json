@@ -432,7 +432,7 @@
         "message": "現在我們的版本是"
     },
     "extUpdated_detail": {
-        "message": "一些更新細節：\n1、在可用時，右鍵功能表中會顯示視頻亮點選單\n2、添加了跳過片頭片尾的選項，預設啟用"
+        "message": "一些更新細節：\n1、專案已經更名為【Yet Another Player for Youku - 更好用的優酷播放機】\n2、播放出錯時嘗試播放較低清晰度"
     },
     "playerTheme": {
         "message": "播放機主題"
