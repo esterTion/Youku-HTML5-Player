@@ -2157,12 +2157,12 @@ body.ABP-FullScreen{
 	right:70px;
 }
 .ABP-Unit[theme="YouTube"] .ABP-Control .button.on{
-	color:#FFF
+	color: #00BFFF;
 }
 .ABP-Unit[theme="YouTube"] .ABP-Control .button:active{
 	background: transparent;
 	outline:none;
-	color:rgb(0, 161, 216);
+	color:#00A1D8;
 }
 .ABP-Unit[theme="YouTube"] .BiliPlus-Scale-Menu{
 	bottom:70px
