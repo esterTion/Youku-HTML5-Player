@@ -55,3 +55,62 @@ readStorage('replace_embed', function (item) {
         observer.observe(document.body, { childList: true, subtree: true });
     }
 });
+
+let webFullState = false;
+window.addEventListener('message', function (e) {
+    if (['YHP_CrossFrame_Fullscreen_init', 'YHP_CrossFrame_Fullscreen_Enter', 'YHP_CrossFrame_Fullscreen_Exit'].indexOf(e.data) == -1) return;
+    let srcFrame = Array.from(document.querySelectorAll('iframe')).find(function (i) {
+        return i.contentWindow == e.source;
+    });
+    if (srcFrame == undefined) return;
+    if (e.data == 'YHP_CrossFrame_Fullscreen_init') {
+        let needReload = !srcFrame.allowFullscreen;
+        srcFrame.setAttribute('allowfullscreen', 'true');
+        if (needReload) {
+            let src = srcFrame.src;
+            srcFrame.src = 'about:blank';
+            setTimeout(function () { srcFrame.src = src; });
+        }
+    } else if (e.data == 'YHP_CrossFrame_Fullscreen_Enter' && !webFullState) {
+        webFullState = true;
+        let origStat = {
+            height: srcFrame.style.height || (srcFrame.offsetHeight + 'px'),
+            width: srcFrame.style.width || (srcFrame.offsetWidth + 'px'),
+            left: srcFrame.style.left,
+            top: srcFrame.style.top,
+            position: srcFrame.style.position,
+            zIndex: srcFrame.style.zIndex
+        };
+        srcFrame.style.zIndex = 0xffffffff;
+        srcFrame.style.height = '100%';
+        srcFrame.style.width = '100%';
+        srcFrame.style.position = 'fixed';
+        srcFrame.style.left = '0';
+        srcFrame.style.top = '0';
+        srcFrame.YHP_origStat = origStat;
+        let climb = srcFrame.parentNode;
+        while (climb != document.body) {
+            climb.YHP_origZIndex = climb.style.zIndex;
+            climb.style.zIndex = 0xffffffff;
+            climb = climb.parentNode;
+        }
+    } else if (e.data == 'YHP_CrossFrame_Fullscreen_Exit' && webFullState) {
+        webFullState = false;
+        let origStat = srcFrame.YHP_origStat;
+        srcFrame.style.zIndex = origStat.zIndex;
+        srcFrame.style.height = origStat.height;
+        srcFrame.style.width = origStat.width;
+        srcFrame.style.position = origStat.position;
+        srcFrame.style.left = origStat.left;
+        srcFrame.style.top = origStat.top;
+        delete srcFrame.YHP_origStat;
+        let climb = srcFrame.parentNode;
+        while (climb != document.body) {
+            if (climb.YHP_origZIndex != undefined)
+                climb.style.zIndex = climb.YHP_origZIndex;
+            climb = climb.parentNode;
+        }
+    }
+    if (parent != window)
+        parent.postMessage(e.data, '*');
+});

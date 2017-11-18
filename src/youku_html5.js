@@ -1229,6 +1229,7 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
     if (domain == 'v.youku.com') {
         chkInit();
     } else if (domain == 'player.youku.com') {
+        parent !== window && (parent.postMessage('YHP_CrossFrame_Fullscreen_init', '*'));
         let container = document.querySelector(objID);
         if (getCookie('cna') == '') {
             chrome.runtime.sendMessage('cna', function (r) {

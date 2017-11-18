@@ -52,6 +52,7 @@ ABP.Strings={
 	
 	commentSpeed:_t('commentSpeed'),
 	commentScale:_t('commentScale'),
+	commentDensity:_t('commentDensity'),
 	commentOpacity:_t('commentOpacity'),
 	commentBlock:_t('commentBlock'),
 	
@@ -1113,7 +1114,7 @@ ABP.Strings={
 			var lastPosition = 0,triedLoadScripting=false;
 			if (ABPInst.cmManager) {
 				ABPInst.cmManager.setBounds = function() {
-					if (playerUnit.offsetHeight <= 300 || playerUnit.offsetWidth <= 700) {
+					if (playerUnit.offsetHeight <= 300 || playerUnit.offsetWidth <= 600) {
 						addClass(playerUnit, "ABP-Mini");
 					} else {
 						removeClass(playerUnit, "ABP-Mini");
@@ -1860,15 +1861,15 @@ ABP.Strings={
 					ABPInst.barVolume.style.width = (ABPInst.video.volume * 100) + "%";
 				}
 			});
-			var originalParent=null;
 			ABPInst.btnWebFull[addEventListener]("click", function() {
-				if(originalParent==null && ABPInst.playerUnit.parentNode!=document.body){
-					var currentState=ABPInst.video.paused;
-					originalParent=ABPInst.playerUnit.parentNode;
-					document.body.appendChild(ABPInst.playerUnit);
-					if(currentState!=ABPInst.video.paused)
-						ABPInst.btnPlay.click();
+				var climb = ABPInst.playerUnit.parentNode;
+				while (climb != document.body) {
+					climb.ABP_origZIndex = climb.style.zIndex;
+					climb.style.zIndex = 0xffffffff;
+					climb = climb.parentNode;
 				}
+				if(parent!=window)
+					parent.postMessage('YHP_CrossFrame_Fullscreen_Enter', '*');
 				addClass(playerUnit, "ABP-FullScreen");
 				addClass(document.body,'ABP-FullScreen');
 				ABPInst.btnFull.className = "button ABP-FullScreen icon-screen-normal";
@@ -1957,15 +1958,18 @@ ABP.Strings={
 					removeClass(playerUnit, "ABP-FullScreen");
 					removeClass(document.body,'ABP-FullScreen');
 					this.className = "button ABP-FullScreen icon-screen-full";
+					if(this.tooltipData == ABP.Strings.exitWebFull){
+						var climb = ABPInst.playerUnit.parentNode;
+						while (climb != document.body) {
+								if (climb.ABP_origZIndex != undefined)
+										climb.style.zIndex = climb.ABP_origZIndex;
+								climb = climb.parentNode;
+						}
+						if(parent!=window)
+							parent.postMessage('YHP_CrossFrame_Fullscreen_Exit', '*');
+					}
 					this.tooltip(ABP.Strings.fullScreen);
 					document.exitFullscreen();
-					if(originalParent!=null){
-						var currentState=ABPInst.video.paused;
-						originalParent.appendChild(ABPInst.playerUnit);
-						originalParent=null;
-						if(currentState!=ABPInst.video.paused)
-							ABPInst.btnPlay.click();
-					}
 				}
 				ABPInst.state.fullscreen = !ABPInst.state.fullscreen;
 				if (ABPInst.cmManager)
