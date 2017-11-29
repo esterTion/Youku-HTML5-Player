@@ -390,18 +390,59 @@ function switchLang(lang) {
         abpinst.removePopup(), abpinst.createPopup(_t('currentLang') + (knownLangs[lang] || lang), 3e3);
 }
 
+let player_r;
+function getAuthParam() {
+    return new Promise(function (res, rej) {
+        if (domain == 'v.youku.com') {
+            //主站使用ckey={_getUA()}
+            window.addEventListener('YHP_ckey', function ckeyCallback(e) {
+                window.removeEventListener('YHP_ckey', ckeyCallback);
+                res('&ccode=0502&ckey=' + encodeURIComponent(e.detail));
+            });
+            document.head.appendChild(_('script', {}, [_('text', 'window.dispatchEvent(new CustomEvent("YHP_ckey", {detail:_getUA()}))')])).remove();
+        } else if (domain == 'player.youku.com') {
+            //外链使用custom.json并保存值
+            if (player_r) return res('&ccode=0405&r=' + encodeURIComponent(player_r));
+            let h = new Headers();
+            h.append('Range', 'bytes=0-0');
+            fetch('https://player.youku.com/player.php/sid/' + vid + '/newPlayer/true/v.swf', {
+                method: 'GET',
+                headers: h,
+                credentials: 'include',
+                referrer: location.href,
+                cache: 'no-cache',
+                redirect: 'follow'
+            }).then(function (r) {
+                let vext = r.url.match(/vext=([^&]+)/)[1];
+                fetch('https://api.youku.com/players/custom.json?client_id=f67e97ee21e17da2&video_id=' + vid + '&refer=' + encodeURIComponent(location.href) + '&vext=' + vext + '&embsig=undefined&styleid=1&type=flash', {
+                    method: 'GET',
+                    credentials: 'include',
+                    referrer: location.href,
+                    cache: 'no-cache'
+                }).then(function (r) {
+                    r.json().then(function (data) {
+                        player_r = data.stealsign;
+                        res('&ccode=0405&r=' + encodeURIComponent(player_r));
+                    });
+                });
+            });
+        }
+    });
+}
 function fetchSrc(extraQuery) {
-    fetch(location.protocol + '//ups.youku.com/ups/get.json?ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid + (extraQuery || ''), {
-        method: 'GET',
-        credentials: 'include',
-        cache: 'no-cache',
-        referrer: location.href
-    }).then(function (r) {
-        r.json().then(fetchSrcThen);
-    }).catch(function (e) {
-        createPopup({
-            content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', e.message)],
-            showConfirm: false
+    getAuthParam().then(function (auth) {
+        fetch(location.protocol + '//ups.youku.com/ups/get.json?client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + auth + '&vid=' + vid + (extraQuery || ''), {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-cache',
+            referrer: location.href
+        }).then(function (r) {
+            r.json().then(fetchSrcThen);
+        }).catch(function (e) {
+            createPopup({
+                content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchSourceErr'))]), _('text', e.message)],
+                showConfirm: false
+            });
         });
     });
 }
@@ -1251,17 +1292,19 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
             }
         }));
         let fetchInfoSuccess = false;
-        fetch(location.protocol + '//ups.youku.com/ups/get.json?ccode=0502&client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + '&vid=' + vid, {
-            method: 'GET',
-            credentials: 'include',
-            cache: 'no-cache',
-            referrer: location.href
-        }).then(function (r) {
-            r.json().then(fetchInfoThen);
-        }).catch(function (e) {
-            createPopup({
-                content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', e.message)],
-                showConfirm: false
+        getAuthParam().then(function (auth) {
+            fetch(location.protocol + '//ups.youku.com/ups/get.json?client_ip=192.168.1.2&utid=' + encodeURIComponent(getCookie('cna')) + '&client_ts=' + Date.now() + auth + '&vid=' + vid, {
+                method: 'GET',
+                credentials: 'include',
+                cache: 'no-cache',
+                referrer: location.href
+            }).then(function (r) {
+                r.json().then(fetchInfoThen);
+            }).catch(function (e) {
+                createPopup({
+                    content: [_('p', { style: { fontSize: '16px' } }, [_('text', _t('fetchInfoErr'))]), _('text', e.message)],
+                    showConfirm: false
+                });
             });
         });
 
