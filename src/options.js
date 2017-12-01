@@ -12,8 +12,8 @@
     let click = function () {
         let set = {};
         set[this.parentNode.id] = this.checked;
-        saveStorage(set)
-    }
+        saveStorage(set);
+    };
     replace_embed.firstChild.addEventListener('click', click);
     skip_head.firstChild.addEventListener('click', click);
     auto_switch.firstChild.addEventListener('click', click);
@@ -24,5 +24,8 @@
         skip_head.firstChild.checked = item.skip_head;
         auto_switch.firstChild.checked = item.auto_switch;
         official_html5.firstChild.checked = item.official_html5;
+    });
+    chrome.runtime.sendMessage('hasNewVersion', function (has) {
+        has !== false && document.body.appendChild(_('div', { style: { marginTop: '20px', cursor: 'default' } }, [_('text', '扩展有新版本：'), _('a', { href: 'https://github.com/esterTion/Youku-HTML5-Player#安装', target: '_blank' }, [_('text', has)])]));
     })
-})()
+})();

@@ -1,13 +1,8 @@
 chrome.runtime.onMessage.addListener(function (message, sender, resolve) {
     if (message == 'version') {
-        fetch(chrome.extension.getURL('manifest.json')).then(
-            function (r) {
-                r.json().then(function (manifest) {
-                    resolve(manifest.version)
-                })
-            }
-        )
-        return true;
+        resolve(extVersion);
+    } else if (message == 'hasNewVersion') {
+        resolve(hasNewVersion);
     } else if (message == 'inject') {
         let tabId = sender.tab.id,
             frameId = sender.frameId;

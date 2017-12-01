@@ -64,7 +64,8 @@
   "permissions": [
     "*://*/*",
     "storage",
-    "clipboardWrite"
+    "clipboardWrite",
+    "alarms"
   ],
   "icons": {
     "48": "icon.png"
