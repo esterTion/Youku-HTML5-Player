@@ -451,5 +451,8 @@
     },
     "rateChange": {
         "message": "Speed changed to "
+    },
+    "hasNewVersion": {
+        "message": "New version available："
     }
 }

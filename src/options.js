@@ -26,6 +26,6 @@
         official_html5.firstChild.checked = item.official_html5;
     });
     chrome.runtime.sendMessage('hasNewVersion', function (has) {
-        has !== false && document.body.appendChild(_('div', { style: { marginTop: '20px', cursor: 'default' } }, [_('text', '扩展有新版本：'), _('a', { href: 'https://github.com/esterTion/Youku-HTML5-Player#安装', target: '_blank' }, [_('text', has)])]));
+        has !== false && document.body.appendChild(_('div', { style: { marginTop: '20px', cursor: 'default' } }, [_('text', _t('hasNewVersion')), _('a', { href: 'https://github.com/esterTion/Youku-HTML5-Player#安装', target: '_blank' }, [_('text', has)])]));
     })
 })();

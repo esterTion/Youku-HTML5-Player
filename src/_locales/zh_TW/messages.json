@@ -451,5 +451,8 @@
     },
     "rateChange": {
         "message": "速度改變至 "
+    },
+    "hasNewVersion": {
+        "message": "擴展有新版本："
     }
 }
