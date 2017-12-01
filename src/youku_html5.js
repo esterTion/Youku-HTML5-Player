@@ -397,6 +397,13 @@ function getAuthParam() {
             //主站使用ckey={_getUA()}
             window.addEventListener('YHP_ckey', function ckeyCallback(e) {
                 window.removeEventListener('YHP_ckey', ckeyCallback);
+                if (e.detail == '') {
+                    console.log('ckey empty, retry later');
+                    setTimeout(function () {
+                        getAuthParam().then(function (s) { res(s); });
+                    }, 1e3);
+                    return;
+                }
                 res('&ccode=0502&ckey=' + encodeURIComponent(e.detail));
             });
             document.head.appendChild(_('script', {}, [_('text', 'window.dispatchEvent(new CustomEvent("YHP_ckey", {detail:_getUA()}))')])).remove();
