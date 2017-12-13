@@ -437,6 +437,18 @@
     "playerTheme": {
         "message": "Player theme"
     },
+	"cmStyle":{
+        "message": "Comment style: "
+    },
+	"cmStyle_st":{
+        "message": "Stroke"
+    },
+	"cmStyle_sh":{
+        "message": "Shadow"
+    },
+	"cmStyle_stsh":{
+        "message": "Stroke & Shadow"
+    },
     "next": {
         "message": "Next video: "
     },
@@ -454,5 +466,8 @@
     },
     "hasNewVersion": {
         "message": "New version available："
+    },
+    "m3uPlaylist" : {
+        "message": "[M3U8 Playlist File]"
     }
 }

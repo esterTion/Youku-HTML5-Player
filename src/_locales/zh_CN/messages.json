@@ -437,6 +437,18 @@
     "playerTheme":{
         "message":"播放器主题"
     },
+	"cmStyle":{
+        "message": "弹幕样式："
+    },
+	"cmStyle_st":{
+        "message": "描边"
+    },
+	"cmStyle_sh":{
+        "message": "阴影"
+    },
+	"cmStyle_stsh":{
+        "message": "描边 + 阴影"
+    },
     "next": {
         "message": "下一个视频："
     },
@@ -454,5 +466,8 @@
     },
     "hasNewVersion": {
         "message": "扩展有新版本："
+    },
+    "m3uPlaylist" : {
+        "message": "[M3U8 播放列表文件]"
     }
 }
