@@ -302,7 +302,9 @@ function generate_downlink() {
                     className: 'YHP_output',
                     style: { cursor: 'pointer' },
                     'data-type': type
-                }, [_('text', _t('outputUrl'))])]),
+                }, [_('text', _t('outputUrl'))]),
+                srcUrl[type].playlist_url ? _('a', { target: '_blank', href: srcUrl[type].playlist_url, download: abpinst.title + ' - ' + type + '.m3u8', style: { marginLeft: '20px' }, event: { click: downPlaylist } }, [_('text', _t('m3uPlaylist'))]) : _('a')
+                ]),
                 _('div', { className: 'YHP_down_container' }, items)
             ]));
         }
@@ -318,6 +320,25 @@ function generate_downlink() {
             }
         }, childs));
     }
+}
+
+function downPlaylist(e) {
+    e.preventDefault();
+    let filename = this.getAttribute('download');
+    fetch(this.href, {
+        cache: 'no-cache'
+    })
+        .then(r => r.text())
+        .then(s => {
+            let a = _('a', {
+                href: 'data: application/octet-stream;base64,' + btoa(s),
+                download: filename,
+                style: { display: 'none' }
+            });
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
 }
 
 function urlsOutput(type) {
