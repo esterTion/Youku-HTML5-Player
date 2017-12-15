@@ -15,12 +15,12 @@
 
 ![](icon.png)
 
-[更新日志](update_note.md)  
 > `权限说明`剪贴板权限为复制弹幕功能所需，并且扩展只获取写入的权限，无权读取已复制内容
 
-## 安装
-- [Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/)([xpi直接安装](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
-- [Chrome](https://chrome.google.com/webstore/detail/youku-html5-player/fpnknfakcmgkbhccgpgnbaddggjligol)([crx分流](https://estertion.github.io/Youku-HTML5-Player/signed.crx))（[xiaoC](http://www.jijidown.com)友情交易滋糍）(chrome 50.0+)
+## 安装  
+当前版本：[![VERSION_TAG_NUMBER](https://img.shields.io/github/tag/esterTion/Youku-HTML5-Player.svg)](update_note.md)
+- [Firefox ![Mozilla扩展中心](https://img.shields.io/amo/users/youku-html5-player.svg)](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/) ([xpi直接安装](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
+- [Chrome ![Chrome商店](https://img.shields.io/chrome-web-store/users/fpnknfakcmgkbhccgpgnbaddggjligol.svg)](https://chrome.google.com/webstore/detail/youku-html5-player/fpnknfakcmgkbhccgpgnbaddggjligol) ([crx分流](https://estertion.github.io/Youku-HTML5-Player/signed.crx)) (chrome 50.0+)
 
 ## 部分功能说明
 - 清晰度切换位于播放器左下角，采用智能记忆模式
@@ -50,8 +50,9 @@ Author: esterTion
 
 ## Install
 
-- [Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/)([xpi direct install](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
-- [Chrome](https://chrome.google.com/webstore/detail/youku-html5-player/fpnknfakcmgkbhccgpgnbaddggjligol)([crx mirror](https://estertion.github.io/Youku-HTML5-Player/signed.crx))（Published with help from [xiaoC](http://www.jijidown.com)）(chrome 50.0+)
+Current version：[![VERSION_TAG_NUMBER](https://img.shields.io/github/tag/esterTion/Youku-HTML5-Player.svg)](update_note.md)
+- [Firefox ![Mozilla Add-on](https://img.shields.io/amo/users/youku-html5-player.svg)](https://addons.mozilla.org/zh-CN/firefox/addon/youku-html5-player/) ([xpi direct install](https://estertion.github.io/Youku-HTML5-Player/signed.xpi)) (firefox 50.0+)
+- [Chrome ![Chrome Web Store](https://img.shields.io/chrome-web-store/users/fpnknfakcmgkbhccgpgnbaddggjligol.svg)](https://chrome.google.com/webstore/detail/youku-html5-player/fpnknfakcmgkbhccgpgnbaddggjligol) ([crx mirror](https://estertion.github.io/Youku-HTML5-Player/signed.crx)) (chrome 50.0+)
 
 ## Some feature notes
 - Video quality switch located at bottom-left corner of player, and uses smart memorize mode
