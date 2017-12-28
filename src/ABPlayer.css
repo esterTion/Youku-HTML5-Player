@@ -1746,7 +1746,8 @@ body.ABP-FullScreen{
 	z-index:1
 }
 .Player-Stats *{
-	font-size:inherit
+	font-size:inherit;
+	line-height:16px;
 }
 .Player-Stats #stats-close {
 	position: absolute;

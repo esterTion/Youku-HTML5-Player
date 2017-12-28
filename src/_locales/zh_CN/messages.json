@@ -11,23 +11,11 @@
     "statsBufferClip": {
         "message": "缓冲片段："
     },
-    "statsMozParse": {
-        "message": "已解析帧："
-    },
-    "statsMozDecode": {
-        "message": "已解码帧："
-    },
-    "statsMozPaint": {
-        "message": "已绘制帧："
-    },
-    "statsWebkitDecode": {
-        "message": "已解码帧："
-    },
     "statsPresent": {
-        "message": "已显示帧："
+        "message": "期望帧率："
     },
     "statsDrop": {
-        "message": "已丢弃帧："
+        "message": "丢弃帧率："
     },
     "statsMimetype": {
         "message": "文件格式："

@@ -11,23 +11,11 @@
     "statsBufferClip": {
         "message": "Buffer clips："
     },
-    "statsMozParse": {
-        "message": "Parsed frames："
-    },
-    "statsMozDecode": {
-        "message": "Decoded frames："
-    },
-    "statsMozPaint": {
-        "message": "Painted frames："
-    },
-    "statsWebkitDecode": {
-        "message": "Decoded frames："
-    },
     "statsPresent": {
-        "message": "Presented frames："
+        "message": "Expected fps："
     },
     "statsDrop": {
-        "message": "Dropped frames："
+        "message": "Drop rate："
     },
     "statsMimetype": {
         "message": "MIME type："

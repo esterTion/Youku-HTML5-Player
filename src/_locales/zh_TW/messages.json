@@ -11,23 +11,11 @@
     "statsBufferClip": {
         "message": "緩衝片段："
     },
-    "statsMozParse": {
-        "message": "已解析幀："
-    },
-    "statsMozDecode": {
-        "message": "已解碼幀："
-    },
-    "statsMozPaint": {
-        "message": "已繪製幀："
-    },
-    "statsWebkitDecode": {
-        "message": "已解碼幀："
-    },
     "statsPresent": {
-        "message": "已顯示幀："
+        "message": "期望幀率："
     },
     "statsDrop": {
-        "message": "已丟棄幀："
+        "message": "丟棄幀率："
     },
     "statsMimetype": {
         "message": "檔案格式："
