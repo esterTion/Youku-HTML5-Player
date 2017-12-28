@@ -2094,14 +2094,6 @@ ABP.Strings={
 			senderInfoTimeout=null,senderInfoDivTimeout=null,currentSender=0,currentSenderDiv=null,
 			senderInfoCache={},
 			getSenderInfo=function(){
-				if(currentSender==0)
-					return;
-				if(senderInfoCache[currentSender]!=undefined){
-					contextMenuBody.dispatchEvent(new CustomEvent('senderInfoFetched',{detail:senderInfoCache[currentSender]}))
-					return;
-				}
-				var s=_('script',{className:'info_jsonp',src:'//account.bilibili.com/api/member/getCardByMid?type=jsonp&callback=getSenderInfo&mid='+currentSender});
-				document.body.appendChild(s);
 			},
 			addTextClick=function(){
 				shield.addText(this.getAttribute('data-text'));
@@ -2205,49 +2197,6 @@ ABP.Strings={
 				if(speed!=undefined)
 					ABPInst.video.playbackRate = speed;
 			});
-			contextMenuBody[addEventListener]('senderInfoFetched',function(e){
-				var card=e.detail;
-				if(card.mid!=currentSender || currentSenderDiv==null){
-					return;
-				}
-				var box=currentSenderDiv.parentNode.getBoundingClientRect(),x=box.left-150,y=innerHeight-box.bottom,
-				infoDiv=_('div',{className:'Context-Menu-Body',id:'Sender-Info',style:{
-					left:x+'px',
-					bottom:y+'px',
-					position:'fixed',
-					fontFamily:"-apple-system,Arial,'PingFang SC','STHeiti Light','Hiragino Kaku Gothic ProN','Microsoft YaHei'",
-					textAlign:'center'
-				}},[
-					_('div',{},[
-						_('img',{style:{height:'130px',width:'130px'},src:card.face.replace(/http\:/,'')})
-					]),
-					_('div',{},[_('text',card.name)]),
-					_('div',{},[_('text',card.mid)]),
-					_('div',{},[_('text','LV'+card.level_info.current_level)])
-				]);
-				document.body.appendChild(infoDiv);
-				if((y+infoDiv.offsetHeight)>innerHeight){
-					infoDiv.style.bottom='';
-					infoDiv.style.top=(box.top)+'px';
-				}
-				infoDiv[addEventListener]('click',function(){
-					window.open('/space/'+card.mid+'/');
-					document.body.removeChild(infoDiv);
-				})
-				infoDiv[addEventListener]('mouseenter',function(){
-					clearTimeout(senderInfoDivTimeout);
-				})
-				infoDiv[addEventListener]('mouseleave',function(){
-					clearTimeout(senderInfoDivTimeout);
-					senderInfoDivTimeout=setTimeout(function(){document.body.removeChild(document.getElementById('Sender-Info'))},500);
-				})
-			});
-			window.getSenderInfo=function(json){
-				if(json.code==0){
-					senderInfoCache[currentSender]=json.card;
-					contextMenuBody.dispatchEvent(new CustomEvent('senderInfoFetched',{detail:json.card}))
-				}
-			}
 			contextMenu[addEventListener]('click',dismissListener);
 			contextMenuBackground[addEventListener]('contextmenu',dismissListener);
 			ABPInst.videoDiv.parentNode[addEventListener]('contextmenu',function(e){
@@ -2265,98 +2214,6 @@ ABP.Strings={
 				e.stopPropagation();
 				showContextMenu(e.clientX,e.clientY,[dmData]);
 			});
-			ABPInst.videoDiv.parentNode[addEventListener]('touchstart',function(e){
-				timeDraggingMode = false;
-				ignoreDragging = false;
-				draggingTimeBase = ABPInst.video.currentTime;
-				activingContext=!1;
-				if(e.touches.length>1 && touchContextTimer!=null){
-					clearTimeout(touchContextTimer);
-					touchContextTimer=null;
-					return;
-				}
-				var box=ABPInst.divComment.getBoundingClientRect(),
-				x=e.touches[0].clientX,
-				y=e.touches[0].clientY,
-				dmList=ABPInst.cmManager.getCommentFromPoint(x-box.left,y-box.top);
-				draggingStartX = x;
-				draggingStartY = y;
-				touchContextTimer=setTimeout(function(){
-					ignoreDragging = true;
-					touchContextTimer=null;
-					activingContext=!0;
-					showContextMenu(x,y,dmList);
-				},300);
-			});
-			ABPInst.playerUnit.querySelector('.shield')[addEventListener]('touchstart touchmove touchend',function(e){e.stopPropagation()})
-			ABPInst.videoDiv.parentNode[addEventListener]('touchmove',function(e){
-				if(touchContextTimer!=null){
-					clearTimeout(touchContextTimer);
-					touchContextTimer=null;
-				}
-				var x=e.touches[0].clientX,
-				y=e.touches[0].clientY,
-				dx=x-draggingStartX,
-				dy=y-draggingStartY,
-				playerBox = ABPInst.videoDiv.getBoundingClientRect(),
-				playerWidth = playerBox.width,
-				playerHeight = playerBox.height;
-				if(timeDraggingMode){
-					var draggingSpeed = 0, increasing = dx>0 ? 1 : 0, speedStringMap = ['Low','Med','High'], duration = ABPInst.video.duration;
-					if( y < playerHeight/3){
-						draggingTimeBase += dx*.2;
-					}else if( y < playerHeight*2/3 ){
-						draggingTimeBase += dx*.6;
-						draggingSpeed = 1;
-					}else{
-						draggingTimeBase += dx*1.5;
-						draggingSpeed = 2;
-					}
-					draggingTimeBase = draggingTimeBase<0 ? 0 : (draggingTimeBase>duration ? duration : draggingTimeBase)
-					draggingStartX += dx;
-					if(draggingStartX-playerBox.left<50 || playerBox.right-draggingStartX<50){
-						document.querySelector('.Drag-Icon').className = 'Drag-Icon cancel';
-						document_querySelector('.Drag-Speed').textContent = ABP.Strings.dragControlCancel;
-						document_querySelector('.Drag-Time').textContent = '　';
-						cancelingDragging = true;
-					}else{
-						document.querySelector('.Drag-Icon').className = 'Drag-Icon '+ (increasing?'forward':'rewind');
-						document_querySelector('.Drag-Speed').textContent = ABP.Strings['dragControl' + speedStringMap[draggingSpeed] + (increasing?'Inc':'Dec')];
-						document_querySelector('.Drag-Time').textContent = formatTime(draggingTimeBase) +'╱'+ formatTime(duration);
-						cancelingDragging = false;
-						if(duration>0)
-							document.querySelector('.Drag-Time-Bar .fill').style.width = draggingTimeBase/duration*100 +'%'
-					}
-				}else if(!ignoreDragging){
-					if(dx<-10 || dx>10){
-						timeDraggingMode = true;
-						if(draggingDismissTimeout!=null){
-							clearTimeout(draggingDismissTimeout);
-							draggingDismissTimeout=null;
-						}
-						document_querySelector('.Drag-Control').style.display = 'block';
-					}else if( dy<-10 || dy>10 ){
-						ignoreDragging = true;
-					}
-				}
-			});
-			ABPInst.videoDiv.parentNode[addEventListener]('touchend',function(){
-				if(touchContextTimer!=null){
-					clearTimeout(touchContextTimer);
-					touchContextTimer=null;
-				}
-				if(timeDraggingMode&& !cancelingDragging){
-					ABPInst.video.currentTime = draggingTimeBase;
-				}
-				draggingDismissTimeout = setTimeout(function(){
-					document_querySelector('.Drag-Control').style.display = 'none';
-				},1e3);
-			});
-			contextMenuBody[addEventListener]('touchstart',function(e){
-				var box=contextMenuBody.getBoundingClientRect();
-				if(e.touches[0].clientX-box.left<=box.width && e.touches[0].clientY-box.top<=box.height)
-					activingContext=!0;
-			})
 
 			var sendComment = function() {
 				var date = new Date(),
@@ -2838,50 +2695,6 @@ ABP.Strings={
 								ABPInst.createPopup(ABP.Strings.volumeChange + ((newVolume*1e2)|0) + '%',1e3);
 							}
 							break;
-					}
-				}
-			});
-			playerUnit[addEventListener]("touchmove", function(e) {
-				e.preventDefault();
-			});
-			var _touch = null;
-			playerUnit[addEventListener]("touchstart", function(e) {
-				if (hasClass(ABPInst.videoDiv, "ABP-HideCursor")) {
-					removeClass(ABPInst.videoDiv, "ABP-HideCursor");
-				}
-				if (e.targetTouches.length > 0) {
-					//Determine whether we want to start or stop
-					_touch = e.targetTouches[0];
-				}
-			});
-			playerUnit[addEventListener]("touchend", function(e) {
-				addClass(ABPInst.videoDiv, "ABP-HideCursor");
-				if (e.changedTouches.length > 0) {
-					if (_touch != null) {
-						var diffx = e.changedTouches[0].pageX - _touch.pageX;
-						var diffy = e.changedTouches[0].pageY - _touch.pageY;
-						if (Math.abs(diffx) < 20 && Math.abs(diffy) < 20) {
-							_touch = null;
-							return;
-						}
-						if (Math.abs(diffx) > 3 * Math.abs(diffy)) {
-							if (diffx > 0) {
-								if (ABPInst.video.paused) {
-									ABPInst.btnPlay.click();
-								}
-							} else {
-								if (!ABPInst.video.paused) {
-									ABPInst.btnPlay.click();
-								}
-							}
-						} else if (Math.abs(diffy) > 3 * Math.abs(diffx)) {
-							if (diffy < 0) {
-								ABPInst.video.volume = Math.min(1, ABPInst.video.volume + 0.1)
-							} else {
-								ABPInst.video.volume = Math.max(0, ABPInst.video.volume - 0.1)
-							}
-						}
-						_touch = null;
 					}
 				}
 			});
