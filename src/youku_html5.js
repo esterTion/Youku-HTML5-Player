@@ -1,4 +1,4 @@
-/// <reference path="chrome.d.ts" url="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/chrome/index.d.ts" />
+/// <reference path="chrome.d.ts" url="chrome.d.ts" />
 /*global _ _t dots getCookie readStorage changeSrc saveStorage chrome shield CryptoJS ABP flvjs flvplayer isChrome resizeSensor*/
 function createPopup(param) {
     if (!param.content)
@@ -865,6 +865,7 @@ function reloadSegment() {
     this._progressChecker = null;
     io.pause();
     io.resume();
+    this._transmuxer._controller._enableStatisticsReporter();
 }
 window.overallBitrate = 0;
 let self = window;
