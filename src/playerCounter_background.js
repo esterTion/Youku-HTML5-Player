@@ -47,18 +47,11 @@ chrome.tabs.query({}, (tabs) => (tabs.forEach(tab => {
 
 chrome.browserAction.setBadgeText({ 'text': '' });
 
-let extVersion, hasNewVersion = false;
-fetch(chrome.extension.getURL('manifest.json')).then(
-  function (r) {
-    r.json().then(function (manifest) {
-      extVersion = manifest.version;
-    });
-  }
-);
+let extVersion = chrome.runtime.getManifest().version, hasNewVersion = false;
 function versionChecker() {
-  fetch('https://estertion.github.io/Youku-HTML5-Player/firefox_ext_update.json', { cache: 'no-cache' }).then(function (r) {
+  fetch('https://addons.mozilla.org/api/v3/addons/addon/{00bf2902-f122-479e-a925-cdd0242e0ee3}/', { cache: 'no-cache' }).then(function (r) {
     r.json().then(function (json) {
-      let storeVer = json.addons['{579e2d44-4478-4d57-b2ac-e17831a37eae}'].updates[0].version;
+      let storeVer = json.current_version.version;
       if (storeVer != extVersion) hasNewVersion = storeVer, chrome.browserAction.setBadgeText({ text: '1' });
     });
   });
