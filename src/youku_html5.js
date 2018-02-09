@@ -666,7 +666,7 @@ function fetchSrcThen(json) {
                 }
             }, [_('text', _t('toYouku'))]), contextMenu.firstChild);
         } else {
-            document.querySelector('#fn_download').addEventListener('click', generate_downlink);
+            document.querySelector('.fn-download>.fn-panel').addEventListener('click', generate_downlink);
         }
 
         if (json.data.preview)
@@ -1166,7 +1166,7 @@ function init() {
     setInterval(playerHeight, 1e3);
     playerHeight();
     if (domain == 'v.youku.com') {
-        let playarea = document.getElementById('playBox') || document.getElementById('module_basic_playarea'),
+        let playarea = document.querySelector('.playBox') || document.getElementById('module_basic_playarea'),
             isMini = false;
         window.addEventListener('scroll', function () {
             let box = playarea.getBoundingClientRect();
@@ -1272,15 +1272,22 @@ body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouT
     position: fixed !important;
     width: 360px !important;
     height: 225px !important;
-    margin: 0 0 0 980px;
+    margin: 0 0 0 1424px;
     background: transparent;
     bottom: 60px;
+    z-index: 11;
 }
 .ABP-Mini[theme="YouTube"] {
     height: 202px !important;
 }
-@media screen and (max-width:1359px){.ABP-Mini{
-    margin: 0 0 0 760px;
+@media screen and (max-width:1829px){.ABP-Mini{
+    margin: 0 0 0 1174px;
+}}
+@media screen and (max-width:1579px){.ABP-Mini{
+    margin: 0 0 0 886px;
+}}
+@media screen and (max-width:1291px){.ABP-Mini{
+    margin: 0 0 0 742px;
 }}`)]));
     flvjs.LoggingControl.enableVerbose = false;
     flvjs.LoggingControl.enableInfo = false;
