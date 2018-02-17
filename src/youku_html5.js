@@ -278,8 +278,9 @@ function padStart(str, pad, len) {
     return str;
 }
 
-function generate_downlink() {
-    let old = document.querySelector('#panel_down .YHP_down');
+function generate_downlink(e) {
+    if (document.querySelector('.fn-download>.fn-panel').contains(e.target)) return;
+    let old = document.querySelector('.fn-download .YHP_down');
     if (old != null)
         old.remove();
     let childs = [];
@@ -310,7 +311,7 @@ function generate_downlink() {
         }
     }
     if (childs.length > 0) {
-        document.querySelector('#panel_down').appendChild(_('div', {
+        document.querySelector('.fn-download>.fn-panel').appendChild(_('div', {
             className: 'YHP_down', event: {
                 click: function (e) {
                     if (e.target.className == 'YHP_output') {
@@ -666,7 +667,8 @@ function fetchSrcThen(json) {
                 }
             }, [_('text', _t('toYouku'))]), contextMenu.firstChild);
         } else {
-            document.querySelector('.fn-download>.fn-panel').addEventListener('click', generate_downlink);
+            document.querySelector('.fn-download').addEventListener('mouseenter', generate_downlink);
+            document.querySelector('.fn-download').addEventListener('click', generate_downlink);
         }
 
         if (json.data.preview)
@@ -1192,10 +1194,11 @@ function init() {
 position:fixed;left:0;right:0;top:0;height:0;z-index:100001;transition:.5s;cursor:default
 }
 .YHP_down_banner{
-margin:2px;padding:2px;color:#FFFFFF;font-size:13px;font-weight:bold;background-color:green
+margin:2px;padding:2px;color:#FFFFFF;font-size:13px;font-weight:bold;background-color:#00da00
 }
+.play-fn>li:hover .fn-panel{z-index:200}
 .YHP_down_btn{
-margin:2px;padding:4px;color:#1E90FF;font-size:14px;font-weight:bold;border:#1E90FF 2px solid;display:inline-block;border-radius:5px
+margin:2px;padding:4px;color:#1E90FF;font-size:14px;font-weight:bold;border:#1E90FF 2px solid;display:inline-block;border-radius:5px;line-height:18px
 }
 @keyframes pop-iframe-in{0%{opacity:0;transform:scale(.7);}100%{opacity:1;transform:scale(1)}}
 @keyframes pop-iframe-out{0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(.7)}}
@@ -1226,43 +1229,6 @@ position:absolute;bottom:0;left:0;right:0;font-size:15px
 }
 #YHP_Notice input[type=button]:active {
 	background: #CCC;
-}
-body.w1080.danmuon[yhp_theme] .playArea .player{
-    height:460px;
-}
-body.w1080[yhp_theme] .listBox .listArea{
-    height:512px;
-}
-body.w1300.danmuon[yhp_theme] .playArea .player{
-    height:584px;
-}
-body.w1300[yhp_theme] .listBox .listArea{
-    height:636px;
-}
-body[yhp_theme] .playBox_thx, body.danmuon[yhp_theme] .playBox_thx .playArea .player,body.danmuon[yhp_theme] .expandBox .expandCont,body.danmuon[yhp_theme] .moveright .listArea, body.danmuon[yhp_theme] .moveleft .listArea{
-    height:658px;
-}
-body.w1300[yhp_theme] .playBox_thx, body.w1300.danmuon[yhp_theme] .playBox_thx .playArea .player, body.w1300.danmuon[yhp_theme] .expandBox .expandCont, body.w1300.danmuon[yhp_theme] .moveright .listArea, body.w1300.danmuon[yhp_theme] .moveleft .listArea{
-    height:781px;
-}
-
-body.w1080.danmuon[yhp_theme="YouTube"] .playArea .player{
-    height:416px;
-}
-body.w1080[yhp_theme="YouTube"] .listBox .listArea{
-    height:468px;
-}
-body.w1300.danmuon[yhp_theme="YouTube"] .playArea .player{
-    height:540px;
-}
-body.w1300[yhp_theme="YouTube"] .listBox .listArea{
-    height:592px;
-}
-body[yhp_theme="YouTube"] .playBox_thx, body.danmuon[yhp_theme="YouTube"] .playBox_thx .playArea .player,body.danmuon[yhp_theme="YouTube"] .expandBox .expandCont,body.danmuon[yhp_theme="YouTube"] .moveright .listArea, body.danmuon[yhp_theme="YouTube"] .moveleft .listArea{
-    height:614px;
-}
-body.w1300[yhp_theme="YouTube"] .playBox_thx, body.w1300.danmuon[yhp_theme="YouTube"] .playBox_thx .playArea .player, body.w1300.danmuon[yhp_theme="YouTube"] .expandBox .expandCont, body.w1300.danmuon[yhp_theme="YouTube"] .moveright .listArea, body.w1300.danmuon[yhp_theme="YouTube"] .moveleft .listArea{
-    height:737px;
 }
 .expandBox .expandCont a.expandlink .txt{
     padding-top:300px;
