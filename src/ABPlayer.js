@@ -21,10 +21,6 @@ ABP.Strings={
 	statsVideo:_t('statsVideo'),
 	statsBuffer:_t('statsBuffer'),
 	statsBufferClip:_t('statsBufferClip'),
-	statsMozParse:_t('statsMozParse'),
-	statsMozDecode:_t('statsMozDecode'),
-	statsMozPaint:_t('statsMozPaint'),
-	statsWebkitDecode:_t('statsWebkitDecode'),
 	statsPresent:_t('statsPresent'),
 	statsDrop:_t('statsDrop'),
 	statsMimetype:_t('statsMimetype'),
@@ -1420,7 +1416,6 @@ ABP.Strings={
 		dropFpsColumn=gEle('drop-fps-column'),
 		dropFpsNum = dropFpsColumn.parentNode.lastChild,
 		bufferArr=[],
-		realtimeBitrateArr=[],
 		downloadSpeedArr=[],
 		playFpsArr=[],
 		dropFpsArr=[],
@@ -1452,7 +1447,6 @@ ABP.Strings={
 		gEle('stats-close')[addEventListener]('click',contextToggleListener);
 		for(;i<60;i++){
 			bufferArr.push(0);
-			realtimeBitrateArr.push(0);
 			downloadSpeedArr.push(0);
 			playFpsArr.push(0);
 			dropFpsArr.push(0);
@@ -1461,6 +1455,7 @@ ABP.Strings={
 		bufferColumn.innerHTML=svgStats;
 		bufferColumn=bufferColumn.firstChild.firstChild;
 		realtimeBitrateColumn.innerHTML=svgStats;
+		realtimeBitrateColumn.firstChild.lastChild.setAttribute('points', '1,21 180,21 60,22 60,1');
 		realtimeBitrateColumn=realtimeBitrateColumn.firstChild.firstChild;
 		downloadSpeedColumn.innerHTML=svgStats;
 		downloadSpeedColumn=downloadSpeedColumn.firstChild.firstChild;
@@ -1578,21 +1573,35 @@ ABP.Strings={
 					
 					if(mediaInfo.bitrateMap){
 						
-						if(mediaInfo.bitrateMap[off])
-							bitrate=mediaInfo.bitrateMap[off][timeOffset]
+						var bitrateMap = mediaInfo.bitrateMap;
+						if(bitrateMap[off])
+							bitrate=bitrateMap[off][timeOffset];
 						if(bitrate!=undefined){
-							if(odd && lastCurrent!=(video.currentTime|0)){
-								lastCurrent=video.currentTime|0;
-								flvjsStats[i++].textContent=to2digitFloat(bitrate)+' kbps';
-								realtimeBitrateArr.push(bitrate);
-								realtimeBitrateArr.shift();
-								if(playerStatsOn)
-									renderColumn(realtimeBitrateColumn,realtimeBitrateArr);
-							}else{
-								i++;
-							}
+							flvjsStats[i++].textContent=to2digitFloat(bitrate)+' kbps';
 						}else{
 							flvjsStats[i++].textContent='N/A';
+						}
+						if(playerStatsOn){
+							var realtimeBitrateArr=[];
+							var displaySegOffset = off, time = timeOffset - 20;
+							while (time < 20) {
+								displaySegOffset--;
+								if (displaySegOffset == -1) {
+									displaySegOffset = 0;
+									break;
+								}
+								time += bitrateMap[displaySegOffset].length;
+							}
+							while (realtimeBitrateArr.length < 60) {
+								if (bitrateMap[displaySegOffset]==undefined) {
+									realtimeBitrateArr.push(0);
+									continue;
+								}
+								realtimeBitrateArr.push(bitrateMap[displaySegOffset][time] ||0);
+								time++;
+								time >= bitrateMap[displaySegOffset].length && (displaySegOffset++, time = 0);
+							}
+							renderColumn(realtimeBitrateColumn,realtimeBitrateArr);
 						}
 					}else{
 						flvjsStats[i++].textContent='N/A'
