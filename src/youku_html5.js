@@ -41,7 +41,7 @@ let uid = '';
 let iid = 0;
 if (domain == 'v.youku.com') {
     vid = location.href.match(/\/id_([a-zA-Z0-9=]+)/);
-    objID = 'object#movie_player, div#ykPlayer';
+    objID = 'object#movie_player, div#ykPlayer, div.not-support-layer';
 } else if (domain == 'player.youku.com') {
     vid = location.href.match(/embed\/([a-zA-Z0-9=]+)/);
     objID = 'object#youku-player';
@@ -203,9 +203,9 @@ function response2url(json) {
                             filesize: part.size | 0,
                             duration: part.total_milliseconds_video | 0,
                             url: part.cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
-                                return s + 'youku/';
+                                return 'http://vali.cp31.ott.cibntv.net/';
                             }),
-                            backup_url: []
+                            backup_url: [part.cdn_url]
                         };
                         if (part.cdn_backup && part.cdn_backup.length) {
                             seg.backup_url = part.cdn_backup;
@@ -611,7 +611,7 @@ function fetchSrcThen(json) {
                     }
                 });
                 if (childs.length) {
-                    let points = _('div', { className: 'dm static' }, [
+                    let points = _('div', { className: 'dm preserve' }, [
                         _('div', {}, [_('text', _t('storylinePoints'))]),
                         _('div', {
                             className: 'dmMenu', event: {
@@ -631,7 +631,7 @@ function fetchSrcThen(json) {
             for (let lang in audioLangs) {
                 childs.push(_('div', { 'data-lang': lang }, [_('text', knownLangs[lang] || lang)]));
             }
-            let langChange = _('div', { className: 'dm static' }, [
+            let langChange = _('div', { className: 'dm preserve' }, [
                 _('div', {}, [_('text', _t('audioLang'))]),
                 _('div', {
                     className: 'dmMenu', event: {
@@ -659,7 +659,7 @@ function fetchSrcThen(json) {
 
         if (domain != 'v.youku.com') {
             contextMenu.insertBefore(_('div', {
-                id: 'main_link', event: {
+                id: 'main_link', className: 'preserve', event: {
                     click: function () {
                         abpinst.video.pause();
                         window.open('http://v.youku.com/v_show/id_' + vid + '.html');
@@ -1074,9 +1074,9 @@ function init() {
         player.remove();
         if (domain == 'v.youku.com') {
             //添加还原按钮
-            document.querySelector('#module-interact').appendChild(_('div', { className: 'fn-phone-see' }, [
-                _('div', {
-                    className: 'fn', event: {
+            document.querySelector('.play-fn').appendChild(_('li', {}, [
+                _('span', {
+                    className: 'text', event: {
                         click: function () {
                             if (disabled)
                                 return;
@@ -1092,9 +1092,9 @@ function init() {
                             document.body.removeAttribute('YHP_theme');
                         }
                     }
-                }, [_('a', { className: 'label', href: 'javascript:void(0);' }, [
-                    _('text', _t('restoreFlash'))
-                ])])
+                }, [
+                        _('text', _t('restoreFlash'))
+                    ])
             ]));
         }
     }
@@ -1147,7 +1147,7 @@ function init() {
         }
     });
     if (domain == 'v.youku.com')
-        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.PlayerSeek=function(e){document.querySelector("video").currentTime=e}')]));
+        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr=window.ykPlyr||{};ykPlyr.PlayerSeek=function(e){document.querySelector("video").currentTime=e}')]));
 
     let savedPassword = JSON.parse(localStorage.YHP_SavedPassword || '{}');
     let password;
