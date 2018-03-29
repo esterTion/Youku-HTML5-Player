@@ -457,5 +457,11 @@
     },
     "m3uPlaylist" : {
         "message": "[M3U8 播放列表文件]"
+    },
+    "copySegUrl" : {
+        "message": "复制地址"
+    },
+    "copied" : {
+        "message": "已复制！"
     }
 }

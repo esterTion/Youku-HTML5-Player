@@ -16,137 +16,18 @@ return check; }
 var ABP = {
 	"version": "0.8.0"
 };
-ABP.Strings={
-	statsPlayer:_t('statsPlayer'),
-	statsVideo:_t('statsVideo'),
-	statsBuffer:_t('statsBuffer'),
-	statsBufferClip:_t('statsBufferClip'),
-	statsPresent:_t('statsPresent'),
-	statsDrop:_t('statsDrop'),
-	statsMimetype:_t('statsMimetype'),
-	statsVideoBitrate:_t('statsVideoBitrate'),
-	statsAudioBitrate:_t('statsAudioBitrate'),
-	statsCurrentBitrate:_t('statsCurrentBitrate'),
-	statsRealtimeBitrate:_t('statsRealtimeBitrate'),
-	overallBitrate:_t('overallBitrate'),
-	reload:_t('reload'),
-	statsDownloadSpeed:_t('statsDownloadSpeed'),
-	statsSourceHost:_t('statsSourceHost'),
-	statsRedirection:_t('statsRedirection'),
-	statsRedirectionNone:_t('statsRedirectionNone'),
-	
-	sendSmall:_t('sendSmall'),
-	sendMid:_t('sendMid'),
-	sendSize:_t('sendSize'),
-	sendMode:_t('sendMode'),
-	sendTop:_t('sendTop'),
-	sendScroll:_t('sendScroll'),
-	sendBottom:_t('sendBottom'),
-	send:_t('send'),
-	sendStyle:_t('sendStyle'),
-	sendColor:_t('sendColor'),
-	
-	commentSpeed:_t('commentSpeed'),
-	commentScale:_t('commentScale'),
-	commentDensity:_t('commentDensity'),
-	commentOpacity:_t('commentOpacity'),
-	commentBlock:_t('commentBlock'),
-	
-	playSpeed:_t('playSpeed'),
-	playSpeedReset:_t('playSpeedReset'),
-	
-	displayScaleD:_t('displayScaleD'),
-	displayScaleF:_t('displayScaleF'),
-	
-	shieldTypeText:_t('shieldTypeText'),
-	shieldTypeUser:_t('shieldTypeUser'),
-	shieldTypeColor:_t('shieldTypeColor'),
-	shieldTypeSetting:_t('shieldTypeSetting'),
-	shieldAdd:_t('shieldAdd'),
-	shieldUseRegex:_t('shieldUseRegex'),
-	shieldBlockTop:_t('shieldBlockTop'),
-	shieldBlockBottom:_t('shieldBlockBottom'),
-	shieldBlockVisitor:_t('shieldBlockVisitor'),
-	shieldRepeat:_t('shieldRepeat'),
-	
-	viewers:_t('viewers'),
-	comments:_t('comments'),
-	commentTime:_t('commentTime'),
-	commentContent:_t('commentContent'),
-	commentDate:_t('commentDate'),
-	
-	showStats:_t('showStats'),
-	
-	loadingMeta:_t('loadingMeta'),
-	switching:_t('switching'),
-	fetchURL:_t('fetchURL'),
-	buffering:_t('buffering'),
-	play:_t('play'),
-	next:_t('next'),
-	pause:_t('pause'),
-	mute:_t('mute'),
-	unmute:_t('unmute'),
-	muteNotSupported:_t('muteNotSupported'),
-	fullScreen:_t('fullScreen'),
-	exitFullScreen:_t('exitFullScreen'),
-	webFull:_t('webFull'),
-	exitWebFull:_t('exitWebFull'),
-	wideScreen:_t('wideScreen'),
-	exitWideScreen:_t('exitWideScreen'),
-	sendTooltip:_t('sendTooltip'),
-	showComment:_t('showComment'),
-	hideComment:_t('hideComment'),
-	loopOn:_t('loopOn'),
-	loopOff:_t('loopOff'),
-	usingCanvas:_t('usingCanvas'),
-	usingCSS:_t('usingCSS'),
-	useCSS:_t('useCSS'),
-	autoOpacityOn:_t('autoOpacityOn'),
-	autoOpacityOff:_t('autoOpacityOff'),
-	settings:_t('settings'),
-	
-	copyComment:_t('copyComment'),
-	findComment:_t('findComment'),
-	blockContent:_t('blockContent'),
-	blockUser:_t('blockUser'),
-	blockColor:_t('blockColor'),
-	blockColorWhite:_t('blockColorWhite'),
-	copyFail:_t('copyFail'),
-	
-	blockUserEmpty:_t('blockUserEmpty'),
-	blockColorEmpty:_t('blockColorEmpty'),
-	repeatPcs:_t('repeatPcs'),
-	repeatUnlimited:_t('repeatUnlimited'),
-	
-	dragControlLowInc:_t('dragControlLowInc'),
-	dragControlLowDec:_t('dragControlLowDec'),
-	dragControlMedInc:_t('dragControlMedInc'),
-	dragControlMedDec:_t('dragControlMedDec'),
-	dragControlHighInc:_t('dragControlHighInc'),
-	dragControlHighDec:_t('dragControlHighDec'),
-	dragControlCancel:_t('dragControlCancel'),
-	
-	settComment:_t('settComment'),
-	recordPlaySpeed:_t('recordPlaySpeed'),
-	settPlayer:_t('settPlayer'),
-	autoPlay:_t('autoPlay'),
-	defaultFull:_t('defaultFull'),
-	playerTheme:_t('playerTheme'),
-	cmStyle:_t('cmStyle'),
-	cmStyle_st:_t('cmStyle_st'),
-	cmStyle_sh:_t('cmStyle_sh'),
-	cmStyle_stsh:_t('cmStyle_stsh'),
-
-	volumeChange:_t('volumeChange'),
-	rateChange:_t('rateChange')
-};
+ABP.Strings = new Proxy({}, {
+	get: function(target, property, receiver) {
+		return _t(property) || (console.warn('[YHP] Undefined translation key', property),property);
+  }
+});
 
 (function() {
 	"use strict";
 	if (!ABP) return;
 	var $$ = jQuery,
 	addEventListener='addEventListener',
-	versionString='HTML5 Player ver.171228 based on ABPlayer-bilibili-ver',
+	versionString='HTML5 Player ver.180329 based on ABPlayer-bilibili-ver',
 	mousePrevPos=[0,0],
 	mouseMoved=function(e){
 		var oldPos=mousePrevPos;
@@ -506,8 +387,8 @@ ABP.Strings={
 				_('div',{className:'flvjs',style:{position:'relative'}},[_('div',{style:{position:'absolute',left:'240px',bottom:'100%',cursor:'pointer'},event:{click:function(e){e.stopPropagation(),flvplayer&&flvplayer.reloadSegment&&flvplayer.reloadSegment()}}},[_('text','[ '+ABP.Strings.reload+' ]')])]),
 				_('div',{className:'flvjs',title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRealtimeBitrate)]),_('span',{className:'stats-column',id:'realtime-bitrate-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
-				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsSourceHost)]),_('span')]),
-				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRedirection)]),_('span')]),
+				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsSourceHost)]),_('span',{className:'srcUrl'})]),
+				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRedirection)]),_('span',{className:'redirUrl'})]),
 				_('br'),
 
 				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
@@ -868,17 +749,18 @@ ABP.Strings={
 		container.appendChild(_('div',{className:'Context-Menu'},[
 			_('div',{className:'Context-Menu-Background'}),
 			_('div',{className:'Context-Menu-Body'},[
-				_('div',{id:'Player-Stats-Toggle'},[_('text',ABP.Strings.showStats)]),
-				_('div',{id:'Player-Speed-Control',className:'dm static'},[_('div',{className:'content'},[_('text',ABP.Strings.playSpeed)]),_('div',{className:'dmMenu',style:{top:'-37px'}},[
+				_('div',{id:'Player-Stats-Toggle', className:'preserve'},[_('text',ABP.Strings.showStats)]),
+				_('div',{id:'Player-Speed-Control',className:'dm preserve'},[_('div',{className:'content'},[_('text',ABP.Strings.playSpeed)]),_('div',{className:'dmMenu',style:{top:'-37px'}},[
 					_('div',{'data-speed':0.5},[_('text',0.5)]),
 					_('div',{'data-speed':1},[_('text',1)]),
 					_('div',{'data-speed':1.25},[_('text',1.25)]),
 					_('div',{'data-speed':1.5},[_('text',1.5)]),
 					_('div',{'data-speed':2},[_('text',2)])
 				])]),
-				_('div',{className:'about'},[_('text',versionString)])
+				_('div',{className:'about preserve'},[_('text',versionString)])
 			])
 		]));
+		container.appendChild(_('input', {class: 'Copy-Text-Input', type:'text', style:{display:'none'}}));
 		container.getElementsByClassName('ABP-Next')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="19" version="1.1" viewBox="0 0 12 12" width="19"><path d="M 0,12 8.5,6 0,0 V 24 z M 10,0 v 0 h 2 V 12 h -2 z"/></svg>';
 		var bind = ABP.bind(container);
 		return bind;
@@ -964,36 +846,31 @@ ABP.Strings={
 				widescreen: false
 			}),
 			createPopup: function(text, delay) {
-				if (playerUnit.hasPopup === true)
-					return false;
+				if ((delay|0) <= 0) delay = 5e3;
 				var p = _("div", {
 					"className": "ABP-Popup"
 				}, [_("text", text)]);
-				p.remove = function() {
-					if (p.isRemoved) return;
-					p.isRemoved = true;
-					playerUnit.removeChild(p);
-					playerUnit.hasPopup = false;
-				};
+				p.bottom=0;
 				playerUnit.appendChild(p);
-				playerUnit.hasPopup = true;
 				if (typeof delay === "number") {
 					setTimeout(function() {
 						p.remove();
 					}, delay);
 				}
+				var prev = playerUnit.getElementsByClassName("ABP-Popup");
+				for (var i=0;i<prev.length;i++) {
+					prev[i] != p && (
+						prev[i].bottom += p.offsetHeight + 10,
+						prev[i].style.transform = 'translateY(-'+prev[i].bottom+'px)'
+					);
+				}
 				return p;
 			},
 			removePopup: function() {
 				var pops = playerUnit.getElementsByClassName("ABP-Popup");
-				for (var i = 0; i < pops.length; i++) {
-					if (pops[i].remove != null) {
-						pops[i].remove();
-					} else {
-						pops[i].parentNode.removeChild(pops[i]);
-					}
+				for (var i = pops.length - 1; i >= 0; i--) {
+					pops[i].remove();
 				}
-				playerUnit.hasPopup = false;
 			},
 			loadCommentList: function(sort, order) {
 			},
@@ -1003,6 +880,24 @@ ABP.Strings={
 			},
 			swapVideo: null
 		};
+		ABPInst.copyText = function (txt) {
+			try{
+				/*
+				chrome需要已有input中才能复制，新生成input无效
+				*/
+				var copier = ABPInst.playerUnit.querySelector('.Copy-Text-Input');
+				copier.value=txt;
+				copier.select();
+				var success=document.execCommand('copy');
+				copier.blur();
+				if(!success)
+					throw '';
+				ABPInst.createPopup(ABP.Strings.copied,1e3);
+			}catch(e){
+				console.error(e)
+				ABPInst.createPopup(ABP.Strings.copyFail,3e3);
+			}
+		}
 		Object.defineProperty(ABPInst,'title',{
 			get:function(){
 				return ABPInst.playerUnit.getElementsByClassName('ABP-Title')[0].textContent;
@@ -1481,6 +1376,13 @@ ABP.Strings={
 		}
 		
 		var flvplayerSpeedRec = [];
+
+		var copySegUrl = function () {
+			ABPInst.copyText(this.title);
+		}
+		ABPInst.playerUnit.querySelector('.srcUrl').contextActionName = ABP.Strings.copySegUrl;
+		ABPInst.playerUnit.querySelector('.srcUrl').contextMenuAction = copySegUrl;
+		ABPInst.playerUnit.querySelector('.redirUrl').contextActionName = ABP.Strings.copySegUrl;
 		
 		setInterval(function(){
 			odd^=1;
@@ -1586,8 +1488,8 @@ ABP.Strings={
 							var displaySegOffset = off, time = timeOffset - 20;
 							while (time < 20) {
 								displaySegOffset--;
-								if (displaySegOffset == -1) {
-									displaySegOffset = 0;
+								if (displaySegOffset == -1 || bitrateMap[displaySegOffset] == undefined) {
+									displaySegOffset++;
 									break;
 								}
 								time += bitrateMap[displaySegOffset].length;
@@ -1645,10 +1547,12 @@ ABP.Strings={
 					flvjsStats[i].title=currentSeg.url;
 					flvjsStats[i++].textContent=srcProtocol+'//'+srcHost;
 					if(!statisticsInfo.hasRedirect){
+						flvjsStats[i].contextMenuAction = undefined;
 						flvjsStats[i++].textContent=ABP.Strings.statsRedirectionNone;
 					}else{
-						flvjsStats[i].title=currentSeg.redirectedURL;
-						flvjsStats[i++].textContent=(currentSeg.redirectedURL||'').match(/(http[s]?:)?\/\/([a-zA-Z0-9\.\-]+)/)[0];
+						flvjsStats[i].contextMenuAction = copySegUrl;
+						flvjsStats[i].title=statisticsInfo.redirectedURL;
+						flvjsStats[i++].textContent=statisticsInfo.redirectedURL.match(/(http[s]?:)?\/\/([a-zA-Z0-9\.\-]+)/)[0];
 					}
 				}else{
 					flvjsStyle.textContent='.flvjs{display:none}';
@@ -2113,13 +2017,12 @@ ABP.Strings={
 			addColorClick=function(){
 				shield.addColor(this.getAttribute('data-color'));
 			},
-			showContextMenu=function(x,y,dmList){
+			showContextMenu=function(x,y,dmList,elementAction){
 				contextMenu.style.display='block';
-				var aboutDiv,remove=contextMenuBody.querySelectorAll('.dm'),originalData,color,isWhite,containerBox=ABPInst.playerUnit.getBoundingClientRect(),
+				var aboutDiv,remove=contextMenuBody.children,originalData,color,isWhite,containerBox=ABPInst.playerUnit.getBoundingClientRect(),
 				dmitem;
 				for(i=remove.length-2;i>=0;i--){
-					if(remove[i].className!='dm static')
-						remove[i].remove();
+					!remove[i].classList.contains('preserve') && remove[i].remove();
 				}
 				aboutDiv=contextMenuBody.firstChild;
 				for(i=0;i<dmList.length;i++){
@@ -2146,9 +2049,14 @@ ABP.Strings={
 					}
 					contextMenuBody.insertBefore(dmitem,aboutDiv);
 				}
+				if (elementAction != undefined) {
+					contextMenuBody.insertBefore(_('div', {event:{click: function(){elementAction.contextMenuAction();}}},[
+						_('div',{className:'content'},[_('text',elementAction.contextActionName)])
+					]),aboutDiv);
+				}
 				var itemMenu=contextMenuBody.querySelectorAll('.dmMenu');
 				for(i=0;i<itemMenu.length-1;i++){
-					if(hasClass(itemMenu[i].parentNode,'static'))
+					if(hasClass(itemMenu[i].parentNode,'preserve'))
 						continue;
 					itemMenu[i].childNodes[0][addEventListener]('click',function(){
 						try{
@@ -2185,8 +2093,8 @@ ABP.Strings={
 					lastMenu.style.display='block';
 					var lastMenuBox=lastMenu.getBoundingClientRect();
 					lastMenu.style.display='';
-					if( containerBox.top+containerBox.height-lastMenuBox.height-y <0)
-						y=containerBox.height-lastMenuBox.height;
+					if (lastMenuBox.top + lastMenuBox.height > containerBox.bottom)
+						y -= lastMenuBox.top + lastMenuBox.height - containerBox.bottom;
 				}
 				contextMenuBody.style.left=x+'px';
 				contextMenuBody.style.top=y+'px';
@@ -2211,9 +2119,16 @@ ABP.Strings={
 			ABPInst.videoDiv.parentNode[addEventListener]('contextmenu',function(e){
 				e.preventDefault();
 				e.stopPropagation();
-				var box=ABPInst.divComment.getBoundingClientRect(),x=e.clientX,
-				y=e.clientY;
-				showContextMenu(x,y,ABPInst.cmManager.getCommentFromPoint(x-box.left,y-box.top));
+				var box=ABPInst.divComment.getBoundingClientRect(),x=e.clientX,y=e.clientY,elementAction;
+				var element = e.target;
+				while (this.contains(element)) {
+					if (element.contextMenuAction!=undefined) {
+						elementAction = element;
+						break;
+					}
+					element = element.parentNode;
+				}
+				showContextMenu(x,y,ABPInst.cmManager.getCommentFromPoint(x-box.left,y-box.top),elementAction);
 			})
 			ABPInst.commentListContainer[addEventListener]('contextmenu',function(e){
 				var dmData=e.target.parentNode.data

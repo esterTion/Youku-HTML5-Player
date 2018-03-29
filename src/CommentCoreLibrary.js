@@ -756,18 +756,10 @@ var CommentManager = (function() {
 		this.paused = true;
 		this.pausedTime = 0;
 		this.canvas = document.createElement('canvas');
-		this.canvasStatic = document.createElement('canvas');
-		this.staticUpdate = false;
 		this.canvasFPS = 0;
 		self.canvas.style.width = '100%';
 		self.canvas.style.height = '100%';
 		self.stage.appendChild(self.canvas);
-		self.canvasStatic.style.width = '100%';
-		self.canvasStatic.style.height = '100%';
-		self.canvasStatic.style.position='absolute';
-		self.canvasStatic.style.top=0;
-		self.canvasStatic.style.left=0;
-		self.stage.appendChild(self.canvasStatic);
 		this.options = {
 			global:{
 				opacity:1,
@@ -865,12 +857,13 @@ var CommentManager = (function() {
 		}
 		this.sendQueueLoader = function(){
 			var start = performance.now(),passed;
-			while(sendQueue.length > 0){
+			sendQueue.length && self.sendAsync(sendQueue.shift());
+			/*while(sendQueue.length > 0){
 				self.sendAsync(sendQueue.shift());
 				passed = performance.now()-start;
-				if(passed > 8)
+				if(passed > 5)
 					return;
-			}
+			}*/
 		}
 		this.addEventListener('clear',function(){
 			sendQueue=[];
@@ -967,7 +960,6 @@ var CommentManager = (function() {
 		}
 		this.dispatchEvent("clear");
 		this.canvas.getContext('2d').clearRect(0,0,this.canvas.width,this.canvas.height);
-		this.canvasStatic.getContext('2d').clearRect(0,0,this.canvasStatic.width,this.canvasStatic.height);
 	};
 
 	CommentManager.prototype.setBounds = function(){
@@ -980,6 +972,7 @@ var CommentManager = (function() {
 		// Update 3d perspective
 		this.stage.style.perspective = this.width * Math.tan(40 * Math.PI/180) / 2 + "px";
 		this.stage.style.webkitPerspective = this.width * Math.tan(40 * Math.PI/180) / 2 + "px";
+		this.canvasResize();
 	};
 	CommentManager.prototype.init = function(){
 		this.setBounds();
@@ -1014,10 +1007,9 @@ var CommentManager = (function() {
 		try{
 		var w=this.width,h=this.height,devicePixelRatio=window.devicePixelRatio;
 		this.canvas.width = this.canvas.offsetWidth * devicePixelRatio;
-		this.canvasStatic.height = this.canvasStatic.offsetHeight * devicePixelRatio;
+		this.canvas.height = this.canvas.offsetHeight * devicePixelRatio;
 		this.ttlRecalcAll();
-		canvasDrawStatic(this);
-		canvasDrawScroll(this);
+		canvasDraw(this);
 		
 		}catch(e){
 			console.error('shit happened! forcing CSS! ',e.message);
@@ -1025,88 +1017,13 @@ var CommentManager = (function() {
 			return;
 		}
 	};
-	var canvasDrawStatic=function(cmMgr){
-		var canvas=cmMgr.canvasStatic, ctx=canvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio,
-		canvasWidth, canvasHeight = cmMgr.height,
-		x, y,
-		maxWidth=[0],
-		halfLeft;
-		cmMgr.runline.forEach(function(cmt){
-			if([4,5].indexOf(cmt.mode)!=-1){
-				maxWidth.push(cmt._width);
-			}
-		});
-		maxWidth=Math.min(cmMgr.width,Math.max.apply(Math,maxWidth));
-		canvasWidth = maxWidth;
-		halfLeft=(cmMgr.width-maxWidth)/2;
-		
-		if(maxWidth!=canvas.offsetWidth){
-			canvas.style.width=maxWidth+'px';
-			canvas.style.left='calc(50% - '+maxWidth/2+'px)'
-			canvas.width=maxWidth * devicePixelRatio;
-		}else{
-			ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
-		}
-		
-		ctx.globalAlpha=cmMgr.options.global.autoOpacity ? cmMgr.options.global.autoOpacityVal : cmMgr.options.global.opacity;
-		cmMgr.runline.forEach(function(cmt){
-			if(!cmt.textData)return;
-			switch(cmt.mode){
-				case 4:
-					//bottom
-					cmt.x = (canvasWidth - cmt.width) / 2+halfLeft;
-					x = cmt.x-halfLeft;
-					y = (canvasHeight - cmt.y - cmt.height);
-				break;
-				case 5:
-					//top
-					cmt.x = (canvasWidth - cmt.width) / 2+halfLeft;
-					x = cmt.x-halfLeft;
-					y = (cmt.y);
-				break;
-				default:
-					return;
-			}
-			ctx.drawImage(cmt.textData, round(x * devicePixelRatio), round(y * devicePixelRatio));
-		});
-	},
-	canvasDrawScroll=function(cmMgr){
+	var cachedMaxBottomLine=0,
+	cachedFixedBottomMaxWidth=0,
+	cachedFixedBottomHeight=0,
+	cachedFixedTopMaxWidth=0,
+	cachedFixedTopHeight=0,
+	canvasDraw=function(cmMgr){
 		//console.log('static call',performance.now())
-		var canvas=cmMgr.canvas, ctx=canvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio,
-		canvasWidth = cmMgr.width, canvasHeight,
-		x, y,
-		drawCount=0,
-		maxBottomLine=[0];
-		cmMgr.runline.forEach(function(cmt){
-			if(cmt.mode==1){
-				maxBottomLine.push(cmt._y+cmt._height);
-			}
-		});
-		maxBottomLine=Math.max.apply(Math,maxBottomLine);
-		canvasHeight=maxBottomLine;
-		
-		if(canvas.offsetHeight!=maxBottomLine){
-			canvas.style.height=maxBottomLine+'px';
-			canvas.height=maxBottomLine * devicePixelRatio;
-		}else{
-			ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
-		}
-		
-		ctx.globalAlpha=cmMgr.options.global.autoOpacity ? cmMgr.options.global.autoOpacityVal : cmMgr.options.global.opacity;
-		cmMgr.runline.forEach(function(cmt){
-			if(!cmt.textData)return;
-			switch(cmt.mode){
-				case 1:
-					//scroll
-					cmt.x = canvasWidth - cmt.rx;
-					x = (canvasWidth - cmt.rx);
-					y = cmt.y;
-				break;
-				default:
-				return;
-			}
-			ctx.drawImage(cmt.textData, round(x * devicePixelRatio), round(y * devicePixelRatio));
-		});
 	}
 	CommentManager.prototype.canvasDrawer = function(){
 		if(this.options.global.useCSS){
@@ -1120,7 +1037,7 @@ var CommentManager = (function() {
 		ctx = this.canvas.getContext('2d'),
 		canvasWidth = this.width, canvasHeight = this.height,
 		x, y;
-		ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
+		//ctx.clearRect(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
 		ctx.globalAlpha=this.options.global.autoOpacity ? this.options.global.autoOpacityVal : this.options.global.opacity;
 		ctx.imageSmoothingEnabled = false;
 		
@@ -1140,23 +1057,97 @@ var CommentManager = (function() {
 			this.pausedTime = 0;
 		}
 		
+		var devicePixelRatio = window.devicePixelRatio,
+		maxBottomLine=[0];
+		maxBottomMaxWidth=[0],
+		maxBottomHeight=[0],
+		maxTopMaxWidth=[0],
+		maxTopHeight=[0];
 		this.runline.forEach(function(cmt){
+			if(cmt.mode==1){
+				cmt.rx += cmt.speed * ( now - cmt.prev ) / 1e3;
+				cmt.prev = now;
+				maxBottomLine.push(cmt._y+cmt._height);
+			} else if(cmt.mode == 4){
+				maxBottomMaxWidth.push(cmt._width);
+				maxBottomHeight.push(cmt._y+cmt._height);
+			} else if(cmt.mode == 5) {
+				maxTopMaxWidth.push(cmt._width);
+				maxTopHeight.push(cmt._y+cmt._height);
+			}
+		});
+		maxBottomLine=Math.max.apply(Math,maxBottomLine);
+		maxBottomMaxWidth=Math.max.apply(Math,maxBottomMaxWidth);
+		maxBottomHeight=Math.max.apply(Math,maxBottomHeight);
+		maxTopMaxWidth=Math.max.apply(Math,maxTopMaxWidth);
+		maxTopHeight=Math.max.apply(Math,maxTopHeight);
+		
+		//canvasDraw(this);
+		/**
+		 * 180303
+		 * canvas重构
+		 * 恢复全屏canvas
+		 * 记录顶部高度进行部分擦除
+		 * 0,0 到 width,滚动高
+		 * 顶宽左,滚动高 到 顶宽右,顶高 （范围内不擦除）
+		 * 底宽左,高-底高 到 底宽右,高 （范围按滚动高改动）
+		 */
+		
+		if(cachedMaxBottomLine > 0){
+			ctx.clearRect(0, 0, round(canvasWidth * devicePixelRatio), round(cachedMaxBottomLine * devicePixelRatio));
+		}
+		if(cachedFixedTopHeight>cachedMaxBottomLine) {
+			ctx.clearRect(
+				round((canvasWidth-cachedFixedTopMaxWidth)/2 * devicePixelRatio),
+				round(cachedMaxBottomLine * devicePixelRatio),
+				round((canvasWidth+cachedFixedTopMaxWidth)/2 * devicePixelRatio),
+				round(cachedFixedTopHeight * devicePixelRatio)
+			);
+		}
+		ctx.clearRect(
+			round((canvasWidth-cachedFixedBottomMaxWidth)/2 * devicePixelRatio),
+			round((Math.max(canvasHeight-cachedFixedBottomHeight, cachedMaxBottomLine)) * devicePixelRatio),
+			round((canvasWidth+cachedFixedBottomMaxWidth)/2 * devicePixelRatio),
+			round(canvasHeight * devicePixelRatio)
+		);
+		cachedMaxBottomLine=maxBottomLine;
+		cachedFixedBottomMaxWidth=maxBottomMaxWidth;
+		cachedFixedBottomHeight=maxBottomHeight;
+		cachedFixedTopMaxWidth=maxTopMaxWidth;
+		cachedFixedTopHeight=maxTopHeight;
+
+		//ctx.globalAlpha = 1;
+		//ctx.drawImage(window.abpinst.video, 0, 0);
+
+		var cmMgr=this;
+				
+		ctx.globalAlpha=cmMgr.options.global.autoOpacity ? cmMgr.options.global.autoOpacityVal : cmMgr.options.global.opacity;
+		cmMgr.runline.forEach(function(cmt){
 			if(!cmt.textData)return;
 			switch(cmt.mode){
 				case 1:
 					//scroll
-					cmt.rx += cmt.speed * ( now - cmt.prev ) / 1e3;
-					cmt.prev = now;
+					cmt.x = canvasWidth - cmt.rx;
+					x = (canvasWidth - cmt.rx);
+					y = cmt.y;
 				break;
+				case 4:
+					//bottom
+					cmt.x = (canvasWidth - cmt.width) / 2;
+					x = cmt.x;
+					y = (canvasHeight - cmt.y - cmt.height);
+				break;
+				case 5:
+					//top
+					cmt.x = (canvasWidth - cmt.width) / 2;
+					x = cmt.x;
+					y = (cmt.y);
+				break;
+				default:
+				return;
 			}
+			ctx.drawImage(cmt.textData, round(x * devicePixelRatio), round(y * devicePixelRatio));
 		});
-		
-		if(this.staticUpdate){
-			canvasDrawStatic(this);
-			this.staticUpdate=false;
-		}
-		
-		canvasDrawScroll(this);
 		//this.canvas.style.opacity = this.options.global.opacity;
 		//this.canvas.getContext('2d').putImageData(ctx.getImageData(0, 0, this.canvas.width, this.canvas.height), 0, 0)
 		requestAnimationFrame(this.canvasDrawerWrapper);
@@ -1179,6 +1170,8 @@ var CommentManager = (function() {
 		}
 	},commentCanvasDrawer = function(cmt, outline, shadow){
 		var commentCanvas = document.createElement('canvas'), commentCanvasCtx = commentCanvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio;
+		commentCanvas.width = 1;
+		commentCanvas.height = 1;
 		commentCanvasCtx.font = 'bold '+ (cmt.size * devicePixelRatio) + 'px ' + font;
 		commentCanvasCtx.imageSmoothingEnabled = false;
 		cmt.width = ceil(commentCanvasCtx.measureText(cmt.text).width / devicePixelRatio)+2;
@@ -1267,8 +1260,8 @@ var CommentManager = (function() {
 			switch(cmt.mode){
 				default:
 				case 1:{this.csa.scroll.add(cmt);}break;
-				case 4:{this.csa.bottom.add(cmt);this.staticUpdate=true;}break;
-				case 5:{this.csa.top.add(cmt);this.staticUpdate=true;}break;
+				case 4:{this.csa.bottom.add(cmt);}break;
+				case 5:{this.csa.top.add(cmt);}break;
 			}
 		}else{
 			
@@ -1325,8 +1318,8 @@ var CommentManager = (function() {
 			default:
 			case 1:{this.csa.scroll.remove(cmt);}break;
 			case 2:{this.csa.scrollbtm.remove(cmt);}break;
-			case 4:{this.csa.bottom.remove(cmt);this.staticUpdate=true;}break;
-			case 5:{this.csa.top.remove(cmt);this.staticUpdate=true;}break;
+			case 4:{this.csa.bottom.remove(cmt);}break;
+			case 5:{this.csa.top.remove(cmt);}break;
 			case 6:{this.csa.reverse.remove(cmt);}break;
 			case 7:break;
 		}

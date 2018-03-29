@@ -457,5 +457,11 @@
     },
     "m3uPlaylist" : {
         "message": "[M3U8 Playlist File]"
+    },
+    "copySegUrl" : {
+        "message": "Copy URL"
+    },
+    "copied" : {
+        "message": "Copied!"
     }
 }
