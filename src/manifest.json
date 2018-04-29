@@ -12,7 +12,6 @@
       "all_frames": true,
       "js": [
         "dom_gen.js",
-        "resizeSensor.js",
         "md5.js",
         "hookFetch.js",
         "flv.min.js",
@@ -20,6 +19,17 @@
       ],
       "css": [
         "ABPlayer.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "*://v.youku.com/v_show/*",
+        "*://player.youku.com/embed/*"
+      ],
+      "all_frames": true,
+      "js": [
+        "resizeSensor.js"
       ],
       "run_at": "document_end"
     },

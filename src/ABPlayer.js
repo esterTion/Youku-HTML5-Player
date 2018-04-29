@@ -760,7 +760,7 @@ ABP.Strings = new Proxy({}, {
 				_('div',{className:'about preserve'},[_('text',versionString)])
 			])
 		]));
-		container.appendChild(_('input', {class: 'Copy-Text-Input', type:'text', style:{display:'none'}}));
+		container.appendChild(_('input', {class: 'Copy-Text-Input', type:'text', style:{height:'1px',width:'1px',padding:0,border:0,pointerEvents:'none',opacity:0}}));
 		container.getElementsByClassName('ABP-Next')[0].innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="19" version="1.1" viewBox="0 0 12 12" width="19"><path d="M 0,12 8.5,6 0,0 V 24 z M 10,0 v 0 h 2 V 12 h -2 z"/></svg>';
 		var bind = ABP.bind(container);
 		return bind;

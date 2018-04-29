@@ -14,14 +14,15 @@
                 chkInit();
             }
         });
-        observer.observe(document.body, { childList: true, subtree: true });
+        observer.observe(document, { childList: true, subtree: true });
     }
 })();
+
 //强制中断html5初始化
 readStorage(['official_html5'], function (item) {
     item = Object.assign({ official_html5: false }, item);
     if (!item.official_html5) {
-        document.head.appendChild(_('script', {}, [_('text', '(' + function () {
+        document.firstElementChild.appendChild(_('script', {}, [_('text', '(' + function () {
             if (window.$) {
                 var extend = $.extend;
                 $.extend = function () {

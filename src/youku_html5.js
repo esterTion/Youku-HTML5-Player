@@ -949,8 +949,27 @@ function reloadBackup() {
     }
     return false;
 }
+function reloadRange() {
+    let currentSegmentIndex = flvplayer._transmuxer._controller._currentSegmentIndex,
+        currentSegment = flvplayer._mediaDataSource.segments[currentSegmentIndex];
+    if (currentSegment.retryTime == undefined) currentSegment.retryTime = 0;
+    currentSegment.retryTime++;
+    if (currentSegment.retryTime > 5) return false;
+    if (abpinst.video.buffered.length == 0 && abpinst.lastTime == undefined) {
+        flvplayer._transmuxer._controller._pendingSeekTime = (abpinst.video.currentTime * 1e3) | 0;
+    }
+    flvplayer._transmuxer._controller._internalAbort();
+    flvplayer._transmuxer._controller._enableStatisticsReporter();
+    flvplayer._transmuxer._controller._loadSegment(currentSegmentIndex);
+    return true;
+}
 
 let load_fail = function (type, info, detail) {
+    if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid' && detail.code == 416) {
+        // range错误，重试5次
+        if (reloadRange())
+            return;
+    }
     if (type == 'NetworkError' && info == 'HttpStatusCodeInvalid' && detail.code == 403) {
         if (reloadBackup())
             return;
@@ -1066,7 +1085,7 @@ function init() {
             return;
         }
         container = player.parentNode.parentNode.parentNode;
-        document.head.appendChild(_('script', {}, [_('text', 'ykPlyr.remove()')])).remove();
+        document.head.appendChild(_('script', {}, [_('text', 'try{ykPlyr.remove()}catch(e){document.getElementById("player").remove()}')])).remove();
         container = container.appendChild(_('div', { className: 'player', id: 'player' }));
     } else {
         //flash播放器
@@ -1101,6 +1120,7 @@ function init() {
 
     container.style.overflow = 'hidden';
     let video = container.appendChild(_('video'));
+    video.addEventListener('seek', e => console.log(e));
     window.flvplayer = {
         unload: function () {
         }, destroy: function () {
