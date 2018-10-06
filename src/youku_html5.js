@@ -1026,7 +1026,7 @@ let flvparam = function (select) {
         changeSrc('', select, true);
         return;
     }
-    createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true } } });
+    createPlayer({ detail: { src: srcUrl[select], option: { seekType: 'range', reuseRedirectedURL: true, fixAudioTimestampGap: false } } });
     if (srcUrl[select].partial) {
         setTimeout(function () {
             abpinst.createPopup(_t('partialAvailable'), 3e3);

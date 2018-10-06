@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, resolve) {
 
 function injector(tabId, frameId, resolve) {
     let files = [
-        "jquery-2.1.4.min.js",
+        "jquery-3.3.1.min.js",
         "google-style-loading.min.js",
         "CommentCoreLibrary.min.js",
         "biliplus_shield.min.js",
