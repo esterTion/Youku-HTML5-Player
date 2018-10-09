@@ -26,6 +26,7 @@ function injector(tabId, frameId, resolve) {
         "google-style-loading.min.js",
         "CommentCoreLibrary.min.js",
         "biliplus_shield.min.js",
+        "jquery-3.3.1.min.js",
         "ABPlayer.min.js",
         "flv.min.js",
         "youku_html5.js"
