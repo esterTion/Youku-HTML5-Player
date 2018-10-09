@@ -27,6 +27,7 @@ function injector(tabId, frameId, resolve) {
         "CommentCoreLibrary.min.js",
         "biliplus_shield.min.js",
         "ABPlayer.min.js",
+        "flv.min.js",
         "youku_html5.js"
     ],
         loopFunc = function () {
