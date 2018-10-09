@@ -718,9 +718,9 @@ function fetchSrcThen(json) {
             });
         //nlid=GPM%2FEhZuIHkCATqawzk1EH%2FA&v=437244772&hwclass=1&devicename=H5&mt=1&autoplay=1&cg=100&shid=310600&tp=1&stg=1&hd=1&seconds=2947&po=0&lastupdate=1506870903&lang=7
     }
-    firstTime = false;
     fetchedCount++;
     changeSrc('', currentSrc, true);
+    firstTime = false;
 }
 
 let sizeList = [24, 22, 28];
@@ -845,7 +845,7 @@ window.changeSrc = function (e, t, force) {
     abpinst.video.pause();
     abpinst.inited = false;
     if (srcUrl[t] != undefined) {
-        div.childNodes[0].childNodes[0].textContent = ABP.Strings.switching;
+        if (!firstTime) div.childNodes[0].childNodes[0].textContent = ABP.Strings.switching;
         if (!dots.running)
             dots.runTimer();
         if (abpinst.lastTime == undefined)
@@ -885,6 +885,13 @@ let createPlayer = function (e) {
     self.flvplayer.load();
     self.flvplayer.reloadSegment = reloadSegment;
 };
+window.addEventListener('unload', function () {
+    if (self.flvplayer != undefined) {
+        self.flvplayer.unload();
+        self.flvplayer.destroy();
+        delete self.flvplayer;
+    }
+})
 
 function fillWithM3u8(select) {
     if (!srcUrl[select].playlist_url) {
