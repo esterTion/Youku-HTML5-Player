@@ -96,6 +96,7 @@ if( isChrome && location.protocol=='https:' ){
   if(self.document !== undefined) {
     if (self.Blob !== newBlob) {
       self.Blob = newBlob
+      self.oldBlob = oldBlob;
     }
   }
   (function () {

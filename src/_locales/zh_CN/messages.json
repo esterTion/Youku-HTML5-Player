@@ -420,7 +420,7 @@
         "message": "现在我们的版本是"
     },
     "extUpdated_detail": {
-        "message": "一些更新细节：\n1、项目已经更名为【Yet Another Player for Youku - 更好用的优酷播放器】\n2、播放出错时尝试播放较低清晰度"
+        "message": "一些更新细节：\n新增 hls 播放核心，及自动清晰度切换"
     },
     "playerTheme":{
         "message":"播放器主题"
@@ -463,5 +463,38 @@
     },
     "copied" : {
         "message": "已复制！"
+    },
+    "Auto": {
+        "message": "自动"
+    },
+    "switchingTo": {
+        "message": "正在切换至 "
+    },
+    "switched": {
+        "message": "已切换"
+    },
+    "currentQuality": {
+        "message": "当前清晰度："
+    },
+    "currentFragment": {
+        "message": "当前分片："
+    },
+    "playerCoreSetting": {
+        "message": "播放器核心："
+    },
+    "screenshot": {
+        "message": "视频截屏"
+    },
+	"screenshotWithoutComment": {
+        "message": "不含弹幕"
+    },
+	"screenshotWithComment": {
+        "message": "含弹幕"
+    },
+	"screenshotCSSNoSupport": {
+        "message": "css弹幕不支持截图"
+    },
+	"screenshotError": {
+        "message": "视频源限制，无法生成截图"
     }
 }

@@ -29,6 +29,8 @@ function injector(tabId, frameId, resolve) {
         "jquery-3.3.1.min.js",
         "ABPlayer.min.js",
         "flv.min.js",
+        "hls.light.min.js",
+        "hlsjsMediaInfo.min.js",
         "youku_html5.js"
     ],
         loopFunc = function () {

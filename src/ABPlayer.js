@@ -27,7 +27,7 @@ ABP.Strings = new Proxy({}, {
 	if (!ABP) return;
 	var $$ = jQuery,
 	addEventListener='addEventListener',
-	versionString='HTML5 Player ver.180329 based on ABPlayer-bilibili-ver',
+	versionString='HTML5 Player ver.190131 based on ABPlayer-bilibili-ver',
 	mousePrevPos=[0,0],
 	mouseMoved=function(e){
 		var oldPos=mousePrevPos;
@@ -389,6 +389,18 @@ ABP.Strings = new Proxy({}, {
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsSourceHost)]),_('span',{className:'srcUrl'})]),
 				_('div',{className:'flvjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRedirection)]),_('span',{className:'redirUrl'})]),
+				
+				_('br',{className:'hlsjs'}),
+				_('div',{className:'hlsjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.currentQuality)]),_('span')]),
+				_('div',{className:'hlsjs'},[_('span',{className:'stats_name'},[_('text','fps：')]),_('span')]),
+				_('div',{className:'hlsjs',title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsVideoBitrate)]),_('span')]),
+				_('div',{className:'hlsjs',title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsAudioBitrate)]),_('span')]),
+				_('div',{className:'hlsjs',title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.overallBitrate)]),_('span')]),
+				_('div',{className:'hlsjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.currentFragment)]),_('span',{style:{width:'180px',height:'5px',display:'inline-block',position:'relative',border:'solid #AAA 1px',borderRadius:'4px',verticalAlign:'middle',marginRight:'2px'}},[
+					_('span',{id:'download-progress-hls',style:{position:'absolute',left:'2px',right:'2px',top:'1px',bottom:'1px',background:'#CCC',borderRadius:'3px',transition:'width .3s',width:0}})
+				]),_('span')]),
+				_('div',{className:'hlsjs',title:'1 kbps = 1000 bps'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsRealtimeBitrate)]),_('span',{className:'stats-column',id:'realtime-bitrate-column-hls',style:{verticalAlign:'top'}}),_('span')]),
+				_('div',{className:'hlsjs'},[_('span',{className:'stats_name'},[_('text',ABP.Strings.statsDownloadSpeed)]),_('span',{className:'stats-column',id:'download-speed-hls-column',style:{verticalAlign:'top'}}),_('span')]),
 				_('br'),
 
 				_('div',{id:'canvas-fps'},[_('span',{className:'stats_name'},[_('text','Canvas fps：')]),_('span')]),
@@ -398,7 +410,7 @@ ABP.Strings = new Proxy({}, {
 				
 				_('br'),
 				_('div',{style:{fontSize:'11px'}},[_('text',versionString)]),
-				_('div',{style:{fontSize:'11px'}},[_('text','2017©esterTion')]),
+				_('div',{style:{fontSize:'11px'}},[_('text','2018©esterTion')]),
 				_('div',{id:'stats-close'},[_('text','×')])
 			]),_('div',{className:'Drag-Control'},[
 			_('div',{className:'Drag-Icon'}),
@@ -742,7 +754,7 @@ ABP.Strings = new Proxy({}, {
 			])]),
 
 			_('p',{className:'label big'},[_('text',_t('settExtension'))]),
-			_('iframe',{src:chrome.extension.getURL("options.html"),style:{width:'100%',height:'100px',border:'none'}})
+			_('iframe',{src:chrome.extension.getURL("options.html"),style:{width:'100%',height:'125px',border:'none'}})
 			//end
 			])
 		])]));
@@ -750,6 +762,10 @@ ABP.Strings = new Proxy({}, {
 			_('div',{className:'Context-Menu-Background'}),
 			_('div',{className:'Context-Menu-Body'},[
 				_('div',{id:'Player-Stats-Toggle', className:'preserve'},[_('text',ABP.Strings.showStats)]),
+				_('div',{id:'Player-Screenshot',className:'dm preserve'},[_('div',{className:'content'},[_('text',ABP.Strings.screenshot)]),_('div',{className:'dmMenu'},[
+					_('div',{'data-comment':'off'},[_('text',ABP.Strings.screenshotWithoutComment)]),
+					_('div',{'data-comment':'on'}, [_('text',ABP.Strings.screenshotWithComment)])
+				])]),
 				_('div',{id:'Player-Speed-Control',className:'dm preserve'},[_('div',{className:'content'},[_('text',ABP.Strings.playSpeed)]),_('div',{className:'dmMenu',style:{top:'-37px'}},[
 					_('div',{'data-speed':0.5},[_('text',0.5)]),
 					_('div',{'data-speed':1},[_('text',1)]),
@@ -1305,20 +1321,23 @@ ABP.Strings = new Proxy({}, {
 		canvasFPS=gEle('canvas-fps').lastChild,
 		bufferColumn=gEle('buffer-health-column'),
 		realtimeBitrateColumn=gEle('realtime-bitrate-column'),
+		realtimeBitrateColumnHls=gEle('realtime-bitrate-column-hls'),
 		downloadSpeedColumn=gEle('download-speed-column'),
+		downloadSpeedHlsColumn=gEle('download-speed-hls-column'),
 		playFpsColumn=gEle('playback-fps-column'),
 		playFpsNum = playFpsColumn.parentNode.lastChild,
 		dropFpsColumn=gEle('drop-fps-column'),
 		dropFpsNum = dropFpsColumn.parentNode.lastChild,
 		bufferArr=[],
 		downloadSpeedArr=[],
+		downloadSpeedHlsArr=[],
 		playFpsArr=[],
 		dropFpsArr=[],
 		prevPlayedFrames=0,
 		prevDroppedFrames=0,
 		bufferNum=gEle('buffer-health').lastChild,
 		svgStats='<svg style="width:180px;height:21px"><polyline style="fill:transparent;stroke:#ccc"></polyline><polyline points="1,21 180,21 180,1" style="fill:transparent;stroke:#fff"></polyline></svg>',
-		addStyle='',style=_('style'),flvjsStyle=_('style'),flvjsStats=document.querySelectorAll('.flvjs>:last-child'),i=0,
+		addStyle='',style=_('style'),flvjsStyle=_('style'),hlsjsStyle=_('style'),flvjsStats=document.querySelectorAll('.flvjs>:last-child'),hlsjsStats=document.querySelectorAll('.hlsjs>:last-child'),i=0,
 		renderColumn=function(column,arr){
 			var max=0,i,points=[];
 			arr.forEach(function(i){max=(i>max)?i:max});
@@ -1336,13 +1355,13 @@ ABP.Strings = new Proxy({}, {
 			document_querySelector('.Player-Stats').style.display=playerStatsOn?'':'block';
 			playerStatsOn=!playerStatsOn;
 		},
-		lastCurrent=-1,
 		odd=0;
 		contextToggle[addEventListener]('click',contextToggleListener);
 		gEle('stats-close')[addEventListener]('click',contextToggleListener);
 		for(;i<60;i++){
 			bufferArr.push(0);
 			downloadSpeedArr.push(0);
+			downloadSpeedHlsArr.push(0);
 			playFpsArr.push(0);
 			dropFpsArr.push(0);
 		}
@@ -1352,8 +1371,13 @@ ABP.Strings = new Proxy({}, {
 		realtimeBitrateColumn.innerHTML=svgStats;
 		realtimeBitrateColumn.firstChild.lastChild.setAttribute('points', '1,21 180,21 60,22 60,1');
 		realtimeBitrateColumn=realtimeBitrateColumn.firstChild.firstChild;
+		realtimeBitrateColumnHls.innerHTML=svgStats;
+		realtimeBitrateColumnHls.firstChild.lastChild.setAttribute('points', '1,21 180,21 120,22 120,1');
+		realtimeBitrateColumnHls=realtimeBitrateColumnHls.querySelector('polyline');
 		downloadSpeedColumn.innerHTML=svgStats;
-		downloadSpeedColumn=downloadSpeedColumn.firstChild.firstChild;
+		downloadSpeedColumn=downloadSpeedColumn.querySelector('polyline');
+		downloadSpeedHlsColumn.innerHTML=svgStats;
+		downloadSpeedHlsColumn=downloadSpeedHlsColumn.querySelector('polyline');
 		playFpsColumn.innerHTML=svgStats;
 		playFpsColumn=playFpsColumn.firstChild.firstChild;
 		dropFpsColumn.innerHTML=svgStats;
@@ -1371,11 +1395,11 @@ ABP.Strings = new Proxy({}, {
 		document.head.appendChild(style);
 		flvjsStyle.textContent='.flvjs{display:none}';
 		document.head.appendChild(flvjsStyle);
+		hlsjsStyle.innerHTML='.hlsjs{display:none}';
+		document.head.appendChild(hlsjsStyle);
 		if(window.flvplayer==undefined){
 			enabledStats.flvjs=false;
 		}
-		
-		var flvplayerSpeedRec = [];
 
 		var copySegUrl = function () {
 			ABPInst.copyText(this.title);
@@ -1395,7 +1419,7 @@ ABP.Strings = new Proxy({}, {
 			try{
 				buffer=getBuffer(video);
 			}catch(e){}
-			buffer=buffer.delta||0
+			buffer=buffer.delta>0?buffer.delta:0;
 			bufferArr.push(buffer);
 			bufferArr.shift();
 			bufferNum.textContent=to2digitFloat(buffer)+'s';
@@ -1466,7 +1490,7 @@ ABP.Strings = new Proxy({}, {
 					/*['mimeType','audioCodec','videoCodec'].forEach(function(name){
 						flvjsStats[i++].innerHTML=mediaInfo[name];
 					})*/
-					document_querySelector('#mimeType').lastChild.textContent=mediaInfo.mimeType;
+					gEle('mimeType').lastChild.textContent=mediaInfo.mimeType;
 					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.fps);
 					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.videoDataRate)+' kbps';
 					flvjsStats[i++].textContent=to2digitFloat(mediaInfo.audioDataRate)+' kbps';
@@ -1486,9 +1510,9 @@ ABP.Strings = new Proxy({}, {
 						if(playerStatsOn){
 							var realtimeBitrateArr=[];
 							var displaySegOffset = off, time = timeOffset - 20;
-							while (time < 20) {
+							while (time < 0) {
 								displaySegOffset--;
-								if (displaySegOffset == -1 || bitrateMap[displaySegOffset] == undefined) {
+								if (!bitrateMap[displaySegOffset]) {
 									displaySegOffset++;
 									break;
 								}
@@ -1509,29 +1533,13 @@ ABP.Strings = new Proxy({}, {
 						flvjsStats[i++].textContent='N/A'
 					}
 					if(odd){
-						downloadSpeedArr.push(statisticsInfo.speed);
-						downloadSpeedArr.shift();
+						if (typeof statisticsInfo.speed == 'number'){
+							downloadSpeedArr.push(statisticsInfo.speed);
+							downloadSpeedArr.shift();
+						}
 						if(playerStatsOn)
 							renderColumn(downloadSpeedColumn,downloadSpeedArr);
 						flvjsStats[i++].textContent=to2digitFloat(statisticsInfo.speed)+' KB/s'
-						//低网速监测
-						var io = flvplayer._transmuxer._controller._ioctl;
-						if (io.status === 2 && !io._paused){
-							flvplayerSpeedRec.push(statisticsInfo.speed);
-							if(flvplayerSpeedRec.length > 10) {
-								flvplayerSpeedRec.shift();
-								var sum = 0;
-								flvplayerSpeedRec.forEach(function(i){sum+=i;});
-								if (sum < 500) {
-									//超过10s均速低于50k，重新载入
-									flvplayer.reloadSegment && (flvplayer.reloadSegment(), console.log('Low average download speed in recent 10 sec, reloading'));
-									flvplayerSpeedRec = [];
-								}
-							}
-						}else{
-							// 连接/暂停/完成
-							flvplayerSpeedRec = [];
-						}
 						flvplayer._statisticsInfo.speed=0;
 					}else{
 						i++;
@@ -1551,44 +1559,91 @@ ABP.Strings = new Proxy({}, {
 						flvjsStats[i++].textContent=ABP.Strings.statsRedirectionNone;
 					}else{
 						flvjsStats[i].contextMenuAction = copySegUrl;
-						flvjsStats[i].title=statisticsInfo.redirectedURL;
-						flvjsStats[i++].textContent=statisticsInfo.redirectedURL.match(/(http[s]?:)?\/\/([a-zA-Z0-9\.\-]+)/)[0];
+						flvjsStats[i].title=currentSeg.redirectedURL;
+						flvjsStats[i++].textContent=currentSeg.redirectedURL.match(/(http[s]?:)?\/\/([a-zA-Z0-9\.\-]+)/)[0];
 					}
 				}else{
 					flvjsStyle.textContent='.flvjs{display:none}';
-					document_querySelector('#mimeType').lastChild.textContent='video/mp4';
+					gEle('mimeType').lastChild.textContent='video/mp4';
 					var segSeperatorChild = document_querySelector('#buffer-clips>span:nth-of-type(2)').children;
 					while(segSeperatorChild.length > 1){
 						segSeperatorChild[1].remove();
 					}
 				}
 			}
-			if(!window.overallBitrate){
-				document_querySelector('#overall-bitrate').parentNode.style.display='none'
+
+			// hls
+			if(window.hlsplayer && window.hlsplayer.mediaInfo){
+				hlsjsStyle.innerHTML='';
+				var percentage = hlsplayer.downloadPercentage * 100, i = 0, levelName = function (n) { return (hlsplayer.levelName&&hlsplayer.levelName[n])||n; }, level = levelName(hlsplayer.currentLevel), mediaInfo = hlsplayer.mediaInfo;
+				if (level != levelName(hlsplayer.nextLoadLevel)) {
+					level += ' '+ABP.Strings.switchingTo+': '+ levelName(hlsplayer.nextLoadLevel);
+				}
+				hlsjsStats[i++].textContent = level;
+				
+				hlsjsStats[i++].textContent=to2digitFloat(mediaInfo.video.fps);
+				hlsjsStats[i++].textContent=to2digitFloat(mediaInfo.video.averageBitrate / 1000)+' kbps';
+				hlsjsStats[i++].textContent=to2digitFloat(mediaInfo.audio.averageBitrate / 1000)+' kbps';
+				hlsjsStats[i++].textContent=to2digitFloat(
+					(mediaInfo.video.totalSize + mediaInfo.audio.totalSize) / (mediaInfo.video.totalDuration / mediaInfo.video.timeScale) / 1000*8
+				) + ' kbps';
+
+				document_querySelector('#download-progress-hls').style.width=percentage+'%';
+				hlsjsStats[i++].textContent = to2digitFloat(percentage)+'%'
+
+				// 码率
+				var bitrateMap = hlsplayer.mediaInfo.bitrateMap, bitrate = bitrateMap[video.currentTime | 0];
+				if (bitrate!=undefined) {
+					hlsjsStats[i++].textContent = to2digitFloat(bitrate)+' kbps';
+				} else {
+					hlsjsStats[i++].textContent = 'N/A';
+				}
+				if (playerStatsOn) {
+					var realtimeBitrateArr=[];
+					var time = (video.currentTime | 0) - 40;
+					while (realtimeBitrateArr.length < 60) {
+						realtimeBitrateArr.push(bitrateMap[time] ||0);
+						time++;
+					}
+					renderColumn(realtimeBitrateColumnHls,realtimeBitrateArr);
+				}
+				if(odd){
+					var speed = hlsplayer.downloadSpeed||0;
+					downloadSpeedHlsArr.push(speed);
+					downloadSpeedHlsArr.shift();
+					if(playerStatsOn)
+						renderColumn(downloadSpeedHlsColumn,downloadSpeedHlsArr);
+					hlsjsStats[i++].innerHTML=to2digitFloat(speed)+' KB/s'
+				}
 			}else{
-				document_querySelector('#overall-bitrate').parentNode.style.display=''
-				document_querySelector('#overall-bitrate').textContent=to2digitFloat(overallBitrate)+' kbps';
+				hlsjsStyle.innerHTML='.hlsjs{display:none}';
+			}
+			if(!window.overallBitrate){
+				gEle('overall-bitrate').parentNode.style.display='none'
+			}else{
+				gEle('overall-bitrate').parentNode.style.display=''
+				gEle('overall-bitrate').textContent=to2digitFloat(overallBitrate)+' kbps';
 			}
 			
 			if(odd)
 				canvasFPS.textContent = ABPInst.cmManager.canvasFPS;
 			
-			if(odd && enabledStats.videoQuality){
-				var quality=video.getVideoPlaybackQuality();
-				if (prevPlayedFrames > quality.totalVideoFrames) prevPlayedFrames = 0;
-				if (prevDroppedFrames > quality.droppedVideoFrames) prevDroppedFrames = 0;
-				var playedFrames=quality.totalVideoFrames - prevPlayedFrames;
-				var droppedFrames=quality.droppedVideoFrames - prevDroppedFrames;
-				prevPlayedFrames = quality.totalVideoFrames;
-				prevDroppedFrames = quality.droppedVideoFrames;
-				playFpsArr.push(playedFrames); playFpsArr.shift();
-				dropFpsArr.push(droppedFrames); dropFpsArr.shift();
-				if(playerStatsOn)
-					renderColumn(playFpsColumn, playFpsArr),
-					renderColumn(dropFpsColumn, dropFpsArr);
-				playFpsNum.textContent = playedFrames + ' fps';
-				dropFpsNum.textContent = droppedFrames + ' fps ' + (droppedFrames/playedFrames*100).toFixed(2)+'%';
-			}
+				if(odd && enabledStats.videoQuality){
+					var quality=video.getVideoPlaybackQuality();
+					if (prevPlayedFrames > quality.totalVideoFrames) prevPlayedFrames = 0;
+					if (prevDroppedFrames > quality.droppedVideoFrames) prevDroppedFrames = 0;
+					var playedFrames=quality.totalVideoFrames - prevPlayedFrames;
+					var droppedFrames=quality.droppedVideoFrames - prevDroppedFrames;
+					prevPlayedFrames = quality.totalVideoFrames;
+					prevDroppedFrames = quality.droppedVideoFrames;
+					playFpsArr.push(playedFrames); playFpsArr.shift();
+					dropFpsArr.push(droppedFrames); dropFpsArr.shift();
+					if(playerStatsOn)
+						renderColumn(playFpsColumn, playFpsArr),
+						renderColumn(dropFpsColumn, dropFpsArr);
+					playFpsNum.textContent = playedFrames + ' fps';
+					dropFpsNum.textContent = droppedFrames + ' fps ' + (droppedFrames/playedFrames*100).toFixed(2)+'%';
+				}
 		},500)
 		
 		/** Create a commentManager if possible **/
@@ -2099,16 +2154,61 @@ ABP.Strings = new Proxy({}, {
 				contextMenuBody.style.left=x+'px';
 				contextMenuBody.style.top=y+'px';
 			},
-			touchContextTimer=null,activingContext=!1,
-			/*
-			触屏拖动进度控制
-			
-			左右超过10px进入拖动状态
-			上下超过10px忽略本次拖动
-			
-			屏幕两侧50px取消拖动
-			*/
-			timeDraggingMode = false, ignoreDragging = false, cancelingDragging = false, draggingStartX,draggingStartY,draggingTimeBase,draggingDismissTimeout=null;
+			touchContextTimer=null,activingContext=!1;
+			contextMenuBody.querySelector('#Player-Screenshot .dmMenu')[addEventListener]('click',function(e){
+				var shouldContainComment = e.target.dataset.comment == 'on';
+				var canvas = _('canvas'), video = ABPInst.video, ctx = canvas.getContext('2d'), devicePixelRatio = window.devicePixelRatio, cmManager = ABPInst.cmManager, paused = video.paused;
+				video.pause();
+				if (shouldContainComment) {
+					if (abpinst.cmManager.options.global.useCSS) {
+						ABPInst.createPopup(ABP.Strings.screenshotCSSNoSupport, 3e3);
+						!paused && video.play();
+						return;
+					}
+					var width = Math.ceil(cmManager.width * devicePixelRatio), height = Math.ceil(cmManager.height * devicePixelRatio),
+					vh = video.videoHeight, vw = video.videoWidth, vl = 0,  vt = 0;
+					canvas.width = width;
+					canvas.height = height;
+					ctx.fillStyle = 'black';
+					ctx.fillRect(0, 0, width, height);
+
+					// calculate video offset
+					if (vh * (width / vw) > vh) {
+						vh = vh * (width / vw);
+						vw = width;
+						vt = Math.floor((height - vh) / 2);
+					} else {
+						vw = vw * (height / vh);
+						vh = height;
+						vl = Math.floor((width - vw) / 2);
+					}
+					ctx.drawImage(video, vl, vt, vw, vh);
+
+					ctx.drawImage(cmManager.canvas, 0, 0);
+				} else {
+					canvas.width = video.videoWidth;
+					canvas.height = video.videoHeight;
+					ctx.drawImage(video, 0, 0);
+				}
+				try {
+					var url = canvas.toDataURL();
+					var newWin = window.open('about:blank');
+					try {
+					newWin.onload = function() {
+						newWin.document.title = ABP.Strings.screenshot + ' @ ' + formatTime(video.currentTime) + ' - ' + ABP.Strings[shouldContainComment ? 'screenshotWithComment' : 'screenshotWithoutComment'];
+						newWin.document.body.innerHTML = '<style>body{background:#222;padding:0;margin:0}img{width:100%;height:100%;object-fit:scale-down}</style><img src="'+url+'">';
+						console.log(newWin.document.body)
+					}
+					} catch(e) {
+						//火狐 wtf???
+						newWin.location.href = url;
+					}
+				} catch(e) {
+					console.error(e);
+					ABPInst.createPopup(ABP.Strings.screenshotError, 3e3);
+					!paused && video.play();
+				}
+			});
 			contextMenuBody.querySelector('#Player-Speed-Control .dmMenu')[addEventListener]('click',function(e){
 				var speed=e.target.getAttribute('data-speed');
 				if(speed!=undefined)

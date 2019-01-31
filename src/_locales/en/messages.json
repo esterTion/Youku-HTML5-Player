@@ -420,7 +420,7 @@
         "message": "We are currently at version "
     },
     "extUpdated_detail": {
-        "message": "Here are some update notes:\n1、Project has been renamed to 【Yet Another Player for Youku】\n2、Attempt to play the lower quality video when playback error occurs."
+        "message": "Here are some update notes:\nNew hls core mode with auto quality switching."
     },
     "playerTheme": {
         "message": "Player theme"
@@ -463,5 +463,38 @@
     },
     "copied" : {
         "message": "Copied!"
+    },
+    "Auto": {
+        "message": "Auto"
+    },
+    "switchingTo": {
+        "message": "Switching to "
+    },
+    "switched": {
+        "message": "Switched"
+    },
+    "currentQuality": {
+        "message": "Current quality："
+    },
+    "currentFragment": {
+        "message": "Current fragment："
+    },
+    "playerCoreSetting": {
+        "message": "Player core："
+    },
+    "screenshot": {
+        "message": "Screenshot"
+    },
+	"screenshotWithoutComment": {
+        "message": "Without comments"
+    },
+	"screenshotWithComment": {
+        "message": "With comments"
+    },
+	"screenshotCSSNoSupport": {
+        "message": "CSS rendering is not supported"
+    },
+	"screenshotError": {
+        "message": "Cannot take screenshot due to video source limitation"
     }
 }

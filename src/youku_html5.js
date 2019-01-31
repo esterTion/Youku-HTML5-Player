@@ -113,6 +113,10 @@ let firstTime = true;
 let tempPwd = '';
 let highestType;
 let abpinst;
+let coreMode = 'hls';
+readStorage('coreMode', function (item) {
+    coreMode = item.coreMode || 'hls';
+});
 
 function response2url(json) {
     if (fetchedCount) {
@@ -183,9 +187,13 @@ function response2url(json) {
                 let time = 0;
                 audioLangs[lang].src[type] = {
                     type: 'flv',
+                    stream_type: type,
                     segments: [],
                     fetchM3U8: false,
-                    playlist_url: data[lang][type].m3u8_url
+                    playlist_url: data[lang][type].m3u8_url,
+                    width: data[lang][type].width,
+                    height: data[lang][type].height,
+                    size: data[lang][type].size
                 };
                 for (let part of data[lang][type].segs) {
                     if (part.key == -1) {
@@ -202,9 +210,7 @@ function response2url(json) {
                         let seg = {
                             filesize: part.size | 0,
                             duration: part.total_milliseconds_video | 0,
-                            url: part.cdn_url.replace(/http:\/\/([\d\.]+?)\//, function (s) {
-                                return 'http://vali.cp31.ott.cibntv.net/';
-                            }),
+                            url: part.cdn_url.replace(/http:\/\/([\d\.]+?)\//, 'http://vali.cp31.ott.cibntv.net/'),
                             backup_url: [part.cdn_url]
                         };
                         if (part.cdn_backup && part.cdn_backup.length) {
@@ -397,6 +403,12 @@ function switchLang(lang) {
     Array.from(abpinst.playerUnit.querySelectorAll('.BiliPlus-Scale-Menu .Video-Defination>div')).forEach(function (i) {
         i.remove();
     });
+
+    if (window.hlsplayer) {
+        hlsplayer.stopLoad();
+        hlsplayer.destroy();
+        delete window.hlsplayer;
+    }
 
     srcUrl = audioLangs[lang].src;
     availableSrc = audioLangs[lang].available;
@@ -833,7 +845,78 @@ function sendComment(e) {
     });
 }
 
+let hlsPending = -1;
 window.changeSrc = function (e, t, force) {
+    if (coreMode == 'hls') {
+        if (!window.hlsplayer) {
+            let playlists = availableSrc.map(i => srcUrl[i[0]]);
+            playlists.sort((a, b) => a.width - b.width);
+            let masterManifest = '#EXTM3U\n' + playlists.map(i => (
+                `#EXT-X-STREAM-INF:BANDWIDTH=${Math.round(i.size / i.duration * 8)},RESOLUTION=${i.width}x${i.height}\n${i.playlist_url}\n`
+            )).join('');
+            let masterManifestBlob = new (window.oldBlob || Blob)([masterManifest], { mimeType: 'application/vnd.apple.mpegurl' });
+            let masterManifestUrl = URL.createObjectURL(masterManifestBlob);
+            let conf = {
+                enableWorker: isChrome,
+                capLevelToPlayerSize: true,
+                startLevel: 2
+            };
+            if (isChrome && location.protocol === 'https:') {
+                conf.xhrSetup = (xhr, url) => {
+                    if (/^http:/.test(url)) {
+                        xhr.open('GET', url.replace(/http:\/\/([\d\.]+?)\//, 'http://vali.cp31.ott.cibntv.net/').replace(/http:/, 'https:'), true);
+                        xhr.withCredentials = true;
+                    }
+                }
+            }
+            if (abpinst.lastTime) {
+                conf.startPosition = abpinst.lastTime;
+                delete abpinst.lastTime;
+                console.log('starting from', conf.startPosition);
+            }
+            window.hlsplayer = new Hls(conf);
+            hlsplayer.loadSource(masterManifestUrl);
+            hlsplayer.attachMedia(abpinst.video);
+            hlsplayer.once(Hls.Events.MANIFEST_PARSED, () => URL.revokeObjectURL(masterManifestUrl));
+            hlsplayer.on(Hls.Events.LEVEL_SWITCHED, () => {
+                if (hlsPending != -1) {
+                    abpinst.createPopup(_t('switched') + ' ' + (hlsplayer.levelName[hlsPending] || hlsPending), 2e3);
+                    hlsPending = -1;
+                }
+            });
+            hlsplayer.on('hlsMIStatPercentage', function initialDisplay(m, p) {
+                abpinst.playerUnit.querySelector('#info-box').childNodes[0].childNodes[0].textContent = ABP.Strings.buffering + ' ' + (p * 100).toFixed(2) + '%';
+            });
+            hlsplayer.on(Hls.Events.ERROR, function (n, d) { console.log(n, d) });
+
+            HlsjsMediaInfoModule.observeMediaInfo(hlsplayer);
+            let scaleMenu = abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu');
+            scaleMenu.querySelector('.Video-Defination').textContent = '';
+            scaleMenu.querySelector('.Video-Defination').appendChild(_('div', {
+                changeto: JSON.stringify([-1, _t('Auto')]),
+                name: _t('Auto'),
+                className: 'on'
+            }, [_('text', _t('Auto'))]));
+            hlsplayer.levelName = playlists.map(i => {
+                let name = knownTypes[i.stream_type];
+                scaleMenu.querySelector('.Video-Defination').appendChild(_('div', {
+                    changeto: JSON.stringify([playlists.indexOf(i), name]),
+                    name: name
+                }, [_('text', name)]));
+                return name;
+            });
+            scaleMenu.style.width = playlists.length > 3 ? (((playlists.length + 1) * 50) + 'px') : '';
+            scaleMenu.style.animationName = 'scale-menu-show';
+            setTimeout(function () {
+                scaleMenu.style.animationName = '';
+            }, 2e3);
+            return;
+        }
+        hlsplayer.nextLevel = t;
+        abpinst.createPopup(_t('switchingTo') + e.target.value, 3e3);
+        hlsPending = t;
+        return;
+    }
     let div = document.getElementById('info-box');
     if ((abpinst == undefined || (currentSrc == t)) && !force)
         return false;
@@ -890,6 +973,11 @@ window.addEventListener('unload', function () {
         self.flvplayer.unload();
         self.flvplayer.destroy();
         delete self.flvplayer;
+    }
+    if (window.hlsplayer != undefined) {
+        hlsplayer.stopLoad();
+        hlsplayer.destroy();
+        delete window.hlsplayer;
     }
 })
 
