@@ -697,8 +697,8 @@ function fetchSrcThen(json) {
                 }
             }));
         readStorage('updateNotifyVer', function (item) {
-            if (item.updateNotifyVer != '1.3.2') {
-                saveStorage({ 'updateNotifyVer': '1.3.2' });
+            if (item.updateNotifyVer != '1.5.0') {
+                saveStorage({ 'updateNotifyVer': '1.5.0' });
                 chrome.runtime.sendMessage('version', function (version) {
                     createPopup({
                         content: [
@@ -845,6 +845,14 @@ function sendComment(e) {
     });
 }
 
+function hlsRecoverMediaError() {
+    if (!window.hlsplayer) return;
+    const currentTime = hlsplayer.media.currentTime;
+    hlsplayer.recoverMediaError();
+    hlsplayer.media.currentTime = currentTime;
+    hlsplayer.media.play();
+}
+
 let hlsPending = -1;
 window.changeSrc = function (e, t, force) {
     if (coreMode == 'hls') {
@@ -859,7 +867,8 @@ window.changeSrc = function (e, t, force) {
             let conf = {
                 enableWorker: isChrome,
                 capLevelToPlayerSize: true,
-                startLevel: 2
+                startLevel: 2,
+                maxMaxBufferLength: 300
             };
             if (isChrome && location.protocol === 'https:') {
                 conf.xhrSetup = (xhr, url) => {
@@ -887,7 +896,11 @@ window.changeSrc = function (e, t, force) {
             hlsplayer.on('hlsMIStatPercentage', function initialDisplay(m, p) {
                 abpinst.playerUnit.querySelector('#info-box').childNodes[0].childNodes[0].textContent = ABP.Strings.buffering + ' ' + (p * 100).toFixed(2) + '%';
             });
-            hlsplayer.on(Hls.Events.ERROR, function (n, d) { console.log(n, d) });
+
+            hlsplayer.on(Hls.Events.ERROR, function (n, d) {
+                console.log(n, d);
+                if (d.details == Hls.ErrorDetails.BUFFER_APPENDING_ERROR) hlsRecoverMediaError();
+            });
 
             HlsjsMediaInfoModule.observeMediaInfo(hlsplayer);
             let scaleMenu = abpinst.playerUnit.querySelector('.BiliPlus-Scale-Menu');
