@@ -870,7 +870,7 @@ window.changeSrc = function (e, t, force) {
                 startLevel: 2,
                 maxMaxBufferLength: 300
             };
-            if (isChrome && location.protocol === 'https:') {
+            if (location.protocol === 'https:') {
                 conf.xhrSetup = (xhr, url) => {
                     if (/^http:/.test(url)) {
                         xhr.open('GET', url.replace(/http:\/\/([\d\.]+?)\//, 'http://vali.cp31.ott.cibntv.net/').replace(/http:/, 'https:'), true);
