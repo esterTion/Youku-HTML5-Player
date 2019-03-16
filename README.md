@@ -1,3 +1,14 @@
+### **本扩展将不再维护**  
+目前的可用性状态（19/03/16）：  
+* firefox 65 基本正常使用  
+* chrome 73 已确认无法使用  
+
+### **This extension is no longer maintained**  
+Current usability status (Mar 16th 19):  
+* firefox 65 with basic functionality  
+* chrome 73 unusable confirmed  
+
+
 # Yet Another Player for Youku - 更好用的优酷播放器 扩展  
 作者：esterTion  
 
